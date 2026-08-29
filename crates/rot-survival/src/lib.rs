@@ -73,13 +73,24 @@ pub fn reduce_events(seed: &Value, input: &[SurvivalEvent]) -> Result<SurvivalSt
         let event_hash = semantic_hash(&event)?;
         if let Some(existing) = seen.get(&event.event_id) {
             if existing != &event_hash {
-                return Err(err("EVENT_ID_COLLISION", "same event identity with different semantic payload"));
+                return Err(err(
+                    "EVENT_ID_COLLISION",
+                    "same event identity with different semantic payload",
+                ));
             }
             continue;
         }
-        let expected = previous.checked_add(1).ok_or_else(|| err("SEQUENCE_OVERFLOW", "event sequence overflow"))?;
+        let expected = previous
+            .checked_add(1)
+            .ok_or_else(|| err("SEQUENCE_OVERFLOW", "event sequence overflow"))?;
         if event.sequence != expected {
-            return Err(err("SEQUENCE_DISCONTINUITY", format!("event sequence discontinuity: expected {expected}, got {}", event.sequence)));
+            return Err(err(
+                "SEQUENCE_DISCONTINUITY",
+                format!(
+                    "event sequence discontinuity: expected {expected}, got {}",
+                    event.sequence
+                ),
+            ));
         }
         seen.insert(event.event_id.clone(), event_hash);
         if event.project_id != state.project_id {
@@ -94,57 +105,146 @@ pub fn reduce_events(seed: &Value, input: &[SurvivalEvent]) -> Result<SurvivalSt
 
 fn apply_event(state: &mut SurvivalState, event: &SurvivalEvent) -> Result<(), SurvivalError> {
     match event.event_type.as_str() {
-        "objective.set" => state.current_objective_id = payload_text(&event.payload, "objective_id")?,
+        "objective.set" => {
+            state.current_objective_id = payload_text(&event.payload, "objective_id")?;
+        }
         "source_revision.observed" => {
             let sha = payload_text(&event.payload, "observed_source_sha")?;
-            if !is_git_sha(&sha) { return Err(err("INVALID_SOURCE_SHA", "invalid observed source revision event")); }
+            if !is_git_sha(&sha) {
+                return Err(err(
+                    "INVALID_SOURCE_SHA",
+                    "invalid observed source revision event",
+                ));
+            }
             state.observed_source_sha = sha;
         }
         "authority.set" => {
             let value = payload_text(&event.payload, "authority_state")?;
-            if !valid_authority(&value) { return Err(err("INVALID_AUTHORITY", "invalid authority transition")); }
+            if !valid_authority(&value) {
+                return Err(err("INVALID_AUTHORITY", "invalid authority transition"));
+            }
             state.authority_state = value;
         }
-        "workstream.started" => add(&mut state.active_workstreams, payload_text(&event.payload, "workstream_id")?),
-        "workstream.completed" => discard(&mut state.active_workstreams, &payload_text(&event.payload, "workstream_id")?),
-        "claim.acquired" => add(&mut state.active_claims, payload_text(&event.payload, "claim_id")?),
-        "claim.released" => discard(&mut state.active_claims, &payload_text(&event.payload, "claim_id")?),
-        "blocker.added" => add(&mut state.blockers, payload_text(&event.payload, "blocker_id")?),
-        "blocker.cleared" => discard(&mut state.blockers, &payload_text(&event.payload, "blocker_id")?),
+        "workstream.started" => add(
+            &mut state.active_workstreams,
+            payload_text(&event.payload, "workstream_id")?,
+        ),
+        "workstream.completed" => discard(
+            &mut state.active_workstreams,
+            &payload_text(&event.payload, "workstream_id")?,
+        ),
+        "claim.acquired" => add(
+            &mut state.active_claims,
+            payload_text(&event.payload, "claim_id")?,
+        ),
+        "claim.released" => discard(
+            &mut state.active_claims,
+            &payload_text(&event.payload, "claim_id")?,
+        ),
+        "blocker.added" => add(
+            &mut state.blockers,
+            payload_text(&event.payload, "blocker_id")?,
+        ),
+        "blocker.cleared" => discard(
+            &mut state.blockers,
+            &payload_text(&event.payload, "blocker_id")?,
+        ),
         "capability.verified" => {
             let value = payload_text(&event.payload, "capability_id")?;
-            discard(&mut state.unverified_capabilities, &value); add(&mut state.verified_capabilities, value);
+            discard(&mut state.unverified_capabilities, &value);
+            add(&mut state.verified_capabilities, value);
         }
         "capability.unverified" => {
             let value = payload_text(&event.payload, "capability_id")?;
-            discard(&mut state.verified_capabilities, &value); add(&mut state.unverified_capabilities, value);
+            discard(&mut state.verified_capabilities, &value);
+            add(&mut state.unverified_capabilities, value);
         }
-        "decision.accepted" => add(&mut state.decisions, payload_text(&event.payload, "decision_id")?),
-        "checkpoint.created" => state.latest_checkpoint_id = Some(payload_text(&event.payload, "checkpoint_id")?),
+        "decision.accepted" => add(
+            &mut state.decisions,
+            payload_text(&event.payload, "decision_id")?,
+        ),
+        "checkpoint.created" => {
+            state.latest_checkpoint_id = Some(payload_text(&event.payload, "checkpoint_id")?);
+        }
         "projection.updated" => {
             let value = payload_text(&event.payload, "projection_hash")?;
-            if !is_hash(&value) { return Err(err("INVALID_PROJECTION_HASH", "invalid projection hash event")); }
+            if !is_hash(&value) {
+                return Err(err(
+                    "INVALID_PROJECTION_HASH",
+                    "invalid projection hash event",
+                ));
+            }
             state.projection_hash = Some(value);
         }
         "next_actions.set" => {
-            let actions = event.payload.get("next_safe_actions").and_then(Value::as_array).ok_or_else(|| err("INVALID_NEXT_ACTIONS", "next_safe_actions must be non-empty string list"))?;
-            if actions.is_empty() { return Err(err("INVALID_NEXT_ACTIONS", "next_safe_actions must be non-empty string list")); }
-            state.next_safe_actions = actions.iter().map(|v| v.as_str().map(str::to_owned).ok_or_else(|| err("INVALID_NEXT_ACTIONS", "next_safe_actions must be string list"))).collect::<Result<Vec<_>, _>>()?;
+            let actions = event
+                .payload
+                .get("next_safe_actions")
+                .and_then(Value::as_array)
+                .ok_or_else(|| {
+                    err(
+                        "INVALID_NEXT_ACTIONS",
+                        "next_safe_actions must be non-empty string list",
+                    )
+                })?;
+            if actions.is_empty() {
+                return Err(err(
+                    "INVALID_NEXT_ACTIONS",
+                    "next_safe_actions must be non-empty string list",
+                ));
+            }
+            state.next_safe_actions = actions
+                .iter()
+                .map(|value| {
+                    value.as_str().map(str::to_owned).ok_or_else(|| {
+                        err(
+                            "INVALID_NEXT_ACTIONS",
+                            "next_safe_actions must be string list",
+                        )
+                    })
+                })
+                .collect::<Result<Vec<_>, _>>()?;
         }
-        other => return Err(err("UNSUPPORTED_EVENT", format!("unsupported event_type {other}"))),
+        other => {
+            return Err(err(
+                "UNSUPPORTED_EVENT",
+                format!("unsupported event_type {other}"),
+            ));
+        }
     }
     Ok(())
 }
 
 fn normalize_state(value: &Value) -> Result<SurvivalState, SurvivalError> {
-    let obj = value.as_object().ok_or_else(|| err("INVALID_STATE", "state must be object"))?;
-    let watermark = obj.get("event_watermark").and_then(Value::as_u64).unwrap_or(0);
-    let authority = obj.get("authority_state").and_then(Value::as_str).unwrap_or("PROPOSED").to_owned();
-    if !valid_authority(&authority) { return Err(err("INVALID_AUTHORITY", "invalid authority state")); }
+    let obj = value
+        .as_object()
+        .ok_or_else(|| err("INVALID_STATE", "state must be object"))?;
+    let watermark = obj
+        .get("event_watermark")
+        .and_then(Value::as_u64)
+        .unwrap_or(0);
+    let authority = obj
+        .get("authority_state")
+        .and_then(Value::as_str)
+        .unwrap_or("PROPOSED")
+        .to_owned();
+    if !valid_authority(&authority) {
+        return Err(err("INVALID_AUTHORITY", "invalid authority state"));
+    }
     let sha = required_text(obj, "observed_source_sha")?;
-    if !is_git_sha(&sha) { return Err(err("INVALID_SOURCE_SHA", "invalid observed source revision")); }
+    if !is_git_sha(&sha) {
+        return Err(err(
+            "INVALID_SOURCE_SHA",
+            "invalid observed source revision",
+        ));
+    }
     let projection_hash = optional_text(obj, "projection_hash")?;
-    if projection_hash.as_ref().is_some_and(|v| !is_hash(v)) { return Err(err("INVALID_PROJECTION_HASH", "invalid projection hash")); }
+    if projection_hash.as_ref().is_some_and(|value| !is_hash(value)) {
+        return Err(err(
+            "INVALID_PROJECTION_HASH",
+            "invalid projection hash",
+        ));
+    }
     Ok(SurvivalState {
         schema_version: "2".into(),
         project_id: required_text(obj, "project_id")?,
@@ -156,8 +256,14 @@ fn normalize_state(value: &Value) -> Result<SurvivalState, SurvivalError> {
         active_workstreams: string_set(obj.get("active_workstreams"), "active_workstreams")?,
         active_claims: string_set(obj.get("active_claims"), "active_claims")?,
         blockers: string_set(obj.get("blockers"), "blockers")?,
-        verified_capabilities: string_set(obj.get("verified_capabilities"), "verified_capabilities")?,
-        unverified_capabilities: string_set(obj.get("unverified_capabilities"), "unverified_capabilities")?,
+        verified_capabilities: string_set(
+            obj.get("verified_capabilities"),
+            "verified_capabilities",
+        )?,
+        unverified_capabilities: string_set(
+            obj.get("unverified_capabilities"),
+            "unverified_capabilities",
+        )?,
         decisions: string_set(obj.get("decisions"), "decisions")?,
         latest_checkpoint_id: optional_text(obj, "latest_checkpoint_id")?,
         projection_hash,
@@ -166,8 +272,19 @@ fn normalize_state(value: &Value) -> Result<SurvivalState, SurvivalError> {
 }
 
 fn validate_seal(seal: &FreshnessSeal) -> Result<(), SurvivalError> {
-    if !is_git_sha(&seal.observed_source_sha) { return Err(err("INVALID_SOURCE_SHA", "invalid observed_source_sha")); }
-    if seal.projection_hash.as_ref().is_some_and(|v| !is_hash(v)) { return Err(err("INVALID_PROJECTION_HASH", "invalid projection_hash")); }
+    if !is_git_sha(&seal.observed_source_sha) {
+        return Err(err("INVALID_SOURCE_SHA", "invalid observed_source_sha"));
+    }
+    if seal
+        .projection_hash
+        .as_ref()
+        .is_some_and(|value| !is_hash(value))
+    {
+        return Err(err(
+            "INVALID_PROJECTION_HASH",
+            "invalid projection_hash",
+        ));
+    }
     Ok(())
 }
 
@@ -176,26 +293,108 @@ fn semantic_hash<T: Serialize>(value: &T) -> Result<String, SurvivalError> {
     Ok(format!("sha256:{}", hex::encode(Sha256::digest(bytes))))
 }
 
-fn required_text(obj: &serde_json::Map<String, Value>, key: &str) -> Result<String, SurvivalError> {
-    obj.get(key).and_then(Value::as_str).filter(|v| !v.is_empty()).map(str::to_owned).ok_or_else(|| err("INVALID_TEXT", format!("{key} must be non-empty string")))
+fn required_text(
+    obj: &serde_json::Map<String, Value>,
+    key: &str,
+) -> Result<String, SurvivalError> {
+    obj.get(key)
+        .and_then(Value::as_str)
+        .filter(|value| !value.is_empty())
+        .map(str::to_owned)
+        .ok_or_else(|| err("INVALID_TEXT", format!("{key} must be non-empty string")))
 }
-fn optional_text(obj: &serde_json::Map<String, Value>, key: &str) -> Result<Option<String>, SurvivalError> {
-    match obj.get(key) { None | Some(Value::Null) => Ok(None), Some(Value::String(v)) if !v.is_empty() => Ok(Some(v.clone())), _ => Err(err("INVALID_TEXT", format!("{key} invalid"))) }
+
+fn optional_text(
+    obj: &serde_json::Map<String, Value>,
+    key: &str,
+) -> Result<Option<String>, SurvivalError> {
+    match obj.get(key) {
+        None | Some(Value::Null) => Ok(None),
+        Some(Value::String(value)) if !value.is_empty() => Ok(Some(value.clone())),
+        _ => Err(err("INVALID_TEXT", format!("{key} invalid"))),
+    }
 }
+
 fn payload_text(payload: &BTreeMap<String, Value>, key: &str) -> Result<String, SurvivalError> {
-    payload.get(key).and_then(Value::as_str).filter(|v| !v.is_empty()).map(str::to_owned).ok_or_else(|| err("INVALID_TEXT", format!("{key} must be non-empty string")))
+    payload
+        .get(key)
+        .and_then(Value::as_str)
+        .filter(|value| !value.is_empty())
+        .map(str::to_owned)
+        .ok_or_else(|| err("INVALID_TEXT", format!("{key} must be non-empty string")))
 }
+
 fn string_list(value: Option<&Value>, key: &str) -> Result<Vec<String>, SurvivalError> {
-    let Some(Value::Array(values)) = value else { return Ok(Vec::new()); };
-    values.iter().map(|v| v.as_str().filter(|s| !s.is_empty()).map(str::to_owned).ok_or_else(|| err("INVALID_STRING_LIST", format!("{key} must be string list")))).collect()
+    let Some(Value::Array(values)) = value else {
+        return Ok(Vec::new());
+    };
+    values
+        .iter()
+        .map(|value| {
+            value
+                .as_str()
+                .filter(|text| !text.is_empty())
+                .map(str::to_owned)
+                .ok_or_else(|| err("INVALID_STRING_LIST", format!("{key} must be string list")))
+        })
+        .collect()
 }
+
 fn string_set(value: Option<&Value>, key: &str) -> Result<Vec<String>, SurvivalError> {
-    Ok(string_list(value, key)?.into_iter().collect::<BTreeSet<_>>().into_iter().collect())
+    Ok(string_list(value, key)?
+        .into_iter()
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect())
 }
-fn add(values: &mut Vec<String>, value: String) { if !values.contains(&value) { values.push(value); values.sort(); } }
-fn discard(values: &mut Vec<String>, value: &str) { values.retain(|v| v != value); }
-fn valid_authority(value: &str) -> bool { matches!(value, "PROPOSED"|"IMPLEMENTED"|"EXECUTED"|"VERIFIED"|"EMPIRICALLY_QUALIFIED"|"BLOCKED"|"DEGRADED_EXTERNAL"|"SUPERSEDED") }
-fn is_git_sha(value: &str) -> bool { value.len() == 40 && value.bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase()) }
-fn is_hash(value: &str) -> bool { value.len() == 71 && value.starts_with("sha256:") && value[7..].bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase()) }
-fn err(code: &'static str, message: impl Into<String>) -> SurvivalError { SurvivalError { code, message: message.into() } }
-fn json_error(error: serde_json::Error) -> SurvivalError { err("JSON_ERROR", error.to_string()) }
+
+fn add(values: &mut Vec<String>, value: String) {
+    if !values.contains(&value) {
+        values.push(value);
+        values.sort();
+    }
+}
+
+fn discard(values: &mut Vec<String>, value: &str) {
+    values.retain(|candidate| candidate != value);
+}
+
+fn valid_authority(value: &str) -> bool {
+    matches!(
+        value,
+        "PROPOSED"
+            | "IMPLEMENTED"
+            | "EXECUTED"
+            | "VERIFIED"
+            | "EMPIRICALLY_QUALIFIED"
+            | "BLOCKED"
+            | "DEGRADED_EXTERNAL"
+            | "SUPERSEDED"
+    )
+}
+
+fn is_git_sha(value: &str) -> bool {
+    value.len() == 40
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+}
+
+fn is_hash(value: &str) -> bool {
+    value.len() == 71
+        && value.starts_with("sha256:")
+        && value[7..]
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+}
+
+fn err(code: &'static str, message: impl Into<String>) -> SurvivalError {
+    SurvivalError {
+        code,
+        message: message.into(),
+    }
+}
+
+fn json_error(error: serde_json::Error) -> SurvivalError {
+    err("JSON_ERROR", error.to_string())
+}
