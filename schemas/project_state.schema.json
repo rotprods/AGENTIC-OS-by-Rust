@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rot.dev/schemas/project-state.v1.json",
+  "title": "Canonical Project State v1",
+  "type": "object",
+  "required": ["project_id","north_star","phase","event_watermark","source_head_sha","current_objectives","active_workstreams","active_claims","blockers","test_summary","latest_checkpoint_id","next_actions","updated_at"],
+  "properties": {
+    "project_id":{"type":"string"},
+    "north_star":{"type":"string"},
+    "phase":{"type":"string"},
+    "authority":{"enum":["PROPOSED","IMPLEMENTED","EXECUTED","VERIFIED","BLOCKED"]},
+    "event_watermark":{"type":"string"},
+    "source_head_sha":{"type":"string","pattern":"^[0-9a-f]{7,40}$"},
+    "current_objectives":{"type":"array","items":{"type":"string"}},
+    "active_workstreams":{"type":"array","items":{"type":"string"}},
+    "active_claims":{"type":"array","items":{"type":"string"}},
+    "blockers":{"type":"array","items":{"type":"string"}},
+    "risks":{"type":"array","items":{"type":"string"}},
+    "test_summary":{"type":"object"},
+    "evidence_summary":{"type":"object"},
+    "decision_heads":{"type":"array","items":{"type":"string"}},
+    "latest_checkpoint_id":{"type":"string"},
+    "latest_handoff_id":{"type":["string","null"]},
+    "graph_projection_watermark":{"type":["string","null"]},
+    "context_pack_id":{"type":["string","null"]},
+    "next_actions":{"type":"array","items":{"type":"string"}},
+    "updated_at":{"type":"string","format":"date-time"}
+  },
+  "additionalProperties": true
+}
