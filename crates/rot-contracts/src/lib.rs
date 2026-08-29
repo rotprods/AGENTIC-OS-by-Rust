@@ -20,6 +20,8 @@ pub enum ContractError {
     },
     #[error("non-finite JSON number is forbidden")]
     NonFiniteNumber,
+    #[error("JSON integer outside ECMAScript safe range is forbidden")]
+    UnsafeInteger,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
