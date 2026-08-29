@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Iterable
+import math
 
 from .canonical_json import hash_canonical
 
@@ -10,6 +11,8 @@ AUTHORITY_STATES = {
     "PROPOSED", "IMPLEMENTED", "EXECUTED", "VERIFIED",
     "EMPIRICALLY_QUALIFIED", "BLOCKED", "DEGRADED_EXTERNAL", "SUPERSEDED",
 }
+TEST_STATES = {"PASS", "FAIL", "SKIPPED", "CANCELLED", "NOT_RUN"}
+DEFAULT_DEATH_DRILL_SLO_SECONDS = 300.0
 
 
 class SurvivalContractError(ValueError):
@@ -36,7 +39,9 @@ def assert_fresh(local: FreshnessSeal, live: FreshnessSeal) -> None:
         raise SurvivalContractError("stale observed source revision")
     if local.event_watermark != live.event_watermark:
         raise SurvivalContractError("stale event watermark")
-    if local.projection_hash is not None and live.projection_hash is not None and local.projection_hash != live.projection_hash:
+    # A known live projection cannot be silently ignored by omitting the local hash,
+    # and a local projection cannot be trusted if live authority no longer exposes it.
+    if local.projection_hash != live.projection_hash:
         raise SurvivalContractError("stale projection")
 
 
@@ -52,29 +57,51 @@ def reduce_events(seed: dict[str, Any], events: Iterable[dict[str, Any]]) -> dic
             if seen[event_id] != event_hash:
                 raise SurvivalContractError("same event identity with different semantic payload")
             continue
-        if event["sequence"] <= previous_sequence:
-            raise SurvivalContractError("event sequence must advance seed watermark strictly")
-        previous_sequence = event["sequence"]
+        expected_sequence = previous_sequence + 1
+        if event["sequence"] != expected_sequence:
+            raise SurvivalContractError(
+                f"event sequence discontinuity: expected {expected_sequence}, got {event['sequence']}"
+            )
         seen[event_id] = event_hash
         if event["project_id"] != state["project_id"]:
             raise SurvivalContractError("cross-project event rejected")
         _apply(state, event)
-        state["event_watermark"] = event["sequence"]
+        previous_sequence = event["sequence"]
+        state["event_watermark"] = previous_sequence
     return _normalize_state(state)
 
 
-def build_checkpoint(state: dict[str, Any], *, checkpoint_id: str, agent_id: str, session_id: str,
-                     workstream_id: str, completed: list[str], blockers: list[str], next_actions: list[str],
-                     resume_recipe: list[str], parent_checkpoint_id: str | None = None,
-                     tests: list[dict[str, Any]] | None = None, evidence: list[str] | None = None,
-                     changed_paths: list[str] | None = None, decisions: list[str] | None = None,
-                     risks: list[str] | None = None, graph_delta: list[str] | None = None,
-                     task_delta: list[str] | None = None, refactor_debt: list[str] | None = None) -> dict[str, Any]:
+def build_checkpoint(
+    state: dict[str, Any], *, checkpoint_id: str, agent_id: str, session_id: str,
+    workstream_id: str, completed: list[str], blockers: list[str], next_actions: list[str],
+    resume_recipe: list[str], parent_checkpoint_id: str | None = None,
+    tests: list[dict[str, Any]] | None = None, evidence: list[str] | None = None,
+    changed_paths: list[str] | None = None, decisions: list[str] | None = None,
+    risks: list[str] | None = None, graph_delta: list[str] | None = None,
+    task_delta: list[str] | None = None, refactor_debt: list[str] | None = None,
+) -> dict[str, Any]:
     current = _normalize_state(state)
-    for field, value in (("checkpoint_id", checkpoint_id), ("agent_id", agent_id), ("session_id", session_id), ("workstream_id", workstream_id)):
+    for field, value in (
+        ("checkpoint_id", checkpoint_id), ("agent_id", agent_id),
+        ("session_id", session_id), ("workstream_id", workstream_id),
+    ):
         _require_text_value(value, field)
-    if not _string_list(next_actions, allow_empty=False) or not _string_list(resume_recipe, allow_empty=False):
-        raise SurvivalContractError("checkpoint requires non-empty next_actions and resume_recipe")
+    if parent_checkpoint_id is not None:
+        _require_text_value(parent_checkpoint_id, "parent_checkpoint_id")
+
+    _require_string_list(completed, "completed", allow_empty=True)
+    _require_string_list(blockers, "blockers", allow_empty=True)
+    _require_string_list(next_actions, "next_actions", allow_empty=False)
+    _require_string_list(resume_recipe, "resume_recipe", allow_empty=False)
+    _require_string_list(changed_paths or [], "changed_paths", allow_empty=True)
+    _require_string_list(decisions or [], "decisions", allow_empty=True)
+    _require_string_list(evidence or [], "evidence", allow_empty=True)
+    _require_string_list(risks or [], "risks", allow_empty=True)
+    _require_string_list(graph_delta or [], "graph_delta", allow_empty=True)
+    _require_string_list(task_delta or [], "task_delta", allow_empty=True)
+    _require_string_list(refactor_debt or [], "refactor_debt", allow_empty=True)
+    normalized_tests = _normalize_tests(tests or [])
+
     checkpoint = {
         "schema_version": "2",
         "checkpoint_id": checkpoint_id,
@@ -88,11 +115,12 @@ def build_checkpoint(state: dict[str, Any], *, checkpoint_id: str, agent_id: str
         "event_watermark": current["event_watermark"],
         "projection_hash": current.get("projection_hash"),
         "context_pack_hash": None,
+        "state_hash": hash_canonical(current),
         "authority_state": current["authority_state"],
         "completed": list(completed),
         "changed_paths": sorted(set(changed_paths or [])),
         "decisions": sorted(set(decisions or [])),
-        "tests": list(tests or []),
+        "tests": normalized_tests,
         "evidence": sorted(set(evidence or [])),
         "blockers": list(blockers),
         "risks": list(risks or []),
@@ -106,19 +134,42 @@ def build_checkpoint(state: dict[str, Any], *, checkpoint_id: str, agent_id: str
     return checkpoint
 
 
-def verify_checkpoint(checkpoint: dict[str, Any]) -> None:
+def verify_checkpoint(checkpoint: dict[str, Any], *, state: dict[str, Any] | None = None) -> None:
+    if type(checkpoint) is not dict:
+        raise SurvivalContractError("checkpoint must be object")
     provided = checkpoint.get("checkpoint_hash")
     if not _is_hash(provided):
         raise SurvivalContractError("checkpoint_hash missing or malformed")
+    state_hash = checkpoint.get("state_hash")
+    if not _is_hash(state_hash):
+        raise SurvivalContractError("state_hash missing or malformed")
     payload = dict(checkpoint)
     payload.pop("checkpoint_hash", None)
     if hash_canonical(payload) != provided:
         raise SurvivalContractError("checkpoint integrity mismatch")
+    if state is not None:
+        canonical = _normalize_state(state)
+        if hash_canonical(canonical) != state_hash:
+            raise SurvivalContractError("checkpoint state binding mismatch")
+        if checkpoint.get("project_id") != canonical["project_id"]:
+            raise SurvivalContractError("checkpoint project binding mismatch")
+        if checkpoint.get("observed_source_sha") != canonical["observed_source_sha"]:
+            raise SurvivalContractError("checkpoint source binding mismatch")
+        if checkpoint.get("event_watermark") != canonical["event_watermark"]:
+            raise SurvivalContractError("checkpoint watermark binding mismatch")
 
 
-def evaluate_death_drill(state: dict[str, Any], report: dict[str, Any]) -> dict[str, Any]:
+def evaluate_death_drill(
+    state: dict[str, Any], report: dict[str, Any], *, elapsed_seconds: float,
+    slo_seconds: float = DEFAULT_DEATH_DRILL_SLO_SECONDS,
+) -> dict[str, Any]:
     if type(report) is not dict:
         raise SurvivalContractError("death-drill report must be object")
+    if isinstance(elapsed_seconds, bool) or not isinstance(elapsed_seconds, (int, float)) or not math.isfinite(float(elapsed_seconds)) or elapsed_seconds < 0:
+        raise SurvivalContractError("elapsed_seconds must be a finite non-negative number")
+    if isinstance(slo_seconds, bool) or not isinstance(slo_seconds, (int, float)) or not math.isfinite(float(slo_seconds)) or slo_seconds <= 0:
+        raise SurvivalContractError("slo_seconds must be a finite positive number")
+
     canonical = _normalize_state(state)
     required = {
         "project_id": canonical["project_id"],
@@ -140,11 +191,17 @@ def evaluate_death_drill(state: dict[str, Any], report: dict[str, Any]) -> dict[
                 mismatches.append(field)
         elif type(observed) is not type(expected) or observed != expected:
             mismatches.append(field)
+
+    within_slo = float(elapsed_seconds) <= float(slo_seconds)
+    passed = not mismatches and within_slo
     return {
-        "passed": not mismatches,
+        "passed": passed,
         "mismatches": mismatches,
         "score": (len(required) - len(mismatches)) / len(required),
-        "continuity_defect": bool(mismatches),
+        "within_slo": within_slo,
+        "elapsed_seconds": float(elapsed_seconds),
+        "slo_seconds": float(slo_seconds),
+        "continuity_defect": bool(mismatches) or not within_slo,
         "state_hash": hash_canonical(canonical),
     }
 
@@ -252,6 +309,30 @@ def _apply(state: dict[str, Any], event: dict[str, Any]) -> None:
         raise SurvivalContractError(f"unsupported event_type {kind}")
 
 
+def _normalize_tests(tests: Any) -> list[dict[str, Any]]:
+    if type(tests) is not list:
+        raise SurvivalContractError("tests must be list")
+    normalized: list[dict[str, Any]] = []
+    for item in tests:
+        if type(item) is not dict:
+            raise SurvivalContractError("test evidence must be object")
+        required = {"test_id", "status", "source_sha"}
+        optional = {"run_id", "evidence_hash"}
+        if not required.issubset(item) or not set(item).issubset(required | optional):
+            raise SurvivalContractError("test evidence fields invalid")
+        _require_text_value(item["test_id"], "test_id")
+        if item["status"] not in TEST_STATES:
+            raise SurvivalContractError("invalid test status")
+        if not _is_git_sha(item["source_sha"]):
+            raise SurvivalContractError("invalid test source_sha")
+        if item.get("run_id") is not None:
+            _require_text_value(item["run_id"], "run_id")
+        if item.get("evidence_hash") is not None and not _is_hash(item["evidence_hash"]):
+            raise SurvivalContractError("invalid test evidence_hash")
+        normalized.append(dict(item))
+    return normalized
+
+
 def _text(payload: dict[str, Any], key: str) -> str:
     value = payload.get(key)
     _require_text_value(value, key)
@@ -269,6 +350,11 @@ def _require_text_value(value: Any, key: str) -> None:
         raise SurvivalContractError(f"{key} required")
 
 
+def _require_string_list(value: Any, key: str, *, allow_empty: bool) -> None:
+    if not _string_list(value, allow_empty=allow_empty):
+        raise SurvivalContractError(f"{key} must be {'possibly-empty' if allow_empty else 'non-empty'} string list")
+
+
 def _normalized_string_set(value: Any, key: str) -> list[str]:
     if not _string_list(value, allow_empty=True):
         raise SurvivalContractError(f"{key} must be string list")
@@ -276,7 +362,9 @@ def _normalized_string_set(value: Any, key: str) -> list[str]:
 
 
 def _string_list(value: Any, *, allow_empty: bool) -> bool:
-    return type(value) is list and (allow_empty or bool(value)) and all(isinstance(item, str) and bool(item) and len(item) <= 4096 for item in value)
+    return type(value) is list and (allow_empty or bool(value)) and all(
+        isinstance(item, str) and bool(item) and len(item) <= 4096 for item in value
+    )
 
 
 def _strict_nonnegative_int(value: Any) -> bool:
@@ -292,7 +380,9 @@ def _discard(state: dict[str, Any], key: str, value: str) -> None:
 
 
 def _is_hash(value: Any) -> bool:
-    return isinstance(value, str) and value.startswith("sha256:") and len(value) == 71 and all(c in "0123456789abcdef" for c in value[7:])
+    return isinstance(value, str) and value.startswith("sha256:") and len(value) == 71 and all(
+        c in "0123456789abcdef" for c in value[7:]
+    )
 
 
 def _is_git_sha(value: Any) -> bool:
