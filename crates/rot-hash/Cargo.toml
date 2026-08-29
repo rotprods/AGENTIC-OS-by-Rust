@@ -11,3 +11,6 @@ hex.workspace = true
 serde.workspace = true
 rot-contracts = { path = "../rot-contracts" }
 rot-canonical-json = { path = "../rot-canonical-json" }
+
+[dev-dependencies]
+serde_json.workspace = true
