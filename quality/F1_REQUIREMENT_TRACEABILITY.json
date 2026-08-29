@@ -1,0 +1,20 @@
+{
+  "schema_version": "rot.f1.traceability.v1",
+  "gate": "G1_CONTRACT_PARITY",
+  "authority": "SHADOW_ONLY",
+  "requirements": [
+    {"id":"F1-R001","requirement":"Canonical JSON is deterministic across Rust, TypeScript and Python","surfaces":["crates/rot-canonical-json","packages/contracts-ts","python/rot_contracts","fixtures/golden/canonical-json.v1.json"],"status":"IMPLEMENTED_BASELINE_NOT_FULLY_CERTIFIED"},
+    {"id":"F1-R002","requirement":"Canonical SHA-256 is identical across languages","surfaces":["crates/rot-hash","packages/contracts-ts","python/rot_contracts"],"status":"IMPLEMENTED_BASELINE_NOT_FULLY_CERTIFIED"},
+    {"id":"F1-R003","requirement":"Opaque canonical entity/event/evidence/run IDs cannot be confused with provider IDs","surfaces":["crates/rot-id"],"status":"IMPLEMENTED_BASELINE"},
+    {"id":"F1-R004","requirement":"Source identity semantics must converge on CP02 SourceIdentityKey namespace and normalization policy","surfaces":["crates/rot-id"],"status":"OPEN_GAP","reference":"rotprods/mission-control#17"},
+    {"id":"F1-R005","requirement":"Temporal values require explicit timezone and preserve valid-time versus recorded-time semantics","surfaces":["crates/rot-temporal"],"status":"IMPLEMENTED_BASELINE_PARSER_HARDENING_REQUIRED"},
+    {"id":"F1-R006","requirement":"Epistemic and authority classes remain distinct","surfaces":["crates/rot-provenance"],"status":"IMPLEMENTED_BASELINE"},
+    {"id":"F1-R007","requirement":"Confidence is finite and bounded to [0,1]","surfaces":["crates/rot-provenance"],"status":"OPEN_GAP"},
+    {"id":"F1-R008","requirement":"EventEnvelope is versioned, tenant/scope bound and hashable","surfaces":["crates/rot-event"],"status":"IMPLEMENTED_BASELINE_CP03_PARITY_REQUIRED","reference":"rotprods/mission-control#18"},
+    {"id":"F1-R009","requirement":"Schema accept/reject behavior has Rust/TS/Python parity","surfaces":["schemas"],"status":"NOT_STARTED"},
+    {"id":"F1-R010","requirement":"Critical coverage, changed-line coverage and mutation kill meet G1","surfaces":["quality",".github/workflows"],"status":"NOT_STARTED"},
+    {"id":"F1-R011","requirement":"No secret or tenant/scope leakage in fixtures/contracts","surfaces":["fixtures","schemas","crates","packages","python"],"status":"NOT_YET_CERTIFIED"},
+    {"id":"F1-R012","requirement":"CI actions are immutable-SHA pinned before G1 promotion","surfaces":[".github/workflows"],"status":"OPEN_GAP"}
+  ],
+  "promotion_rule": "No requirement with OPEN_GAP, NOT_STARTED, NOT_YET_CERTIFIED or *_REQUIRED may remain at G1 PASS."
+}

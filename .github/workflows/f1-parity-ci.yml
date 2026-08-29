@@ -1,0 +1,39 @@
+name: F1 Cross-Language Parity
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feat/f1-contract-kernel-vnext]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: f1-parity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned Python schema validator
+        run: python -m pip install --disable-pip-version-check jsonschema==4.25.1
+      - name: Python golden and schema parity
+        env:
+          PYTHONPATH: python
+        run: python -m unittest discover -s python/tests -v
+      - name: Enable pnpm
+        run: corepack enable
+      - name: Install TypeScript parity dependencies
+        run: pnpm --dir packages/contracts-ts install --frozen-lockfile=false
+      - name: Compile TypeScript parity surface
+        run: pnpm --dir packages/contracts-ts run build
+      - name: TypeScript golden parity
+        run: pnpm --dir packages/contracts-ts run verify:goldens
+      - name: TypeScript schema parity
+        run: pnpm --dir packages/contracts-ts run verify:schemas

@@ -1,0 +1,16 @@
+[package]
+name = "rot-canonical-json"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+serde_jcs.workspace = true
+rot-contracts = { path = "../rot-contracts" }
+
+[dev-dependencies]
+sha2.workspace = true
+hex.workspace = true

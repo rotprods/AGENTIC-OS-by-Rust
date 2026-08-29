@@ -1,0 +1,16 @@
+[package]
+name = "rot-hash"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+sha2.workspace = true
+hex.workspace = true
+serde.workspace = true
+rot-contracts = { path = "../rot-contracts" }
+rot-canonical-json = { path = "../rot-canonical-json" }
+
+[dev-dependencies]
+serde_json.workspace = true
