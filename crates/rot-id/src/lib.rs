@@ -176,9 +176,7 @@ fn token_valid(value: &str) -> bool {
     if !first.is_ascii_lowercase() {
         return false;
     }
-    bytes.all(|b| {
-        b.is_ascii_lowercase() || b.is_ascii_digit() || matches!(b, b'.' | b'_' | b'-')
-    })
+    bytes.all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || matches!(b, b'.' | b'_' | b'-'))
 }
 
 fn normalize_token(
@@ -331,7 +329,8 @@ pub fn derive_canonical_entity_id(
     if command.tenant_id.is_empty() || command.tenant_id.trim() != command.tenant_id {
         return Err(ContractError::InvalidIdentifier(command.tenant_id.clone()));
     }
-    if command.creation_nonce.is_empty() || command.creation_nonce.trim() != command.creation_nonce {
+    if command.creation_nonce.is_empty() || command.creation_nonce.trim() != command.creation_nonce
+    {
         return Err(ContractError::InvalidIdentifier(
             command.creation_nonce.clone(),
         ));
@@ -442,11 +441,7 @@ mod tests {
     #[test]
     fn digest_ids_reject_invalid_shape() {
         assert!(CanonicalEntityId::parse("rot:entity:sha256:ABC").is_err());
-        assert!(SourceRecordId::parse(format!(
-            "rot:source:sha256:{}",
-            "a".repeat(64)
-        ))
-        .is_ok());
+        assert!(SourceRecordId::parse(format!("rot:source:sha256:{}", "a".repeat(64))).is_ok());
     }
 
     #[test]
