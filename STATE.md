@@ -1,59 +1,60 @@
 # STATE — Agent Survival V2
 
-Authority: human-readable projection only. Live GitHub lifecycle + accepted events/contracts + verified evidence outrank this file when stale. Reconstruct live truth before mutation.
+Authority: human-readable projection only. Live GitHub lifecycle + accepted events/contracts + revision-pinned evidence outrank this file when stale. Reconstruct live truth before mutation.
 
 ## Current phase
 `F1_VNEXT_CONTRACT_KERNEL + SURVIVAL_V2_SHADOW / SHADOW_ONLY`
 
 ## Current objective
-Freeze and prove the Survival V2 behavioral contract across Rust, TypeScript and Python while preserving F1 semantics, one-way graph authority and zero-context recoverability.
+Close the remaining contract/assurance gaps after shared Survival V2 behavioral execution across Rust, TypeScript and Python, then empirically prove zero-context successor recovery without prematurely promoting durable/distributed infrastructure.
 
-## Live topology reconciled 2026-08-29
-- `main`: bootstrap head `4964721c48f62cefe5593837fed7dacfd1945253`.
-- PR #1: F1 contract kernel head `015abe49353f744269d10cec7f7d3778a46e963c`; base of the Survival V2 stack.
-- PR #2: Survival V1 head `6d9c3111891b8359296f60c02294ed1d251b0889`; open draft; historical/supersession candidate only. Git history is diverged from PR #4, so its seven unique commits still require semantic supersession audit.
-- PR #4: `feat/graph-refactor-v2-survival`; observed runtime head `856196196ce186357d9e95c37dddef74d984fc3a` before this reconciliation wave; canonical active Survival V2 candidate.
+## Canonical topology
+- `main`: bootstrap.
+- PR #1: F1 contract kernel head `015abe49353f744269d10cec7f7d3778a46e963c`; base of the Survival stack.
+- PR #2: CLOSED/UNMERGED `SUPERSEDED_UNMERGED_HISTORY` after seven-file semantic audit and V2 migration of the standalone survival metaprompt.
+- PR #3: CLOSED/UNMERGED duplicate promotion route; superseded.
+- PR #4: `feat/graph-refactor-v2-survival`; sole active Survival V2 promotion route, stacked on PR #1.
 
-## Exact-head evidence at observed PR #4 runtime head
-- F1 Cross-Language Parity run `33275978136`: `SUCCESS`.
-- F1 Rust Contract Kernel run `33275978153`: `SUCCESS`.
-- Python discovery in parity CI executes the Survival V2 reducer/schema/store/graph/coordination/ContextPack/death-drill suites present at that revision.
+## Latest revision-pinned proof before CP6 state/checkpoint writes
+At `2600ca4edfbe4eb05cf5d91c00027eb9fa9c0a31`:
+- Survival V2 Continuity Gate run `33278482090`: `SUCCESS`.
+- F1 Rust Contract Kernel run `33278482108`: `SUCCESS` — formatting, clippy and unit tests all passed.
+- F1 Cross-Language Parity run `33278482051`: `SUCCESS` — Python golden/schema/test discovery, TypeScript golden/schema and TypeScript Survival behavioral verifier passed.
+- Python executes the same frozen `fixtures/golden/survival-behavior-v2.json` corpus via `test_survival_behavior_corpus_v2.py`.
+- Rust executes that corpus via `crates/rot-survival/tests/behavioral.rs`.
+- TypeScript executes that corpus in the parity workflow.
 
-## Implemented and reference-verified
-- F1 Rust/TS/Python contract kernel and schema/golden parity surfaces;
-- deterministic Python Survival reducer/checkpoint/freshness semantics;
-- reference append-only Survival store with replay/idempotency tests;
-- one-way Survival graph projection/rebuild tests;
-- claims/barriers/coordination reference semantics;
-- ContextPack freshness/invalidation reference semantics;
-- synthetic death-drill evaluator and adversarial tests;
-- strict Survival project-state/checkpoint schemas;
-- COS ontology/projection manifest;
-- pinned critical GitHub Action refs.
+The CP6 documentation/state commits move the branch beyond `2600ca4e...`; exact-head CI must be green again before promotion.
 
-## Not yet promoted / not yet proven
-- Survival behavioral parity across Rust + TypeScript + Python;
-- empirical fresh zero-context recovery <=5 minutes;
-- frozen pnpm dependency graph / lockfile;
-- semantic supersession of PR #2 unique commits;
-- accepted durable event writer and non-zero authoritative event watermark;
-- distributed/multi-host authority;
-- production COS/GraphRAG/MCP/A2A/Mission Control runtime.
+## Implemented / verified reference capabilities
+- F1 Rust/TS/Python contract kernel surfaces;
+- Survival Python reducer/checkpoint/freshness semantics;
+- reference append-only event store + deterministic recovery/replay;
+- one-way deterministic Survival/COS graph projection;
+- claims/leases/fencing reference kernel with monotonic generations;
+- ContextPack sealing/invalidation with `UNTRUSTED_DATA` bounds;
+- synthetic agent-death recovery harness;
+- shared Rust/TypeScript/Python behavioral corpus execution;
+- strict project-state/checkpoint schemas with `state_hash` binding;
+- standalone Agent Survival Metaprompt V2;
+- PR #2 semantic supersession evidence;
+- threat/trust-boundary model T01–T20.
 
-## Active P0/P1 blockers
-1. `survival-cross-language-parity`: reference behavior exists primarily in Python; Rust/TS behavioral equivalence is not frozen.
-2. `typescript-lockfile-missing`: TS dependency resolution remains reproducibility-sensitive.
-3. `pr2-semantic-supersession-unproven`: git comparison is diverged; no safe closure until unique semantics are audited.
-4. `death-drill-not-empirically-executed`: simulator tests are not an empirical zero-context drill.
-5. `durable-event-authority-not-qualified`: event watermark remains `0`; provisional session records are non-canonical.
-6. `external-governance-revisions-unpinned`: CP01/CP02/CP03/rot.knowledge provenance needs local revision manifest.
+## Explicit remaining gaps
+1. Python `SurvivalContractError` still lacks a structured cross-runtime `error_code`; the corpus verifier currently uses a transitional exact-message→code adapter. This prevents claiming fully structured error-contract parity.
+2. pnpm lockfile/frozen install is missing.
+3. empirical fresh zero-context successor drill <=5 minutes has not run; synthetic recovery is not empirical qualification.
+4. accepted durable event writer is not qualified; authoritative event watermark remains `0`.
+5. external CP01/CP02/CP03/rot.knowledge references are not revision-pinned locally.
+6. distributed/multi-host authority remains intentionally deferred until a measured contention/HA trigger exists.
 
-## Authority state
-`IMPLEMENTED` for Survival V2 as a shadow/reference system. Specific capabilities above are VERIFIED at revision-pinned evidence; whole-system `VERIFIED`, `EMPIRICALLY_QUALIFIED` and `PRODUCTION` claims remain unauthorized.
+## Authority
+Whole Survival V2 remains `IMPLEMENTED` SHADOW_ONLY. Individual reference capabilities are `VERIFIED` at exact revisions. `EMPIRICALLY_QUALIFIED` and production authority are unauthorized.
 
 ## Current executable frontier
-1. Survival Rust/TS/Python behavioral parity from one shared corpus.
-2. pnpm lockfile + frozen-install CI.
-3. PR #2 seven-commit semantic supersession audit.
-4. real zero-context death drill after parity is green.
-5. only then qualify accepted-event persistence and broader runtime promotion.
+1. structured Python Survival error-code contract, then remove transitional mapping and rerun all three runtimes;
+2. pnpm lockfile + frozen dependency install;
+3. empirical zero-context successor death drill;
+4. external governance revision manifest;
+5. automate security/property/fuzz checks from `docs/THREAT_MODEL_SURVIVAL_V2.md`;
+6. only after these gates, qualify durable accepted-event persistence.
