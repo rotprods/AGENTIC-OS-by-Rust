@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feat/f1-contract-kernel-vnext]
+    branches: [feat/f1-contract-kernel-vnext, feat/graph-refactor-v2-survival]
 
 permissions:
   contents: read
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - name: Install pinned Python schema validator
@@ -30,6 +30,7 @@ jobs:
       - name: Enable pnpm
         run: corepack enable
       - name: Install TypeScript parity dependencies
+        # No lockfile exists yet on F1. This is a known reproducibility gap, not a frozen install.
         run: pnpm --dir packages/contracts-ts install --frozen-lockfile=false
       - name: Compile TypeScript parity surface
         run: pnpm --dir packages/contracts-ts run build
