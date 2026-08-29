@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from rot_contracts.coordination import ClaimRegistry, ResourceAccess
+from rot_contracts.coordination import ClaimRegistry, ResourceAccess, CLOCK_AUTHORITY
 from rot_contracts.survival import FreshnessSeal, SurvivalContractError
 
 
@@ -61,11 +61,24 @@ class CoordinationV2Tests(unittest.TestCase):
 
     def test_snapshot_marks_expired_claim_without_rewriting_history(self):
         registry = ClaimRegistry()
-        registry.acquire(claim_id="c1", agent_id="a", session_id="s", workstream_id="w", resources=[ResourceAccess("file:a", "WRITE")], logical_tick=1, ttl_ticks=1, local_freshness=SEAL, live_freshness=SEAL)
+        claim = registry.acquire(claim_id="c1", agent_id="a", session_id="s", workstream_id="w", resources=[ResourceAccess("file:a", "WRITE")], logical_tick=1, ttl_ticks=1, local_freshness=SEAL, live_freshness=SEAL)
+        self.assertEqual(claim["clock_authority"], CLOCK_AUTHORITY)
         snapshot = registry.snapshot(logical_tick=3)
+        self.assertEqual(snapshot["clock_authority"], CLOCK_AUTHORITY)
         self.assertEqual(snapshot["claims"][0]["status"], "ACTIVE")
         self.assertEqual(snapshot["claims"][0]["effective_status"], "EXPIRED")
         self.assertTrue(snapshot["snapshot_hash"].startswith("sha256:"))
+
+    def test_logical_clock_regression_is_rejected(self):
+        registry = ClaimRegistry()
+        registry.acquire(claim_id="c1", agent_id="a", session_id="s", workstream_id="w", resources=[ResourceAccess("file:a", "READ")], logical_tick=10, ttl_ticks=2, local_freshness=SEAL, live_freshness=SEAL)
+        with self.assertRaisesRegex(SurvivalContractError, "clock regression"):
+            registry.snapshot(logical_tick=9)
+
+    def test_reference_clock_is_explicitly_not_production_authority(self):
+        registry = ClaimRegistry()
+        registry.acquire(claim_id="c1", agent_id="a", session_id="s", workstream_id="w", resources=[ResourceAccess("file:a", "READ")], logical_tick=1, ttl_ticks=1, local_freshness=SEAL, live_freshness=SEAL)
+        self.assertEqual(registry.snapshot(logical_tick=1)["clock_authority"], "EXTERNAL_LOGICAL_TICK_UNQUALIFIED")
 
 
 if __name__ == "__main__":
