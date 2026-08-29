@@ -24,13 +24,13 @@ class SurvivalContractError(ValueError):
 
 @dataclass(frozen=True)
 class FreshnessSeal:
-    source_head_sha: str
+    observed_source_sha: str
     event_watermark: int
     projection_hash: str | None = None
 
     def __post_init__(self) -> None:
-        if len(self.source_head_sha) != 40 or any(c not in "0123456789abcdef" for c in self.source_head_sha):
-            raise SurvivalContractError("source_head_sha must be lowercase git SHA-1 hex")
+        if not _is_git_sha(self.observed_source_sha):
+            raise SurvivalContractError("observed_source_sha must be lowercase git SHA-1 hex")
         if self.event_watermark < 0:
             raise SurvivalContractError("event_watermark must be non-negative")
         if self.projection_hash is not None and not _is_hash(self.projection_hash):
@@ -38,8 +38,13 @@ class FreshnessSeal:
 
 
 def assert_fresh(local: FreshnessSeal, live: FreshnessSeal) -> None:
-    if local.source_head_sha != live.source_head_sha:
-        raise SurvivalContractError("stale source head")
+    """Compare the upstream authority revision represented by two projections.
+
+    `observed_source_sha` is intentionally not the commit containing a state/checkpoint
+    artifact. A Git-hosted projection cannot safely self-reference its own commit SHA.
+    """
+    if local.observed_source_sha != live.observed_source_sha:
+        raise SurvivalContractError("stale observed source revision")
     if local.event_watermark != live.event_watermark:
         raise SurvivalContractError("stale event watermark")
     if local.projection_hash is not None and live.projection_hash is not None and local.projection_hash != live.projection_hash:
@@ -88,7 +93,7 @@ def build_checkpoint(state: dict[str, Any], *, checkpoint_id: str, agent_id: str
         "objective_id": current["current_objective_id"],
         "agent_id": agent_id,
         "session_id": session_id,
-        "source_head_sha": current["source_head_sha"],
+        "observed_source_sha": current["observed_source_sha"],
         "event_watermark": current["event_watermark"],
         "projection_hash": current.get("projection_hash"),
         "context_pack_hash": None,
@@ -115,7 +120,7 @@ def evaluate_death_drill(state: dict[str, Any], report: dict[str, Any]) -> dict[
     required = {
         "project_id": canonical["project_id"],
         "current_objective_id": canonical["current_objective_id"],
-        "source_head_sha": canonical["source_head_sha"],
+        "observed_source_sha": canonical["observed_source_sha"],
         "event_watermark": canonical["event_watermark"],
         "active_workstreams": canonical["active_workstreams"],
         "active_claims": canonical["active_claims"],
@@ -164,7 +169,7 @@ def _normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         "project_id": state["project_id"],
         "north_star": state["north_star"],
         "current_objective_id": state["current_objective_id"],
-        "source_head_sha": state["source_head_sha"],
+        "observed_source_sha": state["observed_source_sha"],
         "event_watermark": int(state.get("event_watermark", 0)),
         "authority_state": state.get("authority_state", "PROPOSED"),
         "active_workstreams": sorted(set(state.get("active_workstreams", []))),
@@ -179,8 +184,8 @@ def _normalize_state(state: dict[str, Any]) -> dict[str, Any]:
     }
     if current["authority_state"] not in AUTHORITY_STATES:
         raise SurvivalContractError("invalid authority state")
-    if len(current["source_head_sha"]) != 40 or any(c not in "0123456789abcdef" for c in current["source_head_sha"]):
-        raise SurvivalContractError("invalid source head")
+    if not _is_git_sha(current["observed_source_sha"]):
+        raise SurvivalContractError("invalid observed source revision")
     if current["event_watermark"] < 0:
         raise SurvivalContractError("invalid event watermark")
     if current["projection_hash"] is not None and not _is_hash(current["projection_hash"]):
@@ -193,11 +198,11 @@ def _apply(state: dict[str, Any], event: dict[str, Any]) -> None:
     payload = event["payload"]
     if kind == "objective.set":
         state["current_objective_id"] = _text(payload, "objective_id")
-    elif kind == "source_head.set":
-        sha = _text(payload, "source_head_sha")
-        if len(sha) != 40 or any(c not in "0123456789abcdef" for c in sha):
-            raise SurvivalContractError("invalid source head event")
-        state["source_head_sha"] = sha
+    elif kind == "source_revision.observed":
+        sha = _text(payload, "observed_source_sha")
+        if not _is_git_sha(sha):
+            raise SurvivalContractError("invalid observed source revision event")
+        state["observed_source_sha"] = sha
     elif kind == "authority.set":
         value = _text(payload, "authority_state")
         if value not in AUTHORITY_STATES:
@@ -258,3 +263,7 @@ def _discard(state: dict[str, Any], key: str, value: str) -> None:
 
 def _is_hash(value: str) -> bool:
     return isinstance(value, str) and value.startswith("sha256:") and len(value) == 71 and all(c in "0123456789abcdef" for c in value[7:])
+
+
+def _is_git_sha(value: str) -> bool:
+    return isinstance(value, str) and len(value) == 40 and all(c in "0123456789abcdef" for c in value)
