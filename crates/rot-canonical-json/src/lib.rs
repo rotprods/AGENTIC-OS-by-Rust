@@ -25,10 +25,7 @@ fn normalize(value: Value) -> Result<Value, ContractError> {
             Ok(Value::Object(sorted))
         }
         Value::Array(items) => Ok(Value::Array(
-            items
-                .into_iter()
-                .map(normalize)
-                .collect::<Result<_, _>>()?,
+            items.into_iter().map(normalize).collect::<Result<_, _>>()?,
         )),
         Value::Number(number) => {
             if number.as_f64().is_some_and(|n| !n.is_finite()) {
