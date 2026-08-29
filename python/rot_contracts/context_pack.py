@@ -3,9 +3,12 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-from .canonical_json import hash_canonical
+from .canonical_json import canonicalize, hash_canonical
 from .survival import FreshnessSeal, SurvivalContractError, assert_fresh, reduce_events
-from .survival_graph import build_survival_projection, verify_projection
+from .survival_graph import verify_projection
+
+
+MAX_CONTEXT_CANONICAL_BYTES = 262_144
 
 
 def compile_context_pack(
@@ -19,10 +22,14 @@ def compile_context_pack(
     _require_text(workstream_id, "workstream_id")
     if type(relevant_context) is not dict:
         raise SurvivalContractError("relevant_context must be object")
+    serialized_context = canonicalize(relevant_context).encode("utf-8")
+    if len(serialized_context) > MAX_CONTEXT_CANONICAL_BYTES:
+        raise SurvivalContractError("relevant_context exceeds bounded ContextPack budget")
     claim_hash = _claim_snapshot_hash(claim_snapshot)
     packet = {
         "schema_version": "1",
         "authority": "CACHE_ONLY",
+        "context_trust": "UNTRUSTED_DATA",
         "project_id": canonical["project_id"],
         "session_id": session_id,
         "workstream_id": workstream_id,
@@ -61,6 +68,11 @@ def verify_context_pack(
         raise SurvivalContractError("ContextPack integrity mismatch")
     if packet.get("authority") != "CACHE_ONLY":
         raise SurvivalContractError("ContextPack authority escalation")
+    if packet.get("context_trust") != "UNTRUSTED_DATA":
+        raise SurvivalContractError("ContextPack trust classification missing")
+    context = packet.get("context")
+    if type(context) is not dict or len(canonicalize(context).encode("utf-8")) > MAX_CONTEXT_CANONICAL_BYTES:
+        raise SurvivalContractError("ContextPack context budget invalid")
 
     canonical = reduce_events(live_state, [])
     verify_projection(live_projection, canonical)
