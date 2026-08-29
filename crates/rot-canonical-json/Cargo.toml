@@ -9,3 +9,7 @@ license.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 rot-contracts = { path = "../rot-contracts" }
+
+[dev-dependencies]
+sha2.workspace = true
+hex.workspace = true

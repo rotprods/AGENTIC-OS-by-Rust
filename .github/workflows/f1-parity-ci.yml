@@ -1,0 +1,35 @@
+name: F1 Cross-Language Parity
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feat/f1-contract-kernel-vnext]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: f1-parity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python golden parity
+        env:
+          PYTHONPATH: python
+        run: python -m unittest discover -s python/tests -v
+      - name: Enable pnpm
+        run: corepack enable
+      - name: Install TypeScript parity dependencies
+        run: pnpm --dir packages/contracts-ts install --frozen-lockfile=false
+      - name: Compile TypeScript parity surface
+        run: pnpm --dir packages/contracts-ts run build
+      - name: TypeScript golden parity
+        run: pnpm --dir packages/contracts-ts run verify:goldens

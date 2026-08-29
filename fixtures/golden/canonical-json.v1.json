@@ -1,0 +1,17 @@
+{
+  "contract_version": "rot.canonical-json.v1",
+  "provenance": {
+    "reference": "rotprods/mission-control#2",
+    "reference_head": "649cc51478844f62170600c4186ee0ffc221df0c",
+    "reference_files": ["src/contracts/canonical-json.ts", "python/acm_canonical.py"]
+  },
+  "scope": "SAFE_BASELINE_VECTORS",
+  "notes": "These vectors cover deterministic objects, nested data, array order, Unicode and safe integer boundaries. Extended ECMAScript floating-number-format parity remains a separate F1 gate before G1 promotion.",
+  "vectors": [
+    {"name":"object-order","value":{"b":2,"a":1},"expected_canonical":"{\"a\":1,\"b\":2}","expected_sha256":"sha256:43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777"},
+    {"name":"nested-object-order","value":{"z":1,"a":{"y":2,"b":3}},"expected_canonical":"{\"a\":{\"b\":3,\"y\":2},\"z\":1}","expected_sha256":"sha256:10d6b907e50339871355376854e16e87112120f63b9ce9bca2913907cd2a124d"},
+    {"name":"array-order","value":[{"b":1,"a":2},3,2,1],"expected_canonical":"[{\"a\":2,\"b\":1},3,2,1]","expected_sha256":"sha256:82236238b8ebfa5e31d3d7c4feba69aa156ed0496dea191590bf1ffc94fc62b5"},
+    {"name":"unicode-content","value":{"é":"café","a":"α"},"expected_canonical":"{\"a\":\"α\",\"é\":\"café\"}","expected_sha256":"sha256:e7263f20cd9195b9fd777b6e21ca4f7f34ff10dc664daa264eda1acbeee53bd0"},
+    {"name":"safe-integer-boundary","value":{"max":9007199254740991,"min":-9007199254740991},"expected_canonical":"{\"max\":9007199254740991,\"min\":-9007199254740991}","expected_sha256":"sha256:63546eb60913dcb1cdd5118f7bf4885beed344af930c8a9d5f38fad243fd4819"}
+  ]
+}
