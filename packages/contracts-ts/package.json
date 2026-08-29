@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "verify:goldens": "node dist/verify-goldens.js",
-    "verify:schemas": "node dist/verify-schemas.js"
+    "verify:schemas": "node dist/verify-schemas.js",
+    "verify:survival-schemas": "node dist/verify-survival-schemas.js"
   },
   "devDependencies": {
     "@types/node": "24.3.0",
