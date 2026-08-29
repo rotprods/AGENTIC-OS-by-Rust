@@ -1,88 +1,87 @@
 # HANDOFF — GRAPH-REFACTOR-V2 / Agent Survival
 
+Authority: zero-context recovery projection. Re-read live GitHub before execution; this packet self-invalidates on topology/head/event/claim drift.
+
 ## Identity
 - project_id: `rot://project/agentic-os`
 - objective_id: `rot://objective/agentic-os/survival-v2-cp5`
 - workstream_id: `rot://workstream/agentic-os/graph-refactor-v2-survival`
-- agent_id: `rot://agent/chatgpt/graph-refactor-v2-architect`
-- session_id: `rot://session/chatgpt/graph-refactor-v2/20260829T2118+0200`
-- correlation_id: `graph-refactor-v2-survival-convergence`
+- last_reconciliation_agent_id: `rot://agent/chatgpt/graph-refactor-v2-architect`
+- last_reconciliation_session_id: `rot://session/chatgpt/graph-refactor-v2/20260829T2341+0200`
+- correlation_id: `graph-refactor-v2-20260829-2341`
 
 ## Authority snapshot
-- observed semantic source: F1 head `015abe49353f744269d10cec7f7d3778a46e963c`
-- event watermark: `0` — durable Survival event store is not implemented yet
-- branch: `feat/graph-refactor-v2-survival`
-- PR: `#3`
-- CP4 evidence source head: `6f2c74a1471a6af336c1df3318cab49884291189`
-- CP4 authority: `VERIFIED` for Python reference Survival layer only
-- whole Survival V2 authority: `IMPLEMENTED`, not VERIFIED/PRODUCTION
+- repository: `rotprods/AGENTIC-OS-by-Rust`
+- main observed: `4964721c48f62cefe5593837fed7dacfd1945253`
+- F1 semantic/base head: `015abe49353f744269d10cec7f7d3778a46e963c`
+- active branch: `feat/graph-refactor-v2-survival`
+- active PR: `#4`
+- observed runtime head before reconciliation commits: `856196196ce186357d9e95c37dddef74d984fc3a`
+- event watermark: `0`; accepted durable Survival event authority is not qualified
+- whole Survival V2 authority: `IMPLEMENTED / SHADOW_ONLY`
 
-## Why this branch exists
-Survival V1 PR #2 was branched from bootstrap `main` while the real F1 runtime lived in PR #1. That created two parallel architectural truths. This branch begins exactly from PR #1 head and adds Survival V2, producing one combined candidate whose CI can prove integration before any prior PR is superseded.
+## Exact-head evidence for observed runtime head
+- F1 Cross-Language Parity `33275978136`: PASS.
+- F1 Rust Contract Kernel `33275978153`: PASS.
+- Python unittest discovery in the parity workflow executes current Survival reducer/schema/store/graph/coordination/ContextPack/death-drill tests at that revision.
 
-## Completed
-- reconstructed live topology and detected wrong-base Survival V1 defect;
-- compiled V2 architecture, authority hierarchy, lexicon, gap matrix and 20D COS hypergraph ontology;
-- persisted canonical `/GRAPH-REFACTOR-V2` execution prompt;
-- created 17-checkpoint implementation program;
-- added strict Survival project-state/checkpoint schemas;
-- added deterministic Python reducer, freshness seal, checkpoint integrity and death-drill evaluator;
-- fixed escaped failure families: duplicate semantic event identity, sequence rewind, bool watermark coercion, wrong list types, self-referential Git HEAD model and checkpoint tampering;
-- pinned GitHub Actions checkout/Rust toolchain/cache refs to exact commits;
-- created README/STATE/TASKS/ADR/HANDOFF recovery surfaces.
+## What live reconciliation changed
+A stale-continuity defect was found: prior `STATE.md`, `TASKS.md`, this HANDOFF and machine state still referenced PR #3 and an obsolete NOT_RUN frontier although PR #4 had advanced significantly. The reconciliation wave:
 
-## Verification
-At code head `6f2c74a1471a6af336c1df3318cab49884291189`:
-- F1 Rust Contract Kernel run `33271402509`: PASS.
-- F1 Cross-Language Parity run `33271402511`: PASS; its Python discovery included Survival V2 reducer/schema tests at that revision.
-- Survival Rust↔TS↔Python parity: NOT_RUN / not implemented.
-- COS projection rebuild parity: NOT_RUN.
-- claims/concurrency: NOT_RUN.
-- ContextPack invalidation: NOT_RUN.
-- synthetic real zero-context <=5 minute death drill: NOT_RUN.
+- published a non-canonical `HELLO/WORK_STARTED` coordination record for the new session;
+- persisted `evidence/graph-refactor-v2/LIVE_TRUTH_RECONCILIATION_2026-08-29.md`;
+- corrected `STATE.md`, `TASKS.md` and `state/project_state.json`;
+- added `graph/live_truth_snapshot.v2.json` with explicit invalidation semantics;
+- preserved the distinction between reference verification and production qualification.
 
-The commits adding this checkpoint/state/handoff moved the branch after the above PASS. Re-run clean CI on the current final head before any promotion or supersession.
+## Current capability graph
+### Verified/reference-verified
+- F1 Rust kernel and F1 TS/Python parity at observed PR #4 runtime head;
+- Python Survival V2 reducer/checkpoint/freshness semantics;
+- Python reference append-only store and deterministic replay/idempotency tests;
+- Python one-way graph projection/rebuild tests;
+- Python claims/barriers/coordination tests;
+- Python ContextPack invalidation tests;
+- synthetic death-drill evaluator tests;
+- Survival schemas/adversarial corpus.
 
-## Code/security review
-- Survival reference code is in-memory contract logic; no network/shell/filesystem/provider writes.
-- schema surfaces are `additionalProperties:false`.
-- stale source/event/projection seals fail closed.
-- critical GitHub Actions are commit pinned.
-- remaining supply-chain gap: TypeScript parity package has no lockfile, so pnpm transitive resolution is not fully reproducible.
-- external governance refs CP01/CP02/CP03/rot.knowledge are not yet revision-pinned locally.
+### Still blocked
+1. Survival behavioral parity across Rust + TypeScript + Python.
+2. pnpm lockfile/frozen dependency resolution.
+3. semantic supersession audit of PR #2's seven unique commits.
+4. empirical zero-context <=5 minute death drill.
+5. accepted durable event writer / non-zero authoritative event watermark.
+6. local revision manifest for external governance authorities.
 
-## Graph delta
-- Session, Checkpoint, Authority, Decision, Test, Evidence, Claim and EventWatermark are first-class continuity entities.
-- COS dimensions L0/L1/L2/L3/L6/L8/L9/L12/L13/L14/L15 are planned/active views; non-relevant dimensions explicitly NOT_APPLICABLE.
-- projections are one-way derived state and may never reverse-write authority.
+## PR topology warning
+PR #2 and PR #4 are **git-diverged**. Comparison from PR #2 head to observed PR #4 head reports PR #4 ahead by 111 commits and behind by 7. Do **not** close or mark PR #2 superseded until those seven unique commits are semantically audited. Historical truth must be preserved.
 
-## Blockers
-1. current post-handoff head must pass exact-head combined CI;
-2. Rust/TS/Python Survival contract parity;
-3. reference accepted-event store/replay snapshot semantics;
-4. COS deterministic rebuild parity;
-5. claims/barriers/concurrency semantics;
-6. ContextPack freshness/invalidation;
-7. synthetic zero-context death drill;
-8. pnpm lockfile/reproducibility;
-9. revision-pinned external governance references.
+## Next safe parallel wave
+- A — Rust owner: implement Survival behavioral contract parity against frozen shared fixture.
+- B — TypeScript owner: same behavioral contract parity; no independent semantics.
+- C — Migration owner: inspect PR #2-only commits and map each requirement/file/decision to KEEP/REFACTOR/SUPERSEDE.
+- D — DevSecOps owner: create pnpm lockfile and frozen-install CI; record dependency evidence.
+- E — Security owner: expand threat model/corpus for prompt/provider poisoning, secrets/PII, path/URL/shell injection and evidence substitution.
 
-## Next safe actions
-1. Reconstruct live main/PR #3 and run/inspect exact-head Rust + parity CI.
-2. If green, implement `SV2-003` Survival Rust↔TS↔Python golden parity; do not supersede PR #1/#2 until final convergence evidence proves coverage preservation.
-3. Implement reference append-only event store and deterministic snapshot/replay semantics.
-4. Implement one-way COS adapter/rebuild parity only after event/state semantics are frozen.
-5. Then claims/barriers → ContextPack invalidation → real death drill.
+A/B share contract/fixture semantic scope and require fencing/serialization around fixture mutation. C/D/E are intended to be file-disjoint.
+
+## Hard prohibitions
+- no production authority claim from simulator/unit-test success;
+- no reverse-write from COS/ContextPack/GraphRAG/projections into canonical authority;
+- no PR #2 closure without supersession evidence;
+- no PostgreSQL/Redis/Kafka/Kubernetes/vector DB merely for symmetry;
+- no durable/multi-host promotion before behavioral parity + recovery/security gates.
 
 ## Resume recipe
 1. Read `AGENTS.md`.
-2. Read `prompts/GRAPH_REFACTOR_V2.md`.
-3. Read `state/project_state.json`, `STATE.md`, `TASKS.md`, `docs/ARCHITECTURE_V2.md`, `docs/GAP_MATRIX_V2.md` and latest checkpoint.
-4. Re-read live GitHub `main`, PR #1/#2/#3 and current CI; live lifecycle outranks this handoff if changed.
-5. Confirm no competing scope claims before mutation.
-6. Continue CP5 only from fresh truth.
+2. Read `STATE.md`, `TASKS.md`, `state/project_state.json` and `graph/live_truth_snapshot.v2.json`.
+3. Read `evidence/graph-refactor-v2/LIVE_TRUTH_RECONCILIATION_2026-08-29.md`.
+4. Re-fetch live main, PR #1/#2/#4, PR #4 head and latest Actions runs.
+5. Invalidate this handoff if head/topology/event watermark/claims changed.
+6. Inspect existing scope claims before mutation.
+7. Continue only from the current executable frontier.
 
 ## NEXT_ITERATION_METAPROMPT
 **VERIFY LIVE TRUTH BEFORE EXECUTION.**
 
-Reconstruct `main`, PR #3 head/CI, active scopes, current state/checkpoint and applicable contract versions. If unchanged and exact-head CI is green, continue `SV2-003`: implement shared Survival V2 golden fixtures and equivalent Rust/TypeScript/Python semantics for canonical project-state/checkpoint/freshness/replay behavior. Preserve CP4 Python behavior, fail closed on semantic disagreement, and do not begin COS runtime or distributed infrastructure before parity is proven. After every material change run the adversarial gauntlet, persist evidence/state/graph/task/decision deltas, then compile the next safe wave. This packet is acceleration only; invalidate it if live truth differs.
+Reconstruct repository/main, PR #1/#2/#4 topology, current PR #4 head, exact-head CI, event watermark, active claims, current project state and latest evidence. If the live graph still matches the reconciled architecture, continue the P0 gate: freeze one Survival V2 behavioral golden corpus and implement equivalent state/checkpoint/freshness/replay semantics in Rust and TypeScript without diverging from the Python reference. Fail closed on any semantic disagreement. In parallel, audit PR #2-only semantics and lock the TypeScript dependency graph. Do not promote production authority, close historical PRs, or introduce distributed infrastructure until evidence gates permit it. Persist every material state/task/graph/evidence/handoff delta before finishing.
