@@ -26,7 +26,9 @@ impl EventStreamKey {
 
     pub fn validate(&self) -> Result<(), ContractError> {
         if self.schema_version != Self::VERSION {
-            return Err(ContractError::InvalidIdentifier(self.schema_version.clone()));
+            return Err(ContractError::InvalidIdentifier(
+                self.schema_version.clone(),
+            ));
         }
         for (field, value) in [
             ("tenant_id", self.tenant_id.as_str()),
@@ -80,10 +82,14 @@ impl AppendEventInput {
             }
         }
         if !self.payload.is_object() {
-            return Err(ContractError::InvalidIdentifier("payload must be object".into()));
+            return Err(ContractError::InvalidIdentifier(
+                "payload must be object".into(),
+            ));
         }
         if !self.metadata.is_object() {
-            return Err(ContractError::InvalidIdentifier("metadata must be object".into()));
+            return Err(ContractError::InvalidIdentifier(
+                "metadata must be object".into(),
+            ));
         }
         Ok(())
     }
@@ -113,7 +119,9 @@ impl AppendRequest {
 
     pub fn validate(&self) -> Result<(), ContractError> {
         if self.schema_version != Self::VERSION {
-            return Err(ContractError::InvalidIdentifier(self.schema_version.clone()));
+            return Err(ContractError::InvalidIdentifier(
+                self.schema_version.clone(),
+            ));
         }
         self.stream.validate()?;
         if self.request_id.is_empty() {
@@ -126,7 +134,9 @@ impl AppendRequest {
             return Err(ContractError::EmptyField("caller_id"));
         }
         if self.caller.tenant_id != self.stream.tenant_id {
-            return Err(ContractError::InvalidIdentifier("caller tenant mismatch".into()));
+            return Err(ContractError::InvalidIdentifier(
+                "caller tenant mismatch".into(),
+            ));
         }
         if self.events.is_empty() {
             return Err(ContractError::EmptyField("events"));
