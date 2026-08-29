@@ -65,7 +65,11 @@ mod tests {
             let actual_schema = validate_schema(schema, &case.value).unwrap();
             assert_eq!(actual_schema, case.schema_valid, "schema: {}", case.name);
             let actual_semantic = actual_schema && validate_semantics(&case.schema, &case.value);
-            assert_eq!(actual_semantic, case.semantic_valid, "semantic: {}", case.name);
+            assert_eq!(
+                actual_semantic, case.semantic_valid,
+                "semantic: {}",
+                case.name
+            );
         }
     }
 }
