@@ -8,6 +8,7 @@ members = [
   "crates/rot-provenance",
   "crates/rot-event",
   "crates/rot-schema-validation",
+  "crates/rot-survival",
 ]
 resolver = "2"
 
