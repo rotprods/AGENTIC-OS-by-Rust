@@ -1,0 +1,44 @@
+{
+  "contract_version": "rot.identity-kernel.v1",
+  "provenance": {
+    "reference": "rotprods/mission-control CP02",
+    "domains": ["rot.acm.source-record-id", "rot.acm.canonical-entity-id"]
+  },
+  "source_vectors": [
+    {
+      "name": "github-strict-provider-normalization",
+      "input": {"provider":"GitHub","account_id":"acct","workspace_id":"Workspace","resource_type":"Repository","external_id":"ABC"},
+      "expected": {
+        "schema_version":"1.0.0",
+        "normalization_profile_id":"acm-source-key-v1:github:strict",
+        "provider":"github",
+        "account_id":"acct",
+        "workspace_id":"Workspace",
+        "resource_type":"repository",
+        "external_id":"ABC",
+        "source_record_id":"rot:source:sha256:100f02513744fe074d92279d816d555bb14d2ad88e0f2821cc788305b8c6965a"
+      }
+    },
+    {
+      "name": "github-nfc-convergence",
+      "input": {"provider":"github","account_id":"acct","workspace_id":null,"resource_type":"issue","external_id":"é"},
+      "expected": {
+        "schema_version":"1.0.0",
+        "normalization_profile_id":"acm-source-key-v1:github:strict",
+        "provider":"github",
+        "account_id":"acct",
+        "workspace_id":null,
+        "resource_type":"issue",
+        "external_id":"é",
+        "source_record_id":"rot:source:sha256:c7e3b68c983b550e927a9475dcd994426128923dda7d5ffcc0ee43fffe08800a"
+      }
+    }
+  ],
+  "entity_vectors": [
+    {
+      "name":"tenant-person-test-1",
+      "command":{"entity_type_uri":"rot://type/person","tenant_id":"rot","scope_class":"TENANT","creation_nonce":"test-1"},
+      "expected_entity_id":"rot:entity:sha256:e51c29051b76ef3cb235140cfafe4e5f81d79fbbf645318519a1c26bd2ce515a"
+    }
+  ]
+}
