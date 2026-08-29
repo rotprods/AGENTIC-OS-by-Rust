@@ -62,7 +62,10 @@ pub fn assert_fresh(local: &FreshnessSeal, live: &FreshnessSeal) -> Result<(), S
     Ok(())
 }
 
-pub fn reduce_events(seed: &Value, input: &[SurvivalEvent]) -> Result<SurvivalState, SurvivalError> {
+pub fn reduce_events(
+    seed: &Value,
+    input: &[SurvivalEvent],
+) -> Result<SurvivalState, SurvivalError> {
     let mut state = normalize_state(seed)?;
     let mut seen: BTreeMap<String, String> = BTreeMap::new();
     let mut events = input.to_vec();
@@ -239,11 +242,11 @@ fn normalize_state(value: &Value) -> Result<SurvivalState, SurvivalError> {
         ));
     }
     let projection_hash = optional_text(obj, "projection_hash")?;
-    if projection_hash.as_ref().is_some_and(|value| !is_hash(value)) {
-        return Err(err(
-            "INVALID_PROJECTION_HASH",
-            "invalid projection hash",
-        ));
+    if projection_hash
+        .as_ref()
+        .is_some_and(|value| !is_hash(value))
+    {
+        return Err(err("INVALID_PROJECTION_HASH", "invalid projection hash"));
     }
     Ok(SurvivalState {
         schema_version: "2".into(),
@@ -280,10 +283,7 @@ fn validate_seal(seal: &FreshnessSeal) -> Result<(), SurvivalError> {
         .as_ref()
         .is_some_and(|value| !is_hash(value))
     {
-        return Err(err(
-            "INVALID_PROJECTION_HASH",
-            "invalid projection_hash",
-        ));
+        return Err(err("INVALID_PROJECTION_HASH", "invalid projection_hash"));
     }
     Ok(())
 }
@@ -293,10 +293,7 @@ fn semantic_hash<T: Serialize>(value: &T) -> Result<String, SurvivalError> {
     Ok(format!("sha256:{}", hex::encode(Sha256::digest(bytes))))
 }
 
-fn required_text(
-    obj: &serde_json::Map<String, Value>,
-    key: &str,
-) -> Result<String, SurvivalError> {
+fn required_text(obj: &serde_json::Map<String, Value>, key: &str) -> Result<String, SurvivalError> {
     obj.get(key)
         .and_then(Value::as_str)
         .filter(|value| !value.is_empty())
