@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"rot://schema/source-identity-key/1",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["provider","account_id","workspace_id","resource_type","external_id"],
+  "properties":{
+    "provider":{"type":"string","minLength":1,"maxLength":128,"pattern":"^[A-Za-z][A-Za-z0-9._-]{0,127}$"},
+    "account_id":{"type":"string","minLength":1,"maxLength":256},
+    "workspace_id":{"type":["string","null"],"minLength":1,"maxLength":256},
+    "resource_type":{"type":"string","minLength":1,"maxLength":128,"pattern":"^[A-Za-z][A-Za-z0-9._-]{0,127}$"},
+    "external_id":{"type":"string","minLength":1,"maxLength":1024}
+  }
+}
