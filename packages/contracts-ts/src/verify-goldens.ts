@@ -12,7 +12,8 @@ import {
 } from "./identity-kernel.js";
 
 type CanonicalVector = { name: string; value: JsonValue; expected_canonical: string; expected_sha256: string };
-type CanonicalFixture = { vectors: CanonicalVector[] };
+type RejectVector = { name: string; value: JsonValue; reason: string };
+type CanonicalFixture = { vectors: CanonicalVector[]; reject_vectors: RejectVector[] };
 type SourceVector = {
   name: string;
   input: SourceIdentityKeyInput;
@@ -42,6 +43,16 @@ for (const vector of canonicalFixture.vectors) {
   if (hash !== vector.expected_sha256) throw new Error(`${vector.name}: hash mismatch: ${hash}`);
 }
 
+for (const vector of canonicalFixture.reject_vectors) {
+  let rejected = false;
+  try {
+    canonicalize(vector.value);
+  } catch {
+    rejected = true;
+  }
+  if (!rejected) throw new Error(`${vector.name}: expected canonicalization rejection (${vector.reason})`);
+}
+
 const identityFixture = JSON.parse(
   readFileSync(resolve(here, "../../../fixtures/golden/identity.v1.json"), "utf8"),
 ) as IdentityFixture;
@@ -62,5 +73,5 @@ for (const vector of identityFixture.entity_vectors) {
 }
 
 console.log(
-  `TypeScript golden parity PASS (${canonicalFixture.vectors.length} canonical + ${identityFixture.source_vectors.length + identityFixture.entity_vectors.length} identity vectors)`,
+  `TypeScript golden parity PASS (${canonicalFixture.vectors.length} canonical + ${canonicalFixture.reject_vectors.length} rejects + ${identityFixture.source_vectors.length + identityFixture.entity_vectors.length} identity vectors)`,
 );
