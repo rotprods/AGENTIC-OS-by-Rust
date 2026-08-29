@@ -11,6 +11,7 @@ from rot_contracts.survival import (
     build_checkpoint,
     evaluate_death_drill,
     reduce_events,
+    verify_checkpoint,
 )
 
 
@@ -71,11 +72,20 @@ class SurvivalReducerTests(unittest.TestCase):
             reduce_events(seed(), [e1, e2])
 
     def test_two_different_events_cannot_share_sequence(self):
-        with self.assertRaisesRegex(SurvivalContractError, "strictly increasing"):
+        with self.assertRaisesRegex(SurvivalContractError, "advance seed watermark"):
             reduce_events(seed(), [
                 event(1, "e1", "blocker.added", {"blocker_id": "b1"}),
                 event(1, "e2", "blocker.added", {"blocker_id": "b2"}),
             ])
+
+    def test_incremental_replay_cannot_rewind_or_repeat_seed_watermark(self):
+        current = seed()
+        current["event_watermark"] = 5
+        for sequence in (4, 5):
+            with self.assertRaisesRegex(SurvivalContractError, "advance seed watermark"):
+                reduce_events(current, [event(sequence, f"e{sequence}", "blocker.added", {"blocker_id": "b"})])
+        advanced = reduce_events(current, [event(6, "e6", "blocker.added", {"blocker_id": "b"})])
+        self.assertEqual(advanced["event_watermark"], 6)
 
     def test_cross_project_event_rejected(self):
         bad = event(1, "e1", "blocker.added", {"blocker_id": "b1"})
@@ -102,7 +112,7 @@ class SurvivalReducerTests(unittest.TestCase):
         self.assertEqual(state["observed_source_sha"], HEAD2)
         self.assertEqual(state["event_watermark"], 1)
 
-    def test_checkpoint_is_source_and_event_bound(self):
+    def test_checkpoint_is_source_event_bound_and_tamper_evident(self):
         state = reduce_events(seed(), [event(1, "e1", "workstream.started", {"workstream_id": "rot://workstream/survival"})])
         checkpoint = build_checkpoint(
             state,
@@ -117,7 +127,11 @@ class SurvivalReducerTests(unittest.TestCase):
         )
         self.assertEqual(checkpoint["observed_source_sha"], HEAD)
         self.assertEqual(checkpoint["event_watermark"], 1)
-        self.assertTrue(checkpoint["checkpoint_hash"].startswith("sha256:"))
+        verify_checkpoint(checkpoint)
+        tampered = copy.deepcopy(checkpoint)
+        tampered["completed"].append("not actually done")
+        with self.assertRaisesRegex(SurvivalContractError, "integrity mismatch"):
+            verify_checkpoint(tampered)
 
     def test_checkpoint_requires_resume_path(self):
         with self.assertRaisesRegex(SurvivalContractError, "next_actions"):
@@ -144,15 +158,31 @@ class SurvivalReducerTests(unittest.TestCase):
         self.assertEqual(result["mismatches"], ["event_watermark"])
         self.assertTrue(result["continuity_defect"])
 
+    def test_death_drill_rejects_wrong_collection_type_as_mismatch(self):
+        canonical = seed()
+        report = {key: canonical[key] for key in (
+            "project_id", "current_objective_id", "observed_source_sha", "event_watermark",
+            "active_workstreams", "active_claims", "blockers", "verified_capabilities",
+            "unverified_capabilities", "next_safe_actions"
+        )}
+        report["active_workstreams"] = "rot://workstream/survival"
+        result = evaluate_death_drill(canonical, report)
+        self.assertFalse(result["passed"])
+        self.assertIn("active_workstreams", result["mismatches"])
+
     def test_authority_state_is_strict(self):
         bad = seed()
         bad["authority_state"] = "TOTALLY_DONE"
         with self.assertRaisesRegex(SurvivalContractError, "authority"):
             reduce_events(bad, [])
 
-    def test_bool_is_not_valid_event_sequence(self):
+    def test_bool_is_not_valid_event_sequence_or_seed_watermark(self):
         with self.assertRaisesRegex(SurvivalContractError, "sequence"):
             reduce_events(seed(), [{"event_id": "e", "sequence": True, "event_type": "blocker.added", "project_id": PROJECT, "payload": {"blocker_id": "b"}}])
+        bad = seed()
+        bad["event_watermark"] = True
+        with self.assertRaisesRegex(SurvivalContractError, "watermark"):
+            reduce_events(bad, [])
 
 
 if __name__ == "__main__":
