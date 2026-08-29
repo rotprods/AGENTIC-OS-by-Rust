@@ -29,9 +29,12 @@ jobs:
         run: python -m unittest discover -s python/tests -v
       - name: Enable pnpm
         run: corepack enable
-      - name: Install TypeScript parity dependencies
-        # No lockfile exists yet on F1. This is a known reproducibility gap, not a frozen install.
-        run: pnpm --dir packages/contracts-ts install --frozen-lockfile=false
+      - name: Install frozen TypeScript workspace dependencies
+        run: |
+          test -f pnpm-lock.yaml
+          cp pnpm-lock.yaml /tmp/pnpm-lock.before
+          pnpm install --frozen-lockfile
+          cmp pnpm-lock.yaml /tmp/pnpm-lock.before
       - name: Compile TypeScript parity surface
         run: pnpm --dir packages/contracts-ts run build
       - name: TypeScript golden parity
