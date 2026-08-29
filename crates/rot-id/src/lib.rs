@@ -349,6 +349,20 @@ pub fn derive_canonical_entity_id(
     ))
 }
 
+pub fn derive_identity_decision_id<T: Serialize>(
+    decision_without_id: &T,
+) -> Result<IdentityDecisionId, ContractError> {
+    let material = json!({
+        "domain": "rot.acm.identity-decision-id",
+        "version": "1",
+        "decision": decision_without_id,
+    });
+    let hash = canonical_sha256(&material)?;
+    Ok(IdentityDecisionId::from_digest(
+        hash.trim_start_matches("sha256:"),
+    ))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -448,5 +462,19 @@ mod tests {
     fn event_id_round_trip_uses_cp03_versioned_prefix() {
         let id = EventId::new();
         assert_eq!(EventId::parse(id.as_str()).unwrap(), id);
+    }
+
+    #[test]
+    fn identity_decision_id_is_deterministic_without_own_id_field() {
+        let decision = json!({
+            "type": "LINK_SOURCE",
+            "actor_id": "operator:test",
+            "expected_revision": 7,
+            "idempotency_key": "decision-7"
+        });
+        assert_eq!(
+            derive_identity_decision_id(&decision).unwrap(),
+            derive_identity_decision_id(&decision).unwrap()
+        );
     }
 }
