@@ -24,9 +24,17 @@ pub struct EventEnvelope {
 
 impl EventEnvelope {
     pub fn validate(&self) -> Result<(), ContractError> {
-        if self.schema_version != EVENT_ENVELOPE_VERSION { return Err(ContractError::InvalidIdentifier(self.schema_version.clone())); }
-        if self.event_type.is_empty() { return Err(ContractError::EmptyField("event_type")); }
-        if self.stream.is_empty() { return Err(ContractError::EmptyField("stream")); }
+        if self.schema_version != EVENT_ENVELOPE_VERSION {
+            return Err(ContractError::InvalidIdentifier(
+                self.schema_version.clone(),
+            ));
+        }
+        if self.event_type.is_empty() {
+            return Err(ContractError::EmptyField("event_type"));
+        }
+        if self.stream.is_empty() {
+            return Err(ContractError::EmptyField("stream"));
+        }
         Ok(())
     }
 
@@ -40,6 +48,7 @@ impl EventEnvelope {
 mod tests {
     use super::*;
     use rot_provenance::{AuthorityClass, Provenance};
+
     fn event() -> EventEnvelope {
         EventEnvelope {
             schema_version: EVENT_ENVELOPE_VERSION.into(),
@@ -54,11 +63,18 @@ mod tests {
             payload: serde_json::json!({"b":2,"a":1}),
         }
     }
+
     #[test]
-    fn validates_versioned_event() { assert!(event().validate().is_ok()); }
+    fn validates_versioned_event() {
+        assert!(event().validate().is_ok());
+    }
+
     #[test]
     fn semantic_hash_is_deterministic_for_same_event() {
         let event = event();
-        assert_eq!(event.semantic_hash().unwrap(), event.semantic_hash().unwrap());
+        assert_eq!(
+            event.semantic_hash().unwrap(),
+            event.semantic_hash().unwrap()
+        );
     }
 }

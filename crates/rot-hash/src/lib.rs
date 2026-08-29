@@ -14,12 +14,20 @@ pub fn canonical_sha256<T: Serialize>(value: &T) -> Result<String, ContractError
 mod tests {
     use super::*;
     use serde_json::json;
+
     #[test]
     fn known_sha256_vector() {
-        assert_eq!(sha256_bytes(b"abc"), "sha256:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+        assert_eq!(
+            sha256_bytes(b"abc"),
+            "sha256:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        );
     }
+
     #[test]
     fn object_order_does_not_change_hash() {
-        assert_eq!(canonical_sha256(&json!({"b":2,"a":1})).unwrap(), canonical_sha256(&json!({"a":1,"b":2})).unwrap());
+        assert_eq!(
+            canonical_sha256(&json!({"b":2,"a":1})).unwrap(),
+            canonical_sha256(&json!({"a":1,"b":2})).unwrap()
+        );
     }
 }

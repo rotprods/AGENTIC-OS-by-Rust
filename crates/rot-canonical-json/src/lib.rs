@@ -24,9 +24,16 @@ fn normalize(value: Value) -> Result<Value, ContractError> {
             }
             Ok(Value::Object(sorted))
         }
-        Value::Array(items) => Ok(Value::Array(items.into_iter().map(normalize).collect::<Result<_, _>>()?)),
+        Value::Array(items) => Ok(Value::Array(
+            items
+                .into_iter()
+                .map(normalize)
+                .collect::<Result<_, _>>()?,
+        )),
         Value::Number(number) => {
-            if number.as_f64().is_some_and(|n| !n.is_finite()) { return Err(ContractError::NonFiniteNumber); }
+            if number.as_f64().is_some_and(|n| !n.is_finite()) {
+                return Err(ContractError::NonFiniteNumber);
+            }
             Ok(Value::Number(number))
         }
         scalar => Ok(scalar),
@@ -37,14 +44,22 @@ fn normalize(value: Value) -> Result<Value, ContractError> {
 mod tests {
     use super::*;
     use serde_json::json;
+
     #[test]
     fn sorts_nested_object_keys() {
         let bytes = canonical_bytes(&json!({"z":1,"a":{"y":2,"b":3}})).unwrap();
-        assert_eq!(String::from_utf8(bytes).unwrap(), r#"{"a":{"b":3,"y":2},"z":1}"#);
+        assert_eq!(
+            String::from_utf8(bytes).unwrap(),
+            r#"{"a":{"b":3,"y":2},"z":1}"#
+        );
     }
+
     #[test]
     fn preserves_array_order() {
         let bytes = canonical_bytes(&json!([{"b":1,"a":2},3,2,1])).unwrap();
-        assert_eq!(String::from_utf8(bytes).unwrap(), r#"[{"a":2,"b":1},3,2,1]"#);
+        assert_eq!(
+            String::from_utf8(bytes).unwrap(),
+            r#"[{"a":2,"b":1},3,2,1]"#
+        );
     }
 }
