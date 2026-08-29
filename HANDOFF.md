@@ -1,87 +1,78 @@
-# HANDOFF — GRAPH-REFACTOR-V2 / Agent Survival
+# HANDOFF — GRAPH-REFACTOR-V2 / Agent Survival CP6
 
-Authority: zero-context recovery projection. Re-read live GitHub before execution; this packet self-invalidates on topology/head/event/claim drift.
+Authority: zero-context recovery projection. **VERIFY LIVE TRUTH BEFORE EXECUTION.** This packet invalidates on branch/head/event/claim/contract drift.
 
 ## Identity
 - project_id: `rot://project/agentic-os`
-- objective_id: `rot://objective/agentic-os/survival-v2-cp5`
+- objective_id: `rot://objective/agentic-os/survival-v2-cp6`
 - workstream_id: `rot://workstream/agentic-os/graph-refactor-v2-survival`
-- last_reconciliation_agent_id: `rot://agent/chatgpt/graph-refactor-v2-architect`
-- last_reconciliation_session_id: `rot://session/chatgpt/graph-refactor-v2/20260829T2341+0200`
-- correlation_id: `graph-refactor-v2-20260829-2341`
+- agent_id: `rot://agent/chatgpt/graph-refactor-v2-architect`
+- session_id: `rot://session/chatgpt/graph-refactor-v2/20260830T0011+0200`
+- correlation_id: `graph-refactor-v2-survival-cp6`
 
-## Authority snapshot
-- repository: `rotprods/AGENTIC-OS-by-Rust`
-- main observed: `4964721c48f62cefe5593837fed7dacfd1945253`
+## Canonical topology
+- repo: `rotprods/AGENTIC-OS-by-Rust`
 - F1 semantic/base head: `015abe49353f744269d10cec7f7d3778a46e963c`
 - active branch: `feat/graph-refactor-v2-survival`
-- active PR: `#4`
-- observed runtime head before reconciliation commits: `856196196ce186357d9e95c37dddef74d984fc3a`
-- event watermark: `0`; accepted durable Survival event authority is not qualified
+- active PR: `#4`, stacked on PR #1
+- PR #2: CLOSED/UNMERGED `SUPERSEDED_UNMERGED_HISTORY` after seven-file semantic audit
+- PR #3: CLOSED/UNMERGED duplicate route
+- event watermark: `0`; durable accepted-event authority remains unqualified
 - whole Survival V2 authority: `IMPLEMENTED / SHADOW_ONLY`
 
-## Exact-head evidence for observed runtime head
-- F1 Cross-Language Parity `33275978136`: PASS.
-- F1 Rust Contract Kernel `33275978153`: PASS.
-- Python unittest discovery in the parity workflow executes current Survival reducer/schema/store/graph/coordination/ContextPack/death-drill tests at that revision.
+## Last fully qualified code/evidence head before CP6 documentation writes
+`2600ca4edfbe4eb05cf5d91c00027eb9fa9c0a31`
 
-## What live reconciliation changed
-A stale-continuity defect was found: prior `STATE.md`, `TASKS.md`, this HANDOFF and machine state still referenced PR #3 and an obsolete NOT_RUN frontier although PR #4 had advanced significantly. The reconciliation wave:
+Exact outcomes:
+- Survival V2 Continuity Gate run `33278482090`: `SUCCESS`.
+- F1 Rust Contract Kernel run `33278482108`: `SUCCESS` (`cargo fmt --check`, clippy, unit tests).
+- F1 Cross-Language Parity run `33278482051`: `SUCCESS`.
+- TypeScript Survival behavioral verifier: PASS inside parity run.
+- Rust shared behavioral corpus: PASS inside Rust unit tests.
+- Python shared behavioral corpus: PASS inside Continuity/Python discovery.
 
-- published a non-canonical `HELLO/WORK_STARTED` coordination record for the new session;
-- persisted `evidence/graph-refactor-v2/LIVE_TRUTH_RECONCILIATION_2026-08-29.md`;
-- corrected `STATE.md`, `TASKS.md` and `state/project_state.json`;
-- added `graph/live_truth_snapshot.v2.json` with explicit invalidation semantics;
-- preserved the distinction between reference verification and production qualification.
+The later CP6 state/docs/checkpoint commits move the branch beyond this SHA. Re-run all applicable gates on the final head before promotion.
 
-## Current capability graph
-### Verified/reference-verified
-- F1 Rust kernel and F1 TS/Python parity at observed PR #4 runtime head;
-- Python Survival V2 reducer/checkpoint/freshness semantics;
-- Python reference append-only store and deterministic replay/idempotency tests;
-- Python one-way graph projection/rebuild tests;
-- Python claims/barriers/coordination tests;
-- Python ContextPack invalidation tests;
-- synthetic death-drill evaluator tests;
-- Survival schemas/adversarial corpus.
+## Major work completed
+- V2 Survival architecture/ontology/lexicon/gap/implementation compiler persisted;
+- reference deterministic reducer, accepted-event store/recovery bundle, one-way graph projection, claims/leases/fencing, ContextPack and synthetic death drill implemented and tested;
+- checkpoints require `state_hash`; event sequence gaps and conflicting replay fail closed;
+- logical ticks explicitly marked reference-only, not clock authority;
+- external ContextPack payload marked/bounded `UNTRUSTED_DATA`;
+- dedicated Survival V2 Continuity CI gate added;
+- shared Survival behavioral corpus implemented in Rust + TypeScript + Python test surfaces;
+- historical Rust fmt escaped bug repaired and exact-head Rust fmt/clippy/tests verified;
+- PR #2 semantic supersession audit persisted and PR #2 closed without rewriting history;
+- `prompts/AGENT_SURVIVAL_METAPROMPT_V2.md` preserves the standalone operational survival interface;
+- `docs/THREAT_MODEL_SURVIVAL_V2.md` models T01–T20 threats/trust boundaries.
 
-### Still blocked
-1. Survival behavioral parity across Rust + TypeScript + Python.
-2. pnpm lockfile/frozen dependency resolution.
-3. semantic supersession audit of PR #2's seven unique commits.
-4. empirical zero-context <=5 minute death drill.
-5. accepted durable event writer / non-zero authoritative event watermark.
-6. local revision manifest for external governance authorities.
+## Important assurance boundary
+Do **not** claim full structured Rust↔TypeScript↔Python error-contract parity yet. Python `SurvivalContractError` has no structured `error_code`; `test_survival_behavior_corpus_v2.py` uses an explicitly transitional exact-message→code adapter. Behavioral accept/reject/state outcomes are exercised across all three runtimes, but structured Python rejection identity remains a real gap.
 
-## PR topology warning
-PR #2 and PR #4 are **git-diverged**. Comparison from PR #2 head to observed PR #4 head reports PR #4 ahead by 111 commits and behind by 7. Do **not** close or mark PR #2 superseded until those seven unique commits are semantically audited. Historical truth must be preserved.
+## Current blockers / debt
+1. Python structured Survival error-code contract.
+2. pnpm lockfile + frozen TypeScript install.
+3. empirical fresh zero-context successor recovery <=5 minutes.
+4. durable accepted-event writer/non-zero authoritative event watermark.
+5. local revision manifest for CP01/CP02/CP03/rot.knowledge.
+6. automated threat-model property/fuzz/secret/dependency evidence.
 
-## Next safe parallel wave
-- A — Rust owner: implement Survival behavioral contract parity against frozen shared fixture.
-- B — TypeScript owner: same behavioral contract parity; no independent semantics.
-- C — Migration owner: inspect PR #2-only commits and map each requirement/file/decision to KEEP/REFACTOR/SUPERSEDE.
-- D — DevSecOps owner: create pnpm lockfile and frozen-install CI; record dependency evidence.
-- E — Security owner: expand threat model/corpus for prompt/provider poisoning, secrets/PII, path/URL/shell injection and evidence substitution.
-
-A/B share contract/fixture semantic scope and require fencing/serialization around fixture mutation. C/D/E are intended to be file-disjoint.
-
-## Hard prohibitions
-- no production authority claim from simulator/unit-test success;
-- no reverse-write from COS/ContextPack/GraphRAG/projections into canonical authority;
-- no PR #2 closure without supersession evidence;
-- no PostgreSQL/Redis/Kafka/Kubernetes/vector DB merely for symmetry;
-- no durable/multi-host promotion before behavioral parity + recovery/security gates.
+## Current graph delta
+- `PR2 -> PR4` semantic migration edge is complete; PR2 promotion route is SUPERSEDED.
+- `BehavioralCorpus` now has TESTED_BY edges from Rust, TypeScript and Python surfaces.
+- `ErrorCodeContract(Python)` remains BLOCKS fully structured parity.
+- `Threat`/`TrustBoundary`/`Mitigation` nodes T01–T20 are documented.
+- synthetic `DeathDrill` proves mechanics only; empirical successor evidence remains absent.
 
 ## Resume recipe
-1. Read `AGENTS.md`.
-2. Read `STATE.md`, `TASKS.md`, `state/project_state.json` and `graph/live_truth_snapshot.v2.json`.
-3. Read `evidence/graph-refactor-v2/LIVE_TRUTH_RECONCILIATION_2026-08-29.md`.
-4. Re-fetch live main, PR #1/#2/#4, PR #4 head and latest Actions runs.
-5. Invalidate this handoff if head/topology/event watermark/claims changed.
-6. Inspect existing scope claims before mutation.
-7. Continue only from the current executable frontier.
+1. Read `AGENTS.md`, `prompts/AGENT_SURVIVAL_METAPROMPT_V2.md`, `prompts/GRAPH_REFACTOR_V2.md`.
+2. Read `STATE.md`, `TASKS.md`, `state/project_state.json`, latest checkpoint `state/checkpoints/cp6-behavioral-reference-20260830.json` and this HANDOFF.
+3. Re-fetch live branch/PR #4, base PR #1 and exact check-runs. If head differs, invalidate exact-head claims above.
+4. Inspect active scopes before mutation.
+5. Highest-value safe task: structured Python `SurvivalContractError.code` parity and removal of the transitional mapping, unless live state shows another P0/P1 owner/conflict.
+6. After every material mutation run Continuity + Rust + parity gates on the same final SHA, then update evidence/state/checkpoint.
 
 ## NEXT_ITERATION_METAPROMPT
-**VERIFY LIVE TRUTH BEFORE EXECUTION.**
+**VERIFY LIVE TRUTH BEFORE EXECUTION. THIS PACKET IS ACCELERATION, NOT AUTHORITY.**
 
-Reconstruct repository/main, PR #1/#2/#4 topology, current PR #4 head, exact-head CI, event watermark, active claims, current project state and latest evidence. If the live graph still matches the reconciled architecture, continue the P0 gate: freeze one Survival V2 behavioral golden corpus and implement equivalent state/checkpoint/freshness/replay semantics in Rust and TypeScript without diverging from the Python reference. Fail closed on any semantic disagreement. In parallel, audit PR #2-only semantics and lock the TypeScript dependency graph. Do not promote production authority, close historical PRs, or introduce distributed infrastructure until evidence gates permit it. Persist every material state/task/graph/evidence/handoff delta before finishing.
+Reconstruct live PR #4 head, F1 base head, check-runs, event watermark, active scopes, `state/project_state.json` and CP6. If unchanged, continue the highest-value gap: make Python Survival errors expose the same structured cross-runtime codes used by `fixtures/golden/survival-behavior-v2.json`, migrate existing Python raises without weakening current fail-closed behavior, delete the transitional message-to-code adapter, and execute the shared corpus plus full Continuity/F1 Rust/F1 parity gates on one exact head. Then attack supply-chain reproducibility, empirical zero-context death drill and governance revision pinning. Do not introduce distributed infrastructure or production authority without measured triggers and exact evidence.
