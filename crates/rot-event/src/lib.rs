@@ -1,3 +1,5 @@
+pub mod cp03;
+
 use rot_contracts::{ContractError, Scope, TenantId};
 use rot_hash::canonical_sha256;
 use rot_id::EventId;
