@@ -26,10 +26,8 @@ fn shared_behavioral_corpus_passes() {
                 reduce_events(&seed, &events).map(|state| serde_json::to_value(state).unwrap())
             }
             "assert_fresh" => {
-                let local: FreshnessSeal =
-                    serde_json::from_value(vector["local"].clone()).unwrap();
-                let live: FreshnessSeal =
-                    serde_json::from_value(vector["live"].clone()).unwrap();
+                let local: FreshnessSeal = serde_json::from_value(vector["local"].clone()).unwrap();
+                let live: FreshnessSeal = serde_json::from_value(vector["live"].clone()).unwrap();
                 assert_fresh(&local, &live).map(|_| Value::Object(Default::default()))
             }
             other => panic!("unknown operation {other}"),
