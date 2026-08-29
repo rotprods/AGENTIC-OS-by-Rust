@@ -11,6 +11,13 @@ pub enum ContractError {
     InvalidIdentifier(String),
     #[error("invalid timestamp: {0}")]
     InvalidTimestamp(String),
+    #[error("invalid confidence: must be finite and within [0,1]")]
+    InvalidConfidence,
+    #[error("invalid identity component `{field}`: {reason}")]
+    InvalidIdentityComponent {
+        field: &'static str,
+        reason: &'static str,
+    },
     #[error("non-finite JSON number is forbidden")]
     NonFiniteNumber,
 }
