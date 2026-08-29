@@ -24,7 +24,7 @@ def seed():
         "project_id": PROJECT,
         "north_star": "zero-context recovery",
         "current_objective_id": "rot://objective/agentic-os/cp4",
-        "source_head_sha": HEAD,
+        "observed_source_sha": HEAD,
         "event_watermark": 0,
         "authority_state": "IMPLEMENTED",
         "active_workstreams": [],
@@ -87,15 +87,20 @@ class SurvivalReducerTests(unittest.TestCase):
         with self.assertRaisesRegex(SurvivalContractError, "unsupported"):
             reduce_events(seed(), [event(1, "e1", "magic.happened", {})])
 
-    def test_stale_head_and_watermark_fail_closed(self):
+    def test_stale_observed_source_and_watermark_fail_closed(self):
         live = FreshnessSeal(HEAD, 9, "sha256:" + "1" * 64)
         assert_fresh(FreshnessSeal(HEAD, 9, "sha256:" + "1" * 64), live)
-        with self.assertRaisesRegex(SurvivalContractError, "head"):
+        with self.assertRaisesRegex(SurvivalContractError, "source revision"):
             assert_fresh(FreshnessSeal(HEAD2, 9), live)
         with self.assertRaisesRegex(SurvivalContractError, "watermark"):
             assert_fresh(FreshnessSeal(HEAD, 8), live)
         with self.assertRaisesRegex(SurvivalContractError, "projection"):
             assert_fresh(FreshnessSeal(HEAD, 9, "sha256:" + "2" * 64), live)
+
+    def test_source_projection_artifact_does_not_need_to_self_reference_its_commit(self):
+        state = reduce_events(seed(), [event(1, "e1", "source_revision.observed", {"observed_source_sha": HEAD2})])
+        self.assertEqual(state["observed_source_sha"], HEAD2)
+        self.assertEqual(state["event_watermark"], 1)
 
     def test_checkpoint_is_source_and_event_bound(self):
         state = reduce_events(seed(), [event(1, "e1", "workstream.started", {"workstream_id": "rot://workstream/survival"})])
@@ -108,9 +113,9 @@ class SurvivalReducerTests(unittest.TestCase):
             completed=["reference reducer"],
             blockers=[],
             next_actions=["run death drill"],
-            resume_recipe=["read AGENTS", "verify head", "replay events"],
+            resume_recipe=["read AGENTS", "verify observed source", "replay events"],
         )
-        self.assertEqual(checkpoint["source_head_sha"], HEAD)
+        self.assertEqual(checkpoint["observed_source_sha"], HEAD)
         self.assertEqual(checkpoint["event_watermark"], 1)
         self.assertTrue(checkpoint["checkpoint_hash"].startswith("sha256:"))
 
@@ -125,7 +130,7 @@ class SurvivalReducerTests(unittest.TestCase):
             event(3, "e3", "blocker.added", {"blocker_id": "cross-language-parity"}),
         ])
         report = {key: canonical[key] for key in (
-            "project_id", "current_objective_id", "source_head_sha", "event_watermark",
+            "project_id", "current_objective_id", "observed_source_sha", "event_watermark",
             "active_workstreams", "active_claims", "blockers", "verified_capabilities",
             "unverified_capabilities", "next_safe_actions"
         )}
