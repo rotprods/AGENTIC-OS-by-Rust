@@ -22,6 +22,9 @@ class GoldenParityTests(unittest.TestCase):
         for vector in fixture["vectors"]:
             self.assertEqual(canonicalize(vector["value"]), vector["expected_canonical"], vector["name"])
             self.assertEqual(hash_canonical(vector["value"]), vector["expected_sha256"], vector["name"])
+        for vector in fixture["reject_vectors"]:
+            with self.assertRaises(TypeError, msg=vector["name"]):
+                canonicalize(vector["value"])
 
     def test_identity_goldens(self) -> None:
         fixture = json.loads(IDENTITY_FIXTURE.read_text(encoding="utf-8"))
