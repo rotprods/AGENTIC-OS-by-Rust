@@ -79,15 +79,16 @@ mod tests {
 
     #[test]
     fn sorts_object_keys_by_utf16_code_units() {
-        assert_eq!(canonical(json!({"\u{e000}":2,"😀":1})), "{\"😀\":1,\"\":2}");
+        assert_eq!(
+            canonical(json!({"\u{e000}":2,"😀":1})),
+            "{\"😀\":1,\"\":2}"
+        );
     }
 
     #[test]
-    fn matches_ecmascript_number_boundaries() {
+    fn matches_ecmascript_number_boundaries_inside_safe_profile() {
         assert_eq!(canonical(json!({"n": 1e-6})), "{\"n\":0.000001}");
         assert_eq!(canonical(json!({"n": 1e-7})), "{\"n\":1e-7}");
-        assert_eq!(canonical(json!({"n": 1e20})), "{\"n\":100000000000000000000}");
-        assert_eq!(canonical(json!({"n": 1e21})), "{\"n\":1e+21}");
         assert_eq!(canonical(json!({"n": -0.0})), "{\"n\":0}");
     }
 
@@ -95,6 +96,14 @@ mod tests {
     fn rejects_unsafe_integers() {
         assert_eq!(
             canonical_bytes(&json!({"n": 9_007_199_254_740_992_i64})),
+            Err(ContractError::UnsafeInteger)
+        );
+        assert_eq!(
+            canonical_bytes(&json!({"n": 1e20})),
+            Err(ContractError::UnsafeInteger)
+        );
+        assert_eq!(
+            canonical_bytes(&json!({"n": 1e21})),
             Err(ContractError::UnsafeInteger)
         );
     }
