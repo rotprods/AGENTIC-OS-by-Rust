@@ -10,6 +10,7 @@ from .survival import FreshnessSeal, SurvivalContractError, assert_fresh
 
 ACCESS_MODES = {"READ", "WRITE", "EXCLUSIVE_WRITE"}
 RESOURCE_KINDS = {"file", "tree", "contract", "schema", "capability", "plan", "architecture"}
+CLOCK_AUTHORITY = "EXTERNAL_LOGICAL_TICK_UNQUALIFIED"
 
 
 @dataclass(frozen=True)
@@ -26,13 +27,22 @@ class ResourceAccess:
 class ClaimRegistry:
     """SHADOW reference registry for scope conflicts, leases and fencing.
 
-    Logical time is supplied by the caller. The registry does not infer distributed-clock
-    authority. Fencing generations are globally monotonic and never reset after release.
+    Logical time is supplied externally and is explicitly UNQUALIFIED for production authority.
+    This reference implementation only enforces non-regression of observed logical ticks.
+    Fencing generations are globally monotonic and never reset after release.
     """
 
     def __init__(self) -> None:
         self._claims: dict[str, dict[str, Any]] = {}
         self._generation = 0
+        self._last_logical_tick = 0
+
+    def _observe_tick(self, logical_tick: int) -> None:
+        if not _strict_nonnegative_int(logical_tick):
+            raise SurvivalContractError("logical_tick must be non-negative integer")
+        if logical_tick < self._last_logical_tick:
+            raise SurvivalContractError("logical clock regression")
+        self._last_logical_tick = logical_tick
 
     def acquire(
         self, *, claim_id: str, agent_id: str, session_id: str, workstream_id: str,
@@ -40,12 +50,11 @@ class ClaimRegistry:
         local_freshness: FreshnessSeal, live_freshness: FreshnessSeal,
     ) -> dict[str, Any]:
         assert_fresh(local_freshness, live_freshness)
+        self._observe_tick(logical_tick)
         for field, value in (("claim_id", claim_id), ("agent_id", agent_id), ("session_id", session_id), ("workstream_id", workstream_id)):
             _require_text(value, field)
         if claim_id in self._claims:
             raise SurvivalContractError("claim identity reuse forbidden")
-        if not _strict_nonnegative_int(logical_tick):
-            raise SurvivalContractError("logical_tick must be non-negative integer")
         if not isinstance(ttl_ticks, int) or isinstance(ttl_ticks, bool) or ttl_ticks <= 0:
             raise SurvivalContractError("ttl_ticks must be positive integer")
         normalized = sorted(list(resources), key=lambda item: (item.resource, item.mode))
@@ -73,6 +82,7 @@ class ClaimRegistry:
             "acquired_at": logical_tick,
             "lease_until": logical_tick + ttl_ticks,
             "fencing_generation": self._generation,
+            "clock_authority": CLOCK_AUTHORITY,
             "status": "ACTIVE",
             "freshness": {
                 "observed_source_sha": live_freshness.observed_source_sha,
@@ -101,6 +111,7 @@ class ClaimRegistry:
         return copy.deepcopy(record)
 
     def validate_writer(self, claim_id: str, *, session_id: str, fencing_generation: int, logical_tick: int) -> None:
+        self._observe_tick(logical_tick)
         record = self._claims.get(claim_id)
         if record is None:
             raise SurvivalContractError("unknown writer claim")
@@ -112,16 +123,13 @@ class ClaimRegistry:
             raise SurvivalContractError("invalid fencing generation")
         if fencing_generation != record["fencing_generation"]:
             raise SurvivalContractError("stale fencing generation")
-        if not _strict_nonnegative_int(logical_tick):
-            raise SurvivalContractError("logical_tick must be non-negative integer")
         if logical_tick > record["lease_until"]:
             raise SurvivalContractError("writer lease expired")
         if not any(item["mode"] in {"WRITE", "EXCLUSIVE_WRITE"} for item in record["resources"]):
             raise SurvivalContractError("read-only claim cannot authorize writer")
 
     def snapshot(self, *, logical_tick: int) -> dict[str, Any]:
-        if not _strict_nonnegative_int(logical_tick):
-            raise SurvivalContractError("logical_tick must be non-negative integer")
+        self._observe_tick(logical_tick)
         claims = []
         for claim_id in sorted(self._claims):
             record = copy.deepcopy(self._claims[claim_id])
@@ -133,6 +141,7 @@ class ClaimRegistry:
         snapshot = {
             "schema_version": "1",
             "logical_tick": logical_tick,
+            "clock_authority": CLOCK_AUTHORITY,
             "max_fencing_generation": self._generation,
             "claims": claims,
         }
