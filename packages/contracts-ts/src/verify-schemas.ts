@@ -1,4 +1,4 @@
-import Ajv2020 from "ajv/dist/2020.js";
+import * as Ajv2020Module from "ajv/dist/2020.js";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +9,7 @@ type Corpus = { cases: Case[] };
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../../..");
 const corpus = JSON.parse(readFileSync(resolve(root, "fixtures/schema/g1-contract-corpus.v1.json"), "utf8")) as Corpus;
-const ajv = new Ajv2020({ allErrors: true, strict: true, validateFormats: false });
+const ajv = new Ajv2020Module.default({ allErrors: true, strict: true, validateFormats: false });
 const validators = new Map<string, ReturnType<typeof ajv.compile>>();
 
 for (const schemaName of ["source-identity-key.v1.schema.json", "event-append-request.v1.schema.json"] as const) {
