@@ -5,7 +5,17 @@
   "phase": "F1_VNEXT_CONTRACT_KERNEL",
   "authority": "SHADOW_ONLY",
   "gate": "G1_CONTRACT_PARITY",
-  "status": "IMPLEMENTATION_STARTED",
+  "gate_status": "NO_GO",
+  "status": "BOOTSTRAP_VERIFIED_CONTRACT_CONVERGENCE_IN_PROGRESS",
+  "verified_head": "a0ec03ec923e2787da58dea5c3a5eedfaaefac49",
+  "evidence": {
+    "rust_workflow_run": 33266201914,
+    "rust_result": "PASS",
+    "cross_language_workflow_run": 33266201915,
+    "cross_language_result": "PASS",
+    "rust_checks": ["cargo fmt --check", "cargo clippy --workspace --all-targets -- -D warnings", "cargo test --workspace --all-targets"],
+    "cross_language_checks": ["Python golden parity", "TypeScript strict compilation", "TypeScript golden parity"]
+  },
   "hard_constraints": {
     "graph_mutation_without_event": false,
     "name_only_identity_merge": false,
@@ -14,12 +24,32 @@
     "provider_writes": false,
     "one_irreversible_promotion_at_a_time": true
   },
+  "closed_subgates": [
+    "F1_RUST_BOOTSTRAP",
+    "F1_CANONICAL_JSON_BASELINE_PARITY",
+    "F1_CP02_ID_PREFIX_AND_DERIVATION_BASELINE",
+    "F1_BOUNDED_CONFIDENCE_BASELINE",
+    "F1_RFC3339_PARSER_BASELINE"
+  ],
+  "open_g1_gates": [
+    "extended ECMAScript numeric canonicalization parity",
+    "UTF-16 object-key ordering adversarial parity",
+    "full CP02 identity golden parity across Rust/TypeScript/Python",
+    "CP03 EventStream/Append/StoredEvent/Receipt contract parity",
+    "JSON Schema accept/reject parity",
+    "critical coverage and changed-line coverage certification",
+    "critical mutation kill certification",
+    "property/fuzz/adversarial campaign",
+    "secret and tenant/scope leakage certification",
+    "immutable SHA pinning of GitHub Actions",
+    "repository visibility policy decision"
+  ],
   "next_actions": [
-    "compile Rust workspace",
-    "establish golden canonical-json vectors",
-    "add TypeScript parity implementation",
-    "add Python parity implementation",
-    "add schema accept/reject corpus",
-    "run mutation/property/adversarial campaign"
+    "extend canonical-json adversarial golden corpus",
+    "build CP02 identity golden vectors and cross-language parity",
+    "port CP03 event contract types without ledger implementation",
+    "define JSON Schemas and accept/reject corpus",
+    "install coverage/mutation/property gates",
+    "pin CI actions by immutable commit SHA"
   ]
 }
