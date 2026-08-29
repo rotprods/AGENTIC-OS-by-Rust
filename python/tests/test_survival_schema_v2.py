@@ -16,17 +16,18 @@ def load(name: str):
 def valid_checkpoint():
     return {
         "schema_version": "2",
-        "checkpoint_id": "rot://checkpoint/cp4",
-        "parent_checkpoint_id": None,
+        "checkpoint_id": "rot://checkpoint/cp5",
+        "parent_checkpoint_id": "rot://checkpoint/cp4",
         "project_id": "rot://project/agentic-os",
         "workstream_id": "rot://workstream/survival",
-        "objective_id": "rot://objective/agentic-os/cp4",
+        "objective_id": "rot://objective/agentic-os/cp5",
         "agent_id": "rot://agent/chatgpt/architect",
         "session_id": "rot://session/chatgpt/unique",
         "observed_source_sha": "a" * 40,
         "event_watermark": 1,
         "projection_hash": None,
         "context_pack_hash": None,
+        "state_hash": "sha256:" + "2" * 64,
         "authority_state": "EXECUTED",
         "completed": ["schema layer"],
         "changed_paths": [],
@@ -58,7 +59,7 @@ class SurvivalSchemaV2Tests(unittest.TestCase):
             "schema_version": "2",
             "project_id": "rot://project/agentic-os",
             "north_star": "zero-context recovery",
-            "current_objective_id": "rot://objective/agentic-os/cp4",
+            "current_objective_id": "rot://objective/agentic-os/cp5",
             "observed_source_sha": "a" * 40,
             "event_watermark": 1,
             "authority_state": "IMPLEMENTED",
@@ -86,12 +87,16 @@ class SurvivalSchemaV2Tests(unittest.TestCase):
         cp["tests"][1]["status"] = "SUCCESS"
         self.assertTrue(list(self.checkpoint_validator.iter_errors(cp)))
 
-    def test_checkpoint_requires_integrity_hash(self):
-        cp = valid_checkpoint()
-        cp.pop("checkpoint_hash")
-        self.assertTrue(list(self.checkpoint_validator.iter_errors(cp)))
+    def test_checkpoint_requires_integrity_and_state_hashes(self):
+        for field in ("checkpoint_hash", "state_hash"):
+            cp = valid_checkpoint()
+            cp.pop(field)
+            self.assertTrue(list(self.checkpoint_validator.iter_errors(cp)))
         cp = valid_checkpoint()
         cp["checkpoint_hash"] = "invalid"
+        self.assertTrue(list(self.checkpoint_validator.iter_errors(cp)))
+        cp = valid_checkpoint()
+        cp["state_hash"] = "invalid"
         self.assertTrue(list(self.checkpoint_validator.iter_errors(cp)))
 
     def test_checkpoint_rejects_non_sha_observed_revision(self):
