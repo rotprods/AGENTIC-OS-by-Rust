@@ -38,3 +38,5 @@ jobs:
         run: pnpm --dir packages/contracts-ts run verify:goldens
       - name: TypeScript schema parity
         run: pnpm --dir packages/contracts-ts run verify:schemas
+      - name: TypeScript Survival V2 behavioral parity
+        run: pnpm --dir packages/contracts-ts run verify:survival-behavior
