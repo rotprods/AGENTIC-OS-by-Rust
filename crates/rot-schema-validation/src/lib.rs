@@ -1,20 +1,4 @@
-use serde::Deserialize;
 use serde_json::Value;
-use std::collections::BTreeMap;
-
-#[derive(Debug, Deserialize)]
-struct Corpus {
-    cases: Vec<CorpusCase>,
-}
-
-#[derive(Debug, Deserialize)]
-struct CorpusCase {
-    name: String,
-    schema: String,
-    schema_valid: bool,
-    semantic_valid: bool,
-    value: Value,
-}
 
 pub fn validate_schema(schema: &Value, value: &Value) -> Result<bool, String> {
     let validator = jsonschema::validator_for(schema).map_err(|error| error.to_string())?;
@@ -36,6 +20,22 @@ pub fn validate_semantics(schema_name: &str, value: &Value) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde::Deserialize;
+    use std::collections::BTreeMap;
+
+    #[derive(Debug, Deserialize)]
+    struct Corpus {
+        cases: Vec<CorpusCase>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    struct CorpusCase {
+        name: String,
+        schema: String,
+        schema_valid: bool,
+        semantic_valid: bool,
+        value: Value,
+    }
 
     #[test]
     fn g1_schema_and_semantic_corpus_matches() {
