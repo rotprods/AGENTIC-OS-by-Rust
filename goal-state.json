@@ -1,0 +1,25 @@
+{
+  "schema_version": "rot.agentic-os.goal-state.v1",
+  "project_id": "ROT_AGENTIC_OS",
+  "repository": "rotprods/AGENTIC-OS-by-Rust",
+  "phase": "F1_VNEXT_CONTRACT_KERNEL",
+  "authority": "SHADOW_ONLY",
+  "gate": "G1_CONTRACT_PARITY",
+  "status": "IMPLEMENTATION_STARTED",
+  "hard_constraints": {
+    "graph_mutation_without_event": false,
+    "name_only_identity_merge": false,
+    "projection_as_truth": false,
+    "llm_output_as_fact": false,
+    "provider_writes": false,
+    "one_irreversible_promotion_at_a_time": true
+  },
+  "next_actions": [
+    "compile Rust workspace",
+    "establish golden canonical-json vectors",
+    "add TypeScript parity implementation",
+    "add Python parity implementation",
+    "add schema accept/reject corpus",
+    "run mutation/property/adversarial campaign"
+  ]
+}

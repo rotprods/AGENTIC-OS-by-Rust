@@ -1,0 +1,15 @@
+[package]
+name = "rot-event"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+rot-contracts = { path = "../rot-contracts" }
+rot-id = { path = "../rot-id" }
+rot-temporal = { path = "../rot-temporal" }
+rot-provenance = { path = "../rot-provenance" }
+rot-hash = { path = "../rot-hash" }

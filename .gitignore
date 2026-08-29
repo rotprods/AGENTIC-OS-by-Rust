@@ -1,0 +1,11 @@
+/target/
+/node_modules/
+/.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+coverage/
+.nyc_output/
+.DS_Store
