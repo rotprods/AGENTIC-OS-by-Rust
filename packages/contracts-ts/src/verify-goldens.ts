@@ -13,7 +13,7 @@ import {
 
 type CanonicalVector = { name: string; value: JsonValue; expected_canonical: string; expected_sha256: string };
 type RejectVector = { name: string; value: JsonValue; reason: string };
-type CanonicalFixture = { vectors: CanonicalVector[]; reject_vectors: RejectVector[] };
+type CanonicalFixture = { vectors: CanonicalVector[]; reject_vectors?: RejectVector[] };
 type SourceVector = {
   name: string;
   input: SourceIdentityKeyInput;
@@ -32,29 +32,33 @@ type EntityVector = { name: string; command: CanonicalEntityCreationCommand; exp
 type IdentityFixture = { source_vectors: SourceVector[]; entity_vectors: EntityVector[] };
 
 const here = dirname(fileURLToPath(import.meta.url));
-const canonicalFixture = JSON.parse(
-  readFileSync(resolve(here, "../../../fixtures/golden/canonical-json.v1.json"), "utf8"),
-) as CanonicalFixture;
+const root = resolve(here, "../../..");
 
-for (const vector of canonicalFixture.vectors) {
-  const canonical = canonicalize(vector.value);
-  if (canonical !== vector.expected_canonical) throw new Error(`${vector.name}: canonical mismatch: ${canonical}`);
-  const hash = `sha256:${createHash("sha256").update(canonical, "utf8").digest("hex")}`;
-  if (hash !== vector.expected_sha256) throw new Error(`${vector.name}: hash mismatch: ${hash}`);
-}
-
-for (const vector of canonicalFixture.reject_vectors) {
-  let rejected = false;
-  try {
-    canonicalize(vector.value);
-  } catch {
-    rejected = true;
+function verifyCanonicalFixture(path: string): { accepted: number; rejected: number } {
+  const fixture = JSON.parse(readFileSync(resolve(root, path), "utf8")) as CanonicalFixture;
+  for (const vector of fixture.vectors) {
+    const canonical = canonicalize(vector.value);
+    if (canonical !== vector.expected_canonical) throw new Error(`${vector.name}: canonical mismatch: ${canonical}`);
+    const hash = `sha256:${createHash("sha256").update(canonical, "utf8").digest("hex")}`;
+    if (hash !== vector.expected_sha256) throw new Error(`${vector.name}: hash mismatch: ${hash}`);
   }
-  if (!rejected) throw new Error(`${vector.name}: expected canonicalization rejection (${vector.reason})`);
+  for (const vector of fixture.reject_vectors ?? []) {
+    let rejected = false;
+    try {
+      canonicalize(vector.value);
+    } catch {
+      rejected = true;
+    }
+    if (!rejected) throw new Error(`${vector.name}: expected canonicalization rejection (${vector.reason})`);
+  }
+  return { accepted: fixture.vectors.length, rejected: fixture.reject_vectors?.length ?? 0 };
 }
+
+const canonical = verifyCanonicalFixture("fixtures/golden/canonical-json.v1.json");
+const survival = verifyCanonicalFixture("fixtures/golden/survival-v2.json");
 
 const identityFixture = JSON.parse(
-  readFileSync(resolve(here, "../../../fixtures/golden/identity.v1.json"), "utf8"),
+  readFileSync(resolve(root, "fixtures/golden/identity.v1.json"), "utf8"),
 ) as IdentityFixture;
 
 for (const vector of identityFixture.source_vectors) {
@@ -73,5 +77,5 @@ for (const vector of identityFixture.entity_vectors) {
 }
 
 console.log(
-  `TypeScript golden parity PASS (${canonicalFixture.vectors.length} canonical + ${canonicalFixture.reject_vectors.length} rejects + ${identityFixture.source_vectors.length + identityFixture.entity_vectors.length} identity vectors)`,
+  `TypeScript golden parity PASS (${canonical.accepted} canonical + ${canonical.rejected} rejects + ${survival.accepted} survival + ${identityFixture.source_vectors.length + identityFixture.entity_vectors.length} identity vectors)`,
 );
