@@ -9,6 +9,9 @@ from .survival_graph import verify_projection
 
 
 MAX_CONTEXT_CANONICAL_BYTES = 262_144
+MAX_CONTEXT_DEPTH = 24
+MAX_CONTEXT_ITEMS = 4096
+MAX_CONTEXT_STRING_BYTES = 32_768
 
 
 def compile_context_pack(
@@ -22,6 +25,7 @@ def compile_context_pack(
     _require_text(workstream_id, "workstream_id")
     if type(relevant_context) is not dict:
         raise SurvivalContractError("relevant_context must be object")
+    _validate_untrusted_context(relevant_context)
     serialized_context = canonicalize(relevant_context).encode("utf-8")
     if len(serialized_context) > MAX_CONTEXT_CANONICAL_BYTES:
         raise SurvivalContractError("relevant_context exceeds bounded ContextPack budget")
@@ -71,7 +75,10 @@ def verify_context_pack(
     if packet.get("context_trust") != "UNTRUSTED_DATA":
         raise SurvivalContractError("ContextPack trust classification missing")
     context = packet.get("context")
-    if type(context) is not dict or len(canonicalize(context).encode("utf-8")) > MAX_CONTEXT_CANONICAL_BYTES:
+    if type(context) is not dict:
+        raise SurvivalContractError("ContextPack context budget invalid")
+    _validate_untrusted_context(context)
+    if len(canonicalize(context).encode("utf-8")) > MAX_CONTEXT_CANONICAL_BYTES:
         raise SurvivalContractError("ContextPack context budget invalid")
 
     canonical = reduce_events(live_state, [])
@@ -97,6 +104,38 @@ def verify_context_pack(
     _require_hash(live_contracts_hash, "live_contracts_hash")
     if source.get("contracts_hash") != live_contracts_hash:
         raise SurvivalContractError("stale ContextPack contracts revision")
+
+
+def _validate_untrusted_context(value: Any) -> None:
+    """Fail closed on hostile structure before recursive canonicalization."""
+    stack: list[tuple[Any, int]] = [(value, 0)]
+    items = 0
+    while stack:
+        current, depth = stack.pop()
+        if depth > MAX_CONTEXT_DEPTH:
+            raise SurvivalContractError("ContextPack context depth exceeds budget")
+        items += 1
+        if items > MAX_CONTEXT_ITEMS:
+            raise SurvivalContractError("ContextPack context item count exceeds budget")
+        if isinstance(current, str):
+            if len(current.encode("utf-8")) > MAX_CONTEXT_STRING_BYTES:
+                raise SurvivalContractError("ContextPack context string exceeds budget")
+            continue
+        if current is None or isinstance(current, (bool, int, float)):
+            continue
+        if type(current) is list:
+            for child in current:
+                stack.append((child, depth + 1))
+            continue
+        if type(current) is dict:
+            for key, child in current.items():
+                if not isinstance(key, str):
+                    raise SurvivalContractError("ContextPack context keys must be strings")
+                if len(key.encode("utf-8")) > MAX_CONTEXT_STRING_BYTES:
+                    raise SurvivalContractError("ContextPack context key exceeds budget")
+                stack.append((child, depth + 1))
+            continue
+        raise SurvivalContractError("ContextPack context contains unsupported value type")
 
 
 def _claim_snapshot_hash(snapshot: dict[str, Any]) -> str:
