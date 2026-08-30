@@ -10,28 +10,6 @@ from rot_contracts.survival import FreshnessSeal, SurvivalContractError, assert_
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "fixtures" / "golden" / "survival-behavior-v2.json"
 
-# Transitional adapter only. Python SurvivalContractError is currently typed but does not
-# expose a structured cross-runtime `code` field. This mapping lets the shared behavioral
-# corpus detect semantic drift now while keeping structured error-code parity as an explicit
-# follow-up contract gap rather than falsely claiming it already exists.
-ERROR_CODE_BY_MESSAGE_FRAGMENT = {
-    "same event identity with different semantic payload": "EVENT_ID_COLLISION",
-    "event sequence discontinuity": "SEQUENCE_DISCONTINUITY",
-    "cross-project event rejected": "CROSS_PROJECT",
-    "unsupported event_type": "UNSUPPORTED_EVENT",
-    "stale observed source revision": "STALE_SOURCE",
-    "stale event watermark": "STALE_WATERMARK",
-    "stale projection": "STALE_PROJECTION",
-}
-
-
-def rejection_code(error: SurvivalContractError) -> str:
-    message = str(error)
-    for fragment, code in ERROR_CODE_BY_MESSAGE_FRAGMENT.items():
-        if fragment in message:
-            return code
-    raise AssertionError(f"unclassified SurvivalContractError: {message}")
-
 
 class SurvivalBehaviorCorpusV2Tests(unittest.TestCase):
     @classmethod
@@ -59,7 +37,7 @@ class SurvivalBehaviorCorpusV2Tests(unittest.TestCase):
                         self.fail(f"unknown operation {vector['operation']}")
                 except SurvivalContractError as error:
                     self.assertEqual(expected["status"], "REJECT")
-                    self.assertEqual(rejection_code(error), expected["error_code"])
+                    self.assertEqual(error.code, expected["error_code"])
                     continue
 
                 self.assertEqual(expected["status"], "PASS")
@@ -68,13 +46,22 @@ class SurvivalBehaviorCorpusV2Tests(unittest.TestCase):
                         continue
                     self.assertEqual(result[key], value, f"{vector['name']} mismatch for {key}")
 
-    def test_error_code_adapter_covers_every_rejection_in_fixture(self):
-        expected_codes = {
-            vector["expect"]["error_code"]
-            for vector in self.fixture["cases"]
-            if vector["expect"]["status"] == "REJECT"
-        }
-        self.assertEqual(expected_codes, set(ERROR_CODE_BY_MESSAGE_FRAGMENT.values()))
+    def test_every_rejection_declares_structured_error_code(self):
+        seed = self.fixture["seed"]
+        for vector in self.fixture["cases"]:
+            expected = vector["expect"]
+            if expected["status"] != "REJECT":
+                continue
+            with self.subTest(vector=vector["name"]):
+                with self.assertRaises(SurvivalContractError) as raised:
+                    if vector["operation"] == "reduce_events":
+                        reduce_events(seed, vector["events"])
+                    elif vector["operation"] == "assert_fresh":
+                        assert_fresh(FreshnessSeal(**vector["local"]), FreshnessSeal(**vector["live"]))
+                    else:
+                        self.fail(f"unknown operation {vector['operation']}")
+                self.assertEqual(raised.exception.code, expected["error_code"])
+                self.assertNotEqual(raised.exception.code, "SURVIVAL_CONTRACT_ERROR")
 
 
 if __name__ == "__main__":
