@@ -6,7 +6,7 @@ Authority: human-readable projection only. Live GitHub lifecycle + accepted even
 `F1_VNEXT_CONTRACT_KERNEL + SURVIVAL_V2_SHADOW / SHADOW_ONLY`
 
 ## Current objective
-Empirically prove fresh zero-context successor recovery, automate the continuity security gauntlet, revision-pin external governance dependencies, and only then qualify durable accepted-event authority without prematurely promoting distributed infrastructure.
+Resolve the remaining external governance authorities, empirically prove fresh zero-context successor recovery, finish the continuity security gauntlet, and only then qualify durable accepted-event authority without prematurely promoting distributed infrastructure.
 
 ## Canonical topology
 - `main`: bootstrap.
@@ -15,47 +15,56 @@ Empirically prove fresh zero-context successor recovery, automate the continuity
 - PR #3: CLOSED/UNMERGED duplicate promotion route; superseded.
 - PR #4: `feat/graph-refactor-v2-survival`; sole active Survival V2 promotion route, stacked on PR #1.
 
-## Latest revision-pinned implementation proof before CP8 state writes
-At `5952b4c792ef7ca6996f1ca82cd04b1b11bbb431`:
-- Survival V2 Continuity Gate run `33296938445`: SUCCESS.
-- F1 Rust Contract Kernel run `33296938432`: SUCCESS.
-- F1 Cross-Language Parity run `33296938433`: SUCCESS.
-- Rust, TypeScript and Python execute the same frozen `fixtures/golden/survival-behavior-v2.json` corpus.
-- Python now emits structured Survival error codes matching Rust/TypeScript and no longer relies on message-fragment adapters.
-- pnpm workspace lockfile and frozen CI installation are active.
+## Revision-pinned evidence chain
+Behavioral parity implementation proof at `5952b4c792ef7ca6996f1ca82cd04b1b11bbb431`:
+- Survival V2 Continuity Gate `33296938445`: SUCCESS.
+- F1 Rust Contract Kernel `33296938432`: SUCCESS.
+- F1 Cross-Language Parity `33296938433`: SUCCESS.
 
-The CP8 documentation/state commits move the branch beyond `5952b4c7...`; exact-head CI must be green again before promotion.
+Security slices:
+- head `7163acbdb4ec8245ca2c2f0cb9fb07153e4b8727`, Continuity run `33297181677`: SUCCESS. Covers executable adversarial T09/T12/T13/T14/T15/T16.
+- head `d42bf0f78f3905b3472b7e05cf9afc5ad8781eaa`, Continuity run `33297209666`: SUCCESS. Adds high-confidence durable-repository secret hygiene gate for T03.
+
+External governance contract:
+- head `b61b6974faeb7a632917b4b2f26dc82a8fcc74fd`, Continuity run `33297367442`: SUCCESS.
+- `rot.knowledge/main` observed/pinned at `621550ddf725c0c3d1e41540ee878be124dfe871`.
+- `cos-graph-engine/main` / `COS2` observed/pinned at `3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83`.
+- CP01, CP02 and CP03 remain unresolved and therefore block governance readiness by contract rather than being guessed.
+
+Later state/documentation commits move the branch beyond these proof heads. Requalify the exact promotion candidate before any promotion.
 
 ## Implemented / verified reference capabilities
 - F1 Rust/TS/Python contract kernel surfaces;
 - Survival reducer/freshness behavioral parity across Rust, TypeScript and Python;
-- structured cross-runtime Survival rejection codes for the shared corpus;
-- Survival Python checkpoint/freshness semantics;
+- structured cross-runtime Survival rejection codes;
+- Survival checkpoint/freshness semantics;
 - reference append-only event store + deterministic recovery/replay;
 - one-way deterministic Survival/COS graph projection;
 - claims/leases/fencing reference kernel with monotonic generations;
-- ContextPack sealing/invalidation with `UNTRUSTED_DATA` bounds;
+- ContextPack sealing/invalidation with `UNTRUSTED_DATA`, iterative pre-canonicalization depth/item/string/type bounds and total byte budget;
+- promotion evidence preflight requiring unique explicit PASS evidence bound to exact candidate SHA, with optional artifact/evidence hash requirement;
+- deterministic external-governance manifest validation/drift preflight;
 - synthetic agent-death recovery harness;
 - strict project-state/checkpoint schemas with `state_hash` binding;
 - standalone Agent Survival Metaprompt V2;
 - PR #2 semantic supersession evidence;
-- threat/trust-boundary model T01–T20;
+- threat/trust-boundary model T01–T20 with executable security slices;
 - frozen pnpm workspace dependency graph in CI.
 
 ## Explicit remaining gaps
-1. empirical fresh zero-context successor drill <=5 minutes has not run; synthetic recovery is not empirical qualification.
-2. continuity security gauntlet is not yet fully automated: secret/dependency checks, property/fuzz corpus and evidence-substitution/provider-gateway attacks remain.
-3. external CP01/CP02/CP03/rot.knowledge references are not revision-pinned locally.
-4. accepted durable event writer is not qualified; authoritative event watermark remains `0`.
-5. Python dependency reproducibility/SBOM can be hardened beyond the now-closed pnpm reproducibility gate.
-6. distributed/multi-host authority remains intentionally deferred until a measured contention/HA trigger exists.
+1. **Empirical recovery:** genuinely fresh zero-context successor drill <=5 minutes has not run; synthetic recovery is not empirical qualification.
+2. **Governance:** CP01/CP02/CP03 authoritative locators remain unresolved. Manifest is implemented but promotion readiness intentionally fails closed.
+3. **Security:** T01/T02 provider/prompt corpus, T05 network/URL/SSRF gateway, T06 argv-only shell gateway, T17 Rust/Python dependency/SBOM hardening, broader property corpus and final exact-candidate adversarial gauntlet remain.
+4. **Durable authority:** accepted durable event writer is not qualified; authoritative event watermark remains `0`.
+5. **Distributed authority:** multi-host/distributed infrastructure remains intentionally deferred until a measured contention/HA trigger exists.
 
 ## Authority
-Whole Survival V2 remains `IMPLEMENTED` SHADOW_ONLY. Individual reference capabilities are `VERIFIED` at exact revisions. `EMPIRICALLY_QUALIFIED` and production authority are unauthorized.
+Whole Survival V2 remains `IMPLEMENTED` / `SHADOW_ONLY`. Individual reference capabilities may be `VERIFIED` only at cited exact revisions. External governance readiness is `BLOCKED_EXTERNAL` because CP01/CP02/CP03 are unresolved. `EMPIRICALLY_QUALIFIED` and production authority remain unauthorized.
 
 ## Current executable frontier
-1. empirical zero-context successor death drill;
-2. security/property/fuzz automation derived from `docs/THREAT_MODEL_SURVIVAL_V2.md`;
-3. external governance revision manifest and drift detector;
-4. bootstrap/operator CLI around verified primitives;
-5. only after these gates, qualify durable accepted-event persistence.
+1. resolve CP01/CP02/CP03 authoritative locators without inference/guessing;
+2. execute genuinely fresh zero-context successor death drill;
+3. implement provider/network/shell security gateway contracts and broaden adversarial/property corpus;
+4. bootstrap/operator CLI only around already-verified, non-dangerous primitives;
+5. run final whole-system exact-candidate gauntlet;
+6. only after these gates, qualify durable accepted-event persistence.
