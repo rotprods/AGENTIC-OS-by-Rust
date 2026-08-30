@@ -1,0 +1,68 @@
+{
+  "schema_version": "1",
+  "authority": "REFERENCE_MANIFEST_ONLY",
+  "promotion_policy": "FAIL_CLOSED_ON_REQUIRED_UNRESOLVED_OR_DRIFT",
+  "authorities": [
+    {
+      "authority_id": "rot.knowledge",
+      "role": "constitutional_governance_and_change_control",
+      "source_type": "github_repository",
+      "repository_full_name": "rotprods/rot.knowledge",
+      "ref": "main",
+      "pinned_sha": "621550ddf725c0c3d1e41540ee878be124dfe871",
+      "content_path": null,
+      "resolution_status": "PINNED",
+      "required_for_promotion": true
+    },
+    {
+      "authority_id": "CP01",
+      "role": "contract_semantics_reference",
+      "source_type": "unresolved",
+      "repository_full_name": null,
+      "ref": null,
+      "pinned_sha": null,
+      "content_path": null,
+      "resolution_status": "UNRESOLVED",
+      "required_for_promotion": true
+    },
+    {
+      "authority_id": "CP02",
+      "role": "canonical_identity_semantics",
+      "source_type": "unresolved",
+      "repository_full_name": null,
+      "ref": null,
+      "pinned_sha": null,
+      "content_path": null,
+      "resolution_status": "UNRESOLVED",
+      "required_for_promotion": true
+    },
+    {
+      "authority_id": "CP03",
+      "role": "durable_event_ledger_semantics",
+      "source_type": "unresolved",
+      "repository_full_name": null,
+      "ref": null,
+      "pinned_sha": null,
+      "content_path": null,
+      "resolution_status": "UNRESOLVED",
+      "required_for_promotion": true
+    },
+    {
+      "authority_id": "COS2",
+      "role": "graph_semantics_and_algorithms_derived_from_accepted_events",
+      "source_type": "github_repository",
+      "repository_full_name": "rotprods/cos-graph-engine",
+      "ref": "main",
+      "pinned_sha": "3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83",
+      "content_path": null,
+      "resolution_status": "PINNED",
+      "required_for_promotion": true
+    }
+  ],
+  "resolution_notes": [
+    "rot.knowledge and cos-graph-engine were resolved against their observed main heads.",
+    "No repository literally named CP01, CP02 or CP03 was present in the accessible rotprods repository inventory.",
+    "No CP01 locator was found in the inspected rot.knowledge tree/search surface; CP01/CP02/CP03 therefore remain unresolved rather than guessed.",
+    "This manifest records pins; it does not copy or supersede external authority content."
+  ]
+}
