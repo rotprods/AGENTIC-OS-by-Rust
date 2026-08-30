@@ -9,16 +9,6 @@ from rot_contracts.survival import FreshnessSeal, SurvivalContractError, assert_
 ROOT = Path(__file__).resolve().parents[2]
 FIXTURE = ROOT / "fixtures" / "golden" / "survival-behavior-v2.json"
 
-ERROR_MAP = {
-    "EVENT_ID_COLLISION": "same event identity",
-    "SEQUENCE_DISCONTINUITY": "discontinuity",
-    "CROSS_PROJECT": "cross-project",
-    "UNSUPPORTED_EVENT": "unsupported",
-    "STALE_SOURCE": "source revision",
-    "STALE_WATERMARK": "watermark",
-    "STALE_PROJECTION": "projection",
-}
-
 
 class SurvivalBehavioralParityTests(unittest.TestCase):
     def test_shared_behavioral_corpus(self) -> None:
@@ -27,8 +17,9 @@ class SurvivalBehavioralParityTests(unittest.TestCase):
         for vector in fixture["cases"]:
             expected = vector["expect"]
             if expected["status"] == "REJECT":
-                with self.assertRaisesRegex(SurvivalContractError, ERROR_MAP[expected["error_code"]], msg=vector["name"]):
+                with self.assertRaises(SurvivalContractError, msg=vector["name"]) as raised:
                     self._execute(seed, vector)
+                self.assertEqual(raised.exception.code, expected["error_code"], vector["name"])
                 continue
             result = self._execute(seed, vector)
             for key, value in expected.items():
