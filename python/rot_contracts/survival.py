@@ -16,7 +16,9 @@ DEFAULT_DEATH_DRILL_SLO_SECONDS = 300.0
 
 
 class SurvivalContractError(ValueError):
-    pass
+    def __init__(self, message: str, *, code: str = "SURVIVAL_CONTRACT_ERROR") -> None:
+        self.code = code
+        super().__init__(message)
 
 
 @dataclass(frozen=True)
@@ -36,13 +38,13 @@ class FreshnessSeal:
 
 def assert_fresh(local: FreshnessSeal, live: FreshnessSeal) -> None:
     if local.observed_source_sha != live.observed_source_sha:
-        raise SurvivalContractError("stale observed source revision")
+        raise SurvivalContractError("stale observed source revision", code="STALE_SOURCE")
     if local.event_watermark != live.event_watermark:
-        raise SurvivalContractError("stale event watermark")
+        raise SurvivalContractError("stale event watermark", code="STALE_WATERMARK")
     # A known live projection cannot be silently ignored by omitting the local hash,
     # and a local projection cannot be trusted if live authority no longer exposes it.
     if local.projection_hash != live.projection_hash:
-        raise SurvivalContractError("stale projection")
+        raise SurvivalContractError("stale projection", code="STALE_PROJECTION")
 
 
 def reduce_events(seed: dict[str, Any], events: Iterable[dict[str, Any]]) -> dict[str, Any]:
@@ -55,16 +57,20 @@ def reduce_events(seed: dict[str, Any], events: Iterable[dict[str, Any]]) -> dic
         event_hash = hash_canonical(event)
         if event_id in seen:
             if seen[event_id] != event_hash:
-                raise SurvivalContractError("same event identity with different semantic payload")
+                raise SurvivalContractError(
+                    "same event identity with different semantic payload",
+                    code="EVENT_ID_COLLISION",
+                )
             continue
         expected_sequence = previous_sequence + 1
         if event["sequence"] != expected_sequence:
             raise SurvivalContractError(
-                f"event sequence discontinuity: expected {expected_sequence}, got {event['sequence']}"
+                f"event sequence discontinuity: expected {expected_sequence}, got {event['sequence']}",
+                code="SEQUENCE_DISCONTINUITY",
             )
         seen[event_id] = event_hash
         if event["project_id"] != state["project_id"]:
-            raise SurvivalContractError("cross-project event rejected")
+            raise SurvivalContractError("cross-project event rejected", code="CROSS_PROJECT")
         _apply(state, event)
         previous_sequence = event["sequence"]
         state["event_watermark"] = previous_sequence
@@ -306,7 +312,7 @@ def _apply(state: dict[str, Any], event: dict[str, Any]) -> None:
             raise SurvivalContractError("next_safe_actions must be non-empty string list")
         state["next_safe_actions"] = list(actions)
     else:
-        raise SurvivalContractError(f"unsupported event_type {kind}")
+        raise SurvivalContractError(f"unsupported event_type {kind}", code="UNSUPPORTED_EVENT")
 
 
 def _normalize_tests(tests: Any) -> list[dict[str, Any]]:
