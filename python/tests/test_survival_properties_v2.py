@@ -81,13 +81,27 @@ class SurvivalDeterministicPropertyTests(unittest.TestCase):
                 self.assertEqual(observed, oracle)
                 self.assertEqual(hash_canonical(observed), oracle_hash)
 
-    def test_any_single_sequence_gap_fails_closed(self) -> None:
+    def test_any_internal_sequence_gap_fails_closed(self) -> None:
         canonical_events = event_chain(24)
-        for removed_index in range(len(canonical_events)):
+        # Removing the terminal event yields a valid shorter prefix. Internal holes,
+        # however, must always be rejected by the reducer itself.
+        for removed_index in range(len(canonical_events) - 1):
             candidate = canonical_events[:removed_index] + canonical_events[removed_index + 1 :]
             with self.subTest(removed_sequence=removed_index + 1):
                 with self.assertRaisesRegex(SurvivalContractError, "discontinuity"):
                     reduce_events(seed_state(), candidate)
+
+    def test_terminal_truncation_requires_external_watermark_to_detect(self) -> None:
+        canonical_events = event_chain(24)
+        truncated = reduce_events(seed_state(), canonical_events[:-1])
+        complete = reduce_events(seed_state(), canonical_events)
+        self.assertEqual(truncated["event_watermark"], 23)
+        self.assertEqual(complete["event_watermark"], 24)
+        with self.assertRaisesRegex(SurvivalContractError, "watermark"):
+            assert_fresh(
+                FreshnessSeal(HEAD, truncated["event_watermark"], None),
+                FreshnessSeal(HEAD, complete["event_watermark"], None),
+            )
 
     def test_duplicate_identity_with_mutated_payload_never_replays(self) -> None:
         rng = random.Random(SEED)
