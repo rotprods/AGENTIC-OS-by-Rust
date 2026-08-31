@@ -1,0 +1,66 @@
+name: CP11 Materialize Locks
+
+on:
+  push:
+    branches: [feat/cp11-supply-chain]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cp11-materialize-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+
+      - name: Pin Python runtime
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.13.15'
+
+      - name: Pin Rust toolchain
+        uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772
+        with:
+          toolchain: 1.85.0
+
+      - name: Generate exact dependency locks
+        run: |
+          cargo generate-lockfile
+          cargo metadata --locked --format-version 1 >/dev/null
+          python -m pip install --disable-pip-version-check pip-tools==7.6.1
+          python -m piptools compile --generate-hashes --resolver=backtracking --strip-extras --output-file requirements/ci.lock requirements/ci.in
+          python -m pip install --disable-pip-version-check --require-hashes -r requirements/ci.lock
+          python -m pip check
+
+      - name: Verify resolver output matches bootstrap evidence
+        run: |
+          test "$(sha256sum Cargo.lock | cut -d' ' -f1)" = "46560ba1d5717258a3b7ae922a1230c4225f0316bbaccc599a9437207810632a"
+          test "$(sha256sum requirements/ci.lock | cut -d' ' -f1)" = "f40478d5ef14a29b48d06d7457721598856a46dade83978780107a4e9a9eb33f"
+
+      - name: Optimistic-concurrency preflight
+        env:
+          EXPECTED_HEAD: ${{ github.sha }}
+        run: |
+          git fetch origin feat/cp11-supply-chain --depth=1
+          LIVE_HEAD="$(git rev-parse origin/feat/cp11-supply-chain)"
+          test "$LIVE_HEAD" = "$EXPECTED_HEAD"
+
+      - name: Commit exact locks by fast-forward only
+        run: |
+          git add Cargo.lock requirements/ci.lock
+          if git diff --cached --quiet; then
+            echo "Locks already materialized at expected content."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build(cp11): materialize exact dependency locks"
+          git push origin HEAD:feat/cp11-supply-chain
