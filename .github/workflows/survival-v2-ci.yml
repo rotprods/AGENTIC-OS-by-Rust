@@ -29,7 +29,7 @@ jobs:
         env:
           PYTHONPATH: python
         run: python -m unittest discover -s python/tests -v
-      - name: Verify machine-readable state and checkpoint schemas
+      - name: Verify machine-readable state and canonical latest checkpoint
         env:
           PYTHONPATH: python
         run: |
@@ -37,16 +37,28 @@ jobs:
           import json
           from pathlib import Path
           from jsonschema import Draft202012Validator, FormatChecker
+          from rot_contracts.continuity_files import resolve_latest_checkpoint_path
+          from rot_contracts.survival import verify_checkpoint
 
           root = Path('.')
-          pairs = [
-              ('schemas/survival-project-state.v2.schema.json', 'state/project_state.json'),
-              ('schemas/survival-checkpoint.v2.schema.json', 'state/checkpoints/cp5-survival-v2-20260829.json'),
-          ]
-          for schema_path, value_path in pairs:
-              schema = json.loads((root / schema_path).read_text())
-              value = json.loads((root / value_path).read_text())
-              errors = list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(value))
-              if errors:
-                  raise SystemExit(f'{value_path} schema errors: ' + '; '.join(error.message for error in errors))
+          state_schema = json.loads((root / 'schemas/survival-project-state.v2.schema.json').read_text())
+          checkpoint_schema = json.loads((root / 'schemas/survival-checkpoint.v2.schema.json').read_text())
+          state = json.loads((root / 'state/project_state.json').read_text())
+
+          errors = list(Draft202012Validator(state_schema, format_checker=FormatChecker()).iter_errors(state))
+          if errors:
+              raise SystemExit('state/project_state.json schema errors: ' + '; '.join(error.message for error in errors))
+
+          checkpoint_path = resolve_latest_checkpoint_path(root, state)
+          checkpoint = json.loads(checkpoint_path.read_text())
+          if checkpoint.get('checkpoint_id') != state.get('latest_checkpoint_id'):
+              raise SystemExit(
+                  f"latest checkpoint identity mismatch: state={state.get('latest_checkpoint_id')!r} "
+                  f"checkpoint={checkpoint.get('checkpoint_id')!r}"
+              )
+          errors = list(Draft202012Validator(checkpoint_schema, format_checker=FormatChecker()).iter_errors(checkpoint))
+          if errors:
+              raise SystemExit(f'{checkpoint_path} schema errors: ' + '; '.join(error.message for error in errors))
+          verify_checkpoint(checkpoint, state=state)
+          print(f'validated latest checkpoint: {checkpoint_path}')
           PY
