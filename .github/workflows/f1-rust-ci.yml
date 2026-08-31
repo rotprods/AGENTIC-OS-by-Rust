@@ -26,11 +26,23 @@ jobs:
         with:
           toolchain: 1.85.0
           components: rustfmt, clippy
+      - name: Verify frozen Cargo dependency graph
+        run: |
+          test -s Cargo.lock
+          actual="$(sha256sum Cargo.lock | awk '{print $1}')"
+          echo "CARGO_LOCK_SHA256=$actual"
+          test "$actual" = '46560ba1d5717258a3b7ae922a1230c4225f0316bbaccc599a9437207810632a'
+          cp Cargo.lock /tmp/Cargo.lock.before
+          cargo metadata --locked --format-version 1 >/dev/null
+          cmp /tmp/Cargo.lock.before Cargo.lock
       - name: Cache Cargo
         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - name: Formatting
-        run: cargo fmt --check
+        run: cargo fmt --all --check
       - name: Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
       - name: Unit tests
-        run: cargo test --workspace --all-targets
+        run: cargo test --workspace --all-targets --all-features --locked
+      - name: Prove Cargo.lock did not mutate
+        if: always()
+        run: cmp /tmp/Cargo.lock.before Cargo.lock
