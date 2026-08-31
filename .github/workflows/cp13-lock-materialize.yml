@@ -1,0 +1,42 @@
+name: CP13 Temporary Lock Materialization
+
+on:
+  push:
+    branches: [feat/cp13-supply-chain-v2]
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.20.0'
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772
+        with:
+          toolchain: '1.88.0'
+      - name: Regenerate approved lock graphs
+        run: |
+          set -euxo pipefail
+          cargo update -p time --precise 0.3.47
+          cargo metadata --locked --format-version 1 >/dev/null
+          corepack enable
+          corepack prepare 'pnpm@10.15.0' --activate
+          pnpm install --lockfile-only
+          test "$(sha256sum Cargo.lock | awk '{print $1}')" = "03b42bf650a8f52960ce8a92bc9f36848b215640ab58f4c673b09ddf5f05f370"
+          test "$(sha256sum pnpm-lock.yaml | awk '{print $1}')" = "80891079f6c2c0ce556e23910eb5e1435c2d1c424251f88ff0e0ef51f986a9f6"
+      - name: Commit exact regenerated locks
+        run: |
+          set -euxo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Cargo.lock pnpm-lock.yaml
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'chore(cp13): materialize patched dependency locks'
+          git push origin HEAD:feat/cp13-supply-chain-v2

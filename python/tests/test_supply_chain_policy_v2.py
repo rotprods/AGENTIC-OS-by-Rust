@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = ROOT / ".github" / "workflows"
 PINNED_ACTION = re.compile(r"^\s*-\s+uses:\s+([^\s]+)@([0-9a-f]{40})(?:\s+#.*)?$")
 USES_LINE = re.compile(r"^\s*-\s+uses:\s+([^\s]+)@([^\s#]+)")
-CARGO_LOCK_SHA256 = "46560ba1d5717258a3b7ae922a1230c4225f0316bbaccc599a9437207810632a"
+CARGO_LOCK_SHA256 = "03b42bf650a8f52960ce8a92bc9f36848b215640ab58f4c673b09ddf5f05f370"
 
 
 class SupplyChainPolicyV2Tests(unittest.TestCase):
