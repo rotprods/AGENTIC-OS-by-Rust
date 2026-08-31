@@ -1,5 +1,6 @@
 name: T17 Cargo Lock Capture
 
+# Temporary evidence compiler. Delete after Cargo.lock is revision-pinned.
 on:
   push:
     branches: [feat/graph-refactor-v2-survival]
