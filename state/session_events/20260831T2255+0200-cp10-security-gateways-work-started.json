@@ -1,0 +1,23 @@
+{
+  "schema_version": "1",
+  "event_type": "work_started",
+  "session_id": "rot://session/agentic-os/20260831T2255+0200-cp10-security-gateways",
+  "claim_id": "rot://claim/agentic-os/survival-v2-cp10-security-gateways",
+  "branch": "feat/graph-refactor-v2-survival",
+  "base_head": "f56f428a156b5737c22a889d0ca236854b3da48e",
+  "workstream": "rot://workstream/agentic-os/security-gateways",
+  "scope": [
+    "python/rot_contracts/security_gateways.py",
+    "python/tests/test_security_gateways_v2.py",
+    "fixtures/security/untrusted-content-v1.json",
+    "docs/SECURITY_GATEWAYS_SURVIVAL_V2.md"
+  ],
+  "authority_ceiling": "REFERENCE_ONLY / SHADOW_ONLY",
+  "empirical_independence": false,
+  "empirical_action": "NOT_RUN",
+  "notes": [
+    "Current runtime inherited predecessor/chat context and cannot truthfully qualify the empirical successor drill.",
+    "No network or process execution capability is introduced.",
+    "Shared persistence surfaces are reconciled only after a live-head reread."
+  ]
+}
