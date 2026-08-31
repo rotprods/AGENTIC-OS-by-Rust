@@ -37,8 +37,10 @@ jobs:
           import json
           from pathlib import Path
           from jsonschema import Draft202012Validator, FormatChecker
-          from rot_contracts.continuity_files import resolve_latest_checkpoint_path
-          from rot_contracts.survival import verify_checkpoint
+          from rot_contracts.continuity_files import (
+              resolve_latest_checkpoint_path,
+              verify_latest_checkpoint_binding,
+          )
 
           root = Path('.')
           state_schema = json.loads((root / 'schemas/survival-project-state.v2.schema.json').read_text())
@@ -51,14 +53,9 @@ jobs:
 
           checkpoint_path = resolve_latest_checkpoint_path(root, state)
           checkpoint = json.loads(checkpoint_path.read_text())
-          if checkpoint.get('checkpoint_id') != state.get('latest_checkpoint_id'):
-              raise SystemExit(
-                  f"latest checkpoint identity mismatch: state={state.get('latest_checkpoint_id')!r} "
-                  f"checkpoint={checkpoint.get('checkpoint_id')!r}"
-              )
           errors = list(Draft202012Validator(checkpoint_schema, format_checker=FormatChecker()).iter_errors(checkpoint))
           if errors:
               raise SystemExit(f'{checkpoint_path} schema errors: ' + '; '.join(error.message for error in errors))
-          verify_checkpoint(checkpoint, state=state)
+          verify_latest_checkpoint_binding(state, checkpoint)
           print(f'validated latest checkpoint: {checkpoint_path}')
           PY
