@@ -34,6 +34,8 @@ MAX_REDIRECTS = 10
 class NetworkPolicy:
     allowed_schemes: tuple[str, ...] = ("https",)
     allowed_hosts: tuple[str, ...] = ()
+    denied_hosts: tuple[str, ...] = ()
+    allowed_ports: tuple[int, ...] = (443,)
     max_redirects: int = 3
     timeout_seconds: float = 10.0
     max_response_bytes: int = 4 * 1024 * 1024
@@ -41,7 +43,7 @@ class NetworkPolicy:
 
 @dataclass(frozen=True)
 class NetworkRequestPlan:
-    url: str
+    url: str = field(repr=False)
     scheme: str
     host: str
     port: int | None
@@ -54,6 +56,22 @@ class NetworkRequestPlan:
     redirect_policy: str = "REVALIDATE_EACH_HOP"
     requires_resolution_validation: bool = True
     forward_credentials: bool = False
+
+    def audit_record(self) -> dict[str, object]:
+        return {
+            "scheme": self.scheme,
+            "host": self.host,
+            "port": self.port,
+            "method": self.method,
+            "trust_classification": self.trust_classification,
+            "provenance": self.provenance,
+            "max_redirects": self.max_redirects,
+            "timeout_seconds": self.timeout_seconds,
+            "max_response_bytes": self.max_response_bytes,
+            "redirect_policy": self.redirect_policy,
+            "requires_resolution_validation": self.requires_resolution_validation,
+            "forward_credentials": False,
+        }
 
 
 @dataclass(frozen=True)
@@ -68,7 +86,8 @@ class ProcessPolicy:
 @dataclass(frozen=True)
 class ProcessInvocationPlan:
     executable: str
-    argv: tuple[str, ...]
+    argv: tuple[str, ...] = field(repr=False)
+    argv_hash: str
     cwd: str
     environment_keys: tuple[str, ...]
     timeout_seconds: float
@@ -80,7 +99,8 @@ class ProcessInvocationPlan:
     def audit_record(self) -> dict[str, object]:
         return {
             "executable": self.executable,
-            "argv": list(self.argv),
+            "argv_count": len(self.argv),
+            "argv_hash": self.argv_hash,
             "cwd": self.cwd,
             "environment_keys": list(self.environment_keys),
             "timeout_seconds": self.timeout_seconds,
@@ -151,6 +171,8 @@ def plan_network_request(
     _require_trust(trust_classification)
     _require_text(provenance, "provenance", code="NETWORK_PROVENANCE_REQUIRED", max_length=2048)
     _require_text(url, "url", code="NETWORK_URL_INVALID", max_length=8192)
+    if _has_ascii_control(url):
+        _fail("NETWORK_URL_INVALID", "network URL contains control characters")
     method = method.upper()
     if method not in {"GET", "HEAD"}:
         _fail("NETWORK_METHOD_DENIED", "network method denied by read-only gateway")
@@ -181,11 +203,17 @@ def plan_network_request(
     allowed_hosts = tuple(_normalize_host(item) for item in policy.allowed_hosts)
     if allowed_hosts and host not in allowed_hosts:
         _fail("NETWORK_HOST_NOT_ALLOWED", "network host not in explicit allowlist")
+    denied_hosts = tuple(_normalize_host(item) for item in policy.denied_hosts)
+    if any(_host_matches_domain(host, denied) for denied in denied_hosts):
+        _fail("NETWORK_HOST_DENIED", "network host matches explicit deny policy")
+    effective_port = port if port is not None else (443 if scheme == "https" else 80)
+    if effective_port not in policy.allowed_ports:
+        _fail("NETWORK_PORT_DENIED", "network port not in explicit allowlist")
     return NetworkRequestPlan(
         url=url,
         scheme=scheme,
         host=host,
-        port=port,
+        port=effective_port,
         method=method,
         trust_classification=trust_classification,
         provenance=provenance,
@@ -278,9 +306,13 @@ def plan_process_invocation(
             _fail("PROCESS_LIMIT_EXCEEDED", "environment value exceeds limit")
         environment_keys.append(key)
 
+    argv_digest = "sha256:" + hashlib.sha256(
+        "\0".join(normalized_args).encode("utf-8")
+    ).hexdigest()
     return ProcessInvocationPlan(
         executable=executable_path,
         argv=tuple(normalized_args),
+        argv_hash=argv_digest,
         cwd=cwd_path,
         environment_keys=tuple(sorted(environment_keys)),
         timeout_seconds=float(policy.timeout_seconds),
@@ -306,6 +338,15 @@ def _validate_network_policy(policy: NetworkPolicy) -> None:
         if not isinstance(host, str) or not host:
             _fail("NETWORK_POLICY_INVALID", "allowed host malformed")
         _normalize_host(host)
+    for host in policy.denied_hosts:
+        if not isinstance(host, str) or not host:
+            _fail("NETWORK_POLICY_INVALID", "denied host malformed")
+        _normalize_host(host)
+    if not policy.allowed_ports or any(
+        not isinstance(port, int) or isinstance(port, bool) or not 1 <= port <= 65535
+        for port in policy.allowed_ports
+    ):
+        _fail("NETWORK_POLICY_INVALID", "allowed port policy invalid")
 
 
 def _validate_process_policy(policy: ProcessPolicy) -> None:
@@ -344,6 +385,14 @@ def _parse_ip(host: str) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None
         return ipaddress.ip_address(host)
     except ValueError:
         return None
+
+
+def _host_matches_domain(host: str, denied: str) -> bool:
+    return host == denied or host.endswith("." + denied)
+
+
+def _has_ascii_control(value: str) -> bool:
+    return any(ord(char) < 32 or ord(char) == 127 for char in value)
 
 
 def _canonical_path(value: str, *, code: str) -> str:

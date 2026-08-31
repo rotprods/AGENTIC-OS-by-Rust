@@ -75,10 +75,22 @@ class SecurityGatewayV2Tests(unittest.TestCase):
         )
         self.assertEqual(plan.scheme, "https")
         self.assertEqual(plan.host, "example.com")
+        self.assertEqual(plan.port, 443)
         self.assertTrue(plan.requires_resolution_validation)
         self.assertEqual(plan.redirect_policy, "REVALIDATE_EACH_HOP")
         self.assertFalse(plan.forward_credentials)
         self.assertEqual(validate_resolved_addresses(plan, ["8.8.8.8"]), ("8.8.8.8",))
+
+    def test_t05_raw_url_secrets_are_not_exposed_by_repr_or_audit_record(self):
+        secret = "query-secret-sentinel"
+        plan = plan_network_request(
+            f"https://example.com/private?token={secret}",
+            trust_classification="UNTRUSTED_EXTERNAL",
+            provenance="test",
+        )
+        self.assertNotIn(secret, repr(plan))
+        self.assertNotIn(secret, json.dumps(plan.audit_record(), sort_keys=True))
+        self.assertNotIn("/private", json.dumps(plan.audit_record(), sort_keys=True))
 
     def test_t05_scheme_credentials_fragment_and_method_are_fail_closed(self):
         assert_code(
@@ -156,6 +168,17 @@ class SecurityGatewayV2Tests(unittest.TestCase):
             "https://evil.example.com/",
             trust_classification="UNTRUSTED_EXTERNAL", provenance="test", policy=policy,
         )
+        deny_policy = NetworkPolicy(denied_hosts=("blocked.example",))
+        assert_code(
+            self, "NETWORK_HOST_DENIED", plan_network_request,
+            "https://sub.blocked.example/",
+            trust_classification="UNTRUSTED_EXTERNAL", provenance="test", policy=deny_policy,
+        )
+        assert_code(
+            self, "NETWORK_PORT_DENIED", plan_network_request,
+            "https://example.com:22/",
+            trust_classification="UNTRUSTED_EXTERNAL", provenance="test",
+        )
 
     def test_t05_policy_bounds_are_enforced(self):
         assert_code(
@@ -189,7 +212,9 @@ class SecurityGatewayV2Tests(unittest.TestCase):
         self.assertTrue(plan.capture_output)
         self.assertEqual(plan.argv, ("status", "--porcelain"))
         self.assertEqual(plan.environment_keys, ("LANG",))
+        self.assertTrue(plan.argv_hash.startswith("sha256:"))
         self.assertEqual(plan.audit_record()["shell"], False)
+        self.assertNotIn("argv", plan.audit_record())
 
     def test_t06_shell_interpreters_are_never_executable_surface(self):
         policy = ProcessPolicy(
@@ -235,11 +260,12 @@ class SecurityGatewayV2Tests(unittest.TestCase):
             allowed_env_keys=("TOKEN",),
         )
         plan = plan_process_invocation(
-            "/usr/bin/git", ["status"], cwd="/workspace",
+            "/usr/bin/git", ["status", f"--token={secret}"], cwd="/workspace",
             env={"TOKEN": secret}, provenance="test", policy=policy,
         )
         self.assertNotIn(secret, repr(plan))
         self.assertNotIn(secret, json.dumps(plan.audit_record(), sort_keys=True))
+        self.assertEqual(plan.audit_record()["argv_count"], 2)
         assert_code(
             self, "PROCESS_ENV_DENIED", plan_process_invocation,
             "/usr/bin/git", ["status"], cwd="/workspace",
