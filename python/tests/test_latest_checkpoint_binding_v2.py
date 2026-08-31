@@ -3,20 +3,37 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from rot_contracts.continuity_files import resolve_latest_checkpoint_path
-from rot_contracts.survival import SurvivalContractError, verify_checkpoint
+from rot_contracts.continuity_files import (
+    resolve_latest_checkpoint_path,
+    verify_latest_checkpoint_binding,
+)
+from rot_contracts.survival import SurvivalContractError
 
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 class LatestCheckpointBindingTests(unittest.TestCase):
-    def test_repository_latest_checkpoint_exists_matches_id_and_binds_to_state(self) -> None:
+    def test_repository_latest_checkpoint_exists_matches_id_and_binds_to_pre_advance_state(self) -> None:
         state = json.loads((ROOT / "state" / "project_state.json").read_text())
         checkpoint_path = resolve_latest_checkpoint_path(ROOT, state)
         checkpoint = json.loads(checkpoint_path.read_text())
-        self.assertEqual(checkpoint["checkpoint_id"], state["latest_checkpoint_id"])
-        verify_checkpoint(checkpoint, state=state)
+        verify_latest_checkpoint_binding(state, checkpoint)
+
+    def test_non_pointer_state_drift_still_fails_closed(self) -> None:
+        state = json.loads((ROOT / "state" / "project_state.json").read_text())
+        checkpoint = json.loads(resolve_latest_checkpoint_path(ROOT, state).read_text())
+        drifted = dict(state)
+        drifted["event_watermark"] = state["event_watermark"] + 1
+        with self.assertRaisesRegex(SurvivalContractError, "state binding mismatch"):
+            verify_latest_checkpoint_binding(drifted, checkpoint)
+
+    def test_checkpoint_identity_mismatch_fails_closed(self) -> None:
+        state = json.loads((ROOT / "state" / "project_state.json").read_text())
+        checkpoint = json.loads(resolve_latest_checkpoint_path(ROOT, state).read_text())
+        checkpoint["checkpoint_id"] = "rot://checkpoint/agentic-os/other"
+        with self.assertRaisesRegex(SurvivalContractError, "identity mismatch"):
+            verify_latest_checkpoint_binding(state, checkpoint)
 
     def test_missing_checkpoint_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
