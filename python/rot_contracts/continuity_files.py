@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from pathlib import Path
 import re
 from typing import Any
 
-from .survival import SurvivalContractError
+from .survival import SurvivalContractError, verify_checkpoint
 
 
 _CHECKPOINT_PREFIX = "rot://checkpoint/agentic-os/"
@@ -33,3 +34,24 @@ def resolve_latest_checkpoint_path(root: Path, state: dict[str, Any]) -> Path:
     if not candidate.is_file():
         raise SurvivalContractError("latest checkpoint file does not exist", code="CHECKPOINT_NOT_FOUND")
     return candidate
+
+
+def verify_latest_checkpoint_binding(state: dict[str, Any], checkpoint: dict[str, Any]) -> None:
+    """Verify the latest checkpoint against the state it sealed before pointer advancement.
+
+    Creating checkpoint C necessarily advances canonical state's `latest_checkpoint_id` from
+    C.parent_checkpoint_id to C.checkpoint_id. Hashing the post-advance state into C would be
+    self-referential. Therefore C binds the immediately pre-advance state; the live state is
+    reconstructed for verification by rewinding only that pointer. Any other state drift still
+    fails through `verify_checkpoint`.
+    """
+    if checkpoint.get("checkpoint_id") != state.get("latest_checkpoint_id"):
+        raise SurvivalContractError("latest checkpoint identity mismatch", code="CHECKPOINT_ID_MISMATCH")
+
+    parent = checkpoint.get("parent_checkpoint_id")
+    if parent is not None and not isinstance(parent, str):
+        raise SurvivalContractError("parent_checkpoint_id must be string or null", code="INVALID_CHECKPOINT_ID")
+
+    sealed_state = deepcopy(state)
+    sealed_state["latest_checkpoint_id"] = parent
+    verify_checkpoint(checkpoint, state=sealed_state)
