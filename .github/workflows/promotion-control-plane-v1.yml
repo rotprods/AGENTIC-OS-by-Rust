@@ -60,7 +60,7 @@ jobs:
         env:
           PYTHONPATH: python
         run: |
-          python -m compileall -q python/rot_contracts/promotion.py scripts/promotion_readiness_v1.py python/tests/test_promotion_readiness_v1.py
+          python -m compileall -q python/rot_contracts/promotion_readiness.py scripts/promotion_readiness_v1.py python/tests/test_promotion_readiness_v1.py
           python -m unittest -v python.tests.test_promotion_readiness_v1
 
       - name: Collect live fail-closed readiness report

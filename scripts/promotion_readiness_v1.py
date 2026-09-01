@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 
-from rot_contracts.promotion import (
+from rot_contracts.promotion_readiness import (
     PromotionReadinessError,
     collect_live_snapshot,
     evaluate_promotion_readiness,

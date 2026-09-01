@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from rot_contracts.promotion import PromotionReadinessError, evaluate_promotion_readiness
+from rot_contracts.promotion_readiness import PromotionReadinessError, evaluate_promotion_readiness
 
 
 SHA = "a" * 40
