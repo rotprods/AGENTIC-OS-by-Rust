@@ -287,6 +287,15 @@ jobs:
           RUST_SBOM_VALIDATE_OUTCOME: ${{ steps.rust_sbom_validate.outcome }}
         run: |
           set -euxo pipefail
+          printf 'identities=%s\n' "$IDENTITY_OUTCOME"
+          printf 'locked_runtime=%s\n' "$RUNTIME_OUTCOME"
+          printf 'python_tools=%s\n' "$PYTHON_TOOLS_OUTCOME"
+          printf 'rust_tools=%s\n' "$RUST_TOOLS_OUTCOME"
+          printf 'rust_audit=%s\n' "$RUST_AUDIT_OUTCOME"
+          printf 'python_audit=%s\n' "$PYTHON_AUDIT_OUTCOME"
+          printf 'typescript_audit=%s\n' "$TYPESCRIPT_AUDIT_OUTCOME"
+          printf 'rust_sbom_generate=%s\n' "$RUST_SBOM_GENERATE_OUTCOME"
+          printf 'rust_sbom_validate=%s\n' "$RUST_SBOM_VALIDATE_OUTCOME"
           for outcome in "$IDENTITY_OUTCOME" "$RUNTIME_OUTCOME" "$PYTHON_TOOLS_OUTCOME" "$RUST_TOOLS_OUTCOME" "$RUST_AUDIT_OUTCOME" "$PYTHON_AUDIT_OUTCOME" "$TYPESCRIPT_AUDIT_OUTCOME" "$RUST_SBOM_GENERATE_OUTCOME" "$RUST_SBOM_VALIDATE_OUTCOME"; do
             test "$outcome" = "success"
           done
