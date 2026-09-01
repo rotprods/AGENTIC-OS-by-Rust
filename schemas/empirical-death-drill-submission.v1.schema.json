@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rot://schema/empirical-death-drill-submission/v1",
+  "title": "Empirical Agent Death Drill Submission V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "drill_id",
+    "runtime_id",
+    "session_id",
+    "fresh_context_attestation",
+    "durable_inputs",
+    "forbidden_inputs",
+    "elapsed_seconds",
+    "reconstructed_state"
+  ],
+  "properties": {
+    "drill_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "runtime_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "fresh_context_attestation": {"const": true},
+    "durable_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 4096}
+    },
+    "forbidden_inputs": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "elapsed_seconds": {"type": "number", "minimum": 0},
+    "reconstructed_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "current_objective_id",
+        "observed_source_sha",
+        "event_watermark",
+        "active_workstreams",
+        "active_claims",
+        "blockers",
+        "verified_capabilities",
+        "unverified_capabilities",
+        "next_safe_actions"
+      ],
+      "properties": {
+        "project_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "current_objective_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "observed_source_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "event_watermark": {"type": "integer", "minimum": 0},
+        "active_workstreams": {"$ref": "#/$defs/stringSet"},
+        "active_claims": {"$ref": "#/$defs/stringSet"},
+        "blockers": {"$ref": "#/$defs/stringSet"},
+        "verified_capabilities": {"$ref": "#/$defs/stringSet"},
+        "unverified_capabilities": {"$ref": "#/$defs/stringSet"},
+        "next_safe_actions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "maxLength": 4096}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "stringSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 4096}
+    }
+  }
+}

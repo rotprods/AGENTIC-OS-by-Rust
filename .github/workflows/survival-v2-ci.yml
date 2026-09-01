@@ -1,0 +1,73 @@
+name: Survival V2 Continuity Gate
+
+on:
+  pull_request:
+    branches: [feat/f1-contract-kernel-vnext, main]
+  push:
+    branches: [feat/graph-refactor-v2-survival]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: survival-v2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  continuity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Create isolated hash-locked Python verification environment
+        run: |
+          python - <<'PY'
+          import sys
+          if sys.version_info[:2] != (3, 12):
+              raise SystemExit(f'expected Python 3.12, got {sys.version}')
+          PY
+          python -m venv /tmp/survival-v2-venv
+          /tmp/survival-v2-venv/bin/python -m pip install \
+            --disable-pip-version-check \
+            --require-hashes \
+            --only-binary=:all: \
+            -r requirements/continuity.txt
+          /tmp/survival-v2-venv/bin/python -m pip check
+      - name: Compile Python continuity surface
+        run: /tmp/survival-v2-venv/bin/python -m compileall -q python/rot_contracts python/tests
+      - name: Execute Survival V2 reference, recovery, coordination and schema tests
+        env:
+          PYTHONPATH: python
+        run: /tmp/survival-v2-venv/bin/python -m unittest discover -s python/tests -v
+      - name: Verify machine-readable state and canonical latest checkpoint
+        env:
+          PYTHONPATH: python
+        run: |
+          /tmp/survival-v2-venv/bin/python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator, FormatChecker
+          from rot_contracts.continuity_files import (
+              resolve_latest_checkpoint_path,
+              verify_latest_checkpoint_binding,
+          )
+
+          root = Path('.')
+          state_schema = json.loads((root / 'schemas/survival-project-state.v2.schema.json').read_text())
+          checkpoint_schema = json.loads((root / 'schemas/survival-checkpoint.v2.schema.json').read_text())
+          state = json.loads((root / 'state/project_state.json').read_text())
+
+          errors = list(Draft202012Validator(state_schema, format_checker=FormatChecker()).iter_errors(state))
+          if errors:
+              raise SystemExit('state/project_state.json schema errors: ' + '; '.join(error.message for error in errors))
+
+          checkpoint_path = resolve_latest_checkpoint_path(root, state)
+          checkpoint = json.loads(checkpoint_path.read_text())
+          errors = list(Draft202012Validator(checkpoint_schema, format_checker=FormatChecker()).iter_errors(checkpoint))
+          if errors:
+              raise SystemExit(f'{checkpoint_path} schema errors: ' + '; '.join(error.message for error in errors))
+          verify_latest_checkpoint_binding(state, checkpoint)
+          print(f'validated latest checkpoint: {checkpoint_path}')
+          PY

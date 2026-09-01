@@ -1,0 +1,14 @@
+{
+  "schema_version": "1",
+  "event_type": "work_started",
+  "project_id": "rot://project/agentic-os",
+  "workstream_id": "rot://workstream/agentic-os/graph-refactor-v2-survival",
+  "objective_id": "rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution",
+  "session_id": "rot://session/agentic-os/20260901T1400+0200-cp15-governance-candidate-resolution",
+  "agent_id": "rot://agent/openai/gpt-5.6-sol",
+  "observed_branch": "feat/graph-refactor-v2-survival",
+  "observed_head_sha": "b276ddf2e0f3c82fec11429f28041eb2b0605536",
+  "authority_state": "IMPLEMENTED",
+  "event_watermark": 0,
+  "summary": "Resolve CP01/CP02/CP03 exact governance locators without promoting SHADOW/NO-GO candidates; prove signing-path limits and preserve fail-closed promotion semantics."
+}
