@@ -1,76 +1,118 @@
-# CP15 External Authority Locator Resolution — 2026-09-01
+# CP15 External Authority Resolution & Independent Qualification — 2026-09-01
 
 Authority: evidence projection only. Live GitHub, revision-pinned `rot.knowledge`, machine state/checkpoints and exact-SHA CI outrank this file.
 
 ## Result
 
-CP01, CP02 and CP03 are no longer locator-unknown.
+CP01, CP02 and CP03 are no longer locator-unknown. CP15 now distinguishes three separate facts:
 
-The previously pinned `rot.knowledge/main@621550ddf725c0c3d1e41540ee878be124dfe871` had advanced by eight commits to `6fcd62059f087c88454c555380c6eb37b7ad3ec2`. The exact compare was reviewed before repinning: the delta is prompt-library/validator material and contains no `life-os-control` path change. GitHub reports the new main HEAD as cryptographically verified. CP15 therefore repins the repository-level constitutional/change-control authority to `6fcd62059f087c88454c555380c6eb37b7ad3ec2`; CP01/CP02/CP03 remain independently pinned to the governance candidate revision below.
+1. **locator exactness** — where the versioned governance candidate lives;
+2. **independent qualification** — what immutable runtime candidate has actually executed on an independent GitHub-hosted runner;
+3. **promotion authority** — whether parent governance has explicitly promoted that candidate.
 
-The canonical CP governance surface is `rotprods/rot.knowledge`, branch `feat/rot-life-graph-os-foundation`, observed at exact SHA:
+The first two have advanced materially. The third remains fail-closed.
 
-`94d62493e5347bc6767a5784e5cab597d7a79147`
+## Constitutional repository drift
 
-The branch contains `life-os-control/subsystems/agentic-context-mesh/CHECKPOINT_REGISTRY.json`, which names:
-- `ACM-CP01 — CONTRACT_KERNEL` as `IN_PROGRESS`;
-- `ACM-CP02 — IDENTITY_AUTHORITY` as `OPEN`;
-- `ACM-CP03 — EVENT_LEDGER` as `OPEN`;
-and states that plans, documentation, code volume, test count or model confidence cannot promote a checkpoint without versioned executable evidence.
+The previous `rot.knowledge/main@621550ddf725c0c3d1e41540ee878be124dfe871` pin advanced by eight commits to signed HEAD:
 
-## Exact canonical locators
+`6fcd62059f087c88454c555380c6eb37b7ad3ec2`
 
-### CP01 — contract semantics reference
+The exact compare was reviewed before repinning. The observed delta is prompt-library/validation material and contains no `life-os-control` path change. GitHub reports the new main HEAD as cryptographically verified. The repository-level constitutional/change-control authority is therefore repinned to this SHA.
+
+The canonical ACM governance branch was independently reconciled after new runner evidence and now stands at:
+
+`rotprods/rot.knowledge / feat/rot-life-graph-os-foundation @ 48b0d1eddb83b165237268c4334d6e19bbd969ec`
+
+That revision adds versioned independent-qualification addenda and a current qualification reconciliation state without promoting any checkpoint.
+
+## CP01 — contract semantics reference
+
+Canonical governance locator:
 - repository: `rotprods/rot.knowledge`
 - ref: `feat/rot-life-graph-os-foundation`
-- pinned governance SHA: `94d62493e5347bc6767a5784e5cab597d7a79147`
-- content: `life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP01_HARDENING_ADDENDUM_2026-08-28.md`
-- governance decision: `IN_PROGRESS / SHADOW_ONLY`
-- mapped runtime: `rotprods/mission-control`, `feat/acm-contract-kernel@649cc51478844f62170600c4186ee0ffc221df0c`, PR #2
-- blocker: independent exact-head runner evidence and parent promotion decision remain open.
+- SHA: `48b0d1eddb83b165237268c4334d6e19bbd969ec`
+- content: `life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP01_INDEPENDENT_GITHUB_QUALIFICATION_2026-09-01.md`
 
-### CP02 — canonical identity semantics
+Runtime candidate:
+- repository: `rotprods/mission-control`
+- branch: `feat/acm-contract-kernel`
+- SHA: `649cc51478844f62170600c4186ee0ffc221df0c`
+- PR #2
+
+The original GitHub-hosted runs on 2026-08-28 failed before checkout with no runner/steps. The same immutable candidate was re-executed on 2026-09-01:
+- run `33173677622`
+- successful rerun job `99857494321`
+- checkout/runtime setup: PASS
+- `npm run ci`: **PASS**
+
+Therefore the old `INDEPENDENT_RUNNER_REQUIRED` execution blocker is closed. CP01 still remains `IN_PROGRESS / SHADOW_ONLY` until an explicit governance checkpoint transition/release decision.
+
+## CP02 — canonical identity semantics
+
+Canonical governance locator:
 - repository: `rotprods/rot.knowledge`
 - ref: `feat/rot-life-graph-os-foundation`
-- pinned governance SHA: `94d62493e5347bc6767a5784e5cab597d7a79147`
-- content: `life-os-control/subsystems/agentic-context-mesh/CP02_CONVERGENCE_CANDIDATE_STATE.json`
-- governance decision: `CANDIDATE_PUBLISHED_FORMAL_NO_GO / SHADOW_ONLY`
-- runtime branch independently observed: `rotprods/mission-control`, `feat/acm-identity-authority@60c0bd68d587998564e3dc5a4f5516a134a35317`, live PR #17
-- Git lineage: CP02 is `59` commits ahead and `0` behind CP01 head `649cc514...`; merge base is CP01.
-- stale mirror finding: older Drive text naming mission-control PR #4 is not current topology; PR #4 has been repurposed and must not be used as CP02 lifecycle authority.
+- SHA: `48b0d1eddb83b165237268c4334d6e19bbd969ec`
+- content: `life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP02_MID01_INDEPENDENT_DEEP_2026-09-01.md`
 
-### CP03 — durable event ledger semantics
+Canonical runtime candidate is **not** the old donor `feat/acm-identity-authority` branch. It is:
+- repository: `rotprods/mission-control`
+- branch: `feat/acm-cp02-convergence-mid01`
+- current SHA: `07d94e9ec5b6e36515704e55d83178d1db276f3e`
+
+The first real deep independent execution against predecessor `98ec375f...` passed functional convergence but failed the mandatory 100% line/function coverage threshold for shared canonical-JSON/hash helpers. No threshold was relaxed. A one-file test-only coverage patch produced current candidate `07d94e9...`.
+
+Current candidate evidence:
+- FAST run `33509487746`: **PASS**
+- independent MID01 run `33509532612`, job `99861567852`: **PASS**
+- `npm run deep:convergence`: **PASS**
+- 20-run convergence flake campaign: **PASS**, divergence `0`
+- clean candidate checkout after qualification: **PASS**
+
+Exact candidate inspection and deep execution support closure of CP02 findings F001/F003/F004/F005/F006: opaque canonical IDs, workspace scope, transitive supersession cycle guard, generated resolver contract parity and independent runner execution are present/proven. F002 remains open for parent G-0001 CP-0300 compatibility/sign-off.
+
+Formal `ACM-MID01` is **not auto-promoted**: the independent qualification packet requires one complete machine manifest with changed-line/generic-mutation/security/artifact fields. CP15 does not infer missing fields from the non-authoritative Drive mirror.
+
+## CP03 — durable event-ledger semantics
+
+Canonical governance locator:
 - repository: `rotprods/rot.knowledge`
 - ref: `feat/rot-life-graph-os-foundation`
-- pinned governance SHA: `94d62493e5347bc6767a5784e5cab597d7a79147`
-- content: `life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP03_SQLITE_REFERENCE_WAVE_2026-08-29.md`
-- governance decision: `SHADOW_ONLY / NO_GO_EXTERNAL_AND_PREDECESSOR_GATES_OPEN`
-- mapped runtime: `rotprods/mission-control`, `feat/acm-cp03-sqlite-reference@b91fe7468d3888c30209c704d2c4c66aa9075198`, PR #23
-- runtime machine state explicitly says `durable_event_authority=false`, SQLite is `PERSISTENT_REFERENCE_NOT_GLOBAL_AUTHORITY`, PostgreSQL is disabled, and independent execution remains open.
-- lineage: CP03 and the observed CP02 runtime are diverged; their common merge-base family is CP01. No CP02→CP03 ancestry is claimed.
+- SHA: `48b0d1eddb83b165237268c4334d6e19bbd969ec`
+- content: `life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP03_SQLITE_INDEPENDENT_QUALIFICATION_2026-09-01.md`
 
-## Model correction
+Current runtime candidate:
+- repository: `rotprods/mission-control`
+- branch: `feat/acm-cp03-sqlite-reference`
+- SHA: `1e30b4a023513fae2f87de193b31de0dc1d89b6d`
 
-The former manifest model allowed only `PINNED` or `UNRESOLVED`. That was insufficient once an exact locator was discovered for a candidate whose own governance explicitly denies promotion.
+The first real GitHub-hosted execution of predecessor `b91fe746...` executed 211 tests and found one real defect: malformed runtime JSON leaked a raw canonical-JSON `TypeError` instead of the public typed `INVALID_REQUEST` boundary. The candidate was fixed without changing SQLite/event semantics.
 
-Schema v2 therefore introduces:
+Current candidate evidence:
+- FAST run `33509684541`, job `99862060259`: **PASS**
+- immutable SQLite deep run `33509977149`, job `99863012530`: **PASS**
+- candidate tree clean: **PASS**
+
+The prior independent-execution blocker is closed for this SQLite reference candidate. Authority remains `SHADOW_ONLY`; `durable_event_authority=false`; SQLite remains `PERSISTENT_REFERENCE_NOT_GLOBAL_AUTHORITY`. MID02, PostgreSQL/RLS/backend parity, predecessor governance compatibility, independent architecture/security review and owner promotion remain open.
+
+## Manifest model
+
+`governance/external-authorities.v2.json` uses:
 
 `CANDIDATE_PINNED`
 
 Meaning:
-- repository/ref/SHA/content locator is exact and can be freshness-checked;
+- repository/ref/SHA/content locator is exact and freshness-checkable;
 - explicit promotion blockers are mandatory;
-- it never satisfies `assert_external_governance_ready`;
-- only an explicit governance transition to final `PINNED`, with blockers cleared and exact-head observation, can satisfy promotion.
+- independent executable evidence may exist;
+- it still never satisfies `assert_external_governance_ready`;
+- only an explicit governance transition to final `PINNED`, with blockers cleared, can satisfy promotion.
 
-This converts the CP01/CP02/CP03 problem from **unknown location** to **known exact candidate, intentionally not promotion-qualified** without weakening fail-closed behavior.
+This converts the CP01/02/03 problem from **unknown authority location** into **known exact, independently tested governance candidates whose promotion is still intentionally blocked**.
 
-## Signing probe
+## Signing path probe
 
-An isolated GitHub Contents API probe on branch `probe/github-contents-signing-20260901` produced commit:
+An isolated GitHub Contents API write on branch `probe/github-contents-signing-20260901` produced commit `40bf8eb8c2f10698ffd547cc4bb5d436e3367213` with `verification.verified=false`, `reason=unsigned`.
 
-`40bf8eb8c2f10698ffd547cc4bb5d436e3367213`
-
-GitHub reported `verification.verified=false`, `reason=unsigned`.
-
-Therefore the available GitHub write paths in this runtime do not remove `HEAD_SIGNATURE_UNVERIFIED`. The probe is evidence-only and is not part of the Survival promotion branch.
+Separately, `rot.knowledge/main` demonstrates that native GitHub merge commits can be cryptographically verified. CP15 will therefore test the native GitHub merge path for the Survival integration rather than assuming Contents/Git Data writes can satisfy signed-head policy.
