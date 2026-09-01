@@ -30,19 +30,23 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+
       - name: Pin Python runtime
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+
       - name: Pin Node runtime
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+
       - name: Pin project Rust toolchain
         uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772
         with:
           toolchain: ${{ env.PROJECT_RUST_VERSION }}
           components: rustfmt, clippy
+
       - name: Verify runtime and lock identities
         id: identities
         run: |
@@ -61,6 +65,7 @@ jobs:
           cp requirements/ci.lock /tmp/ci.lock.before
           cp requirements/audit.lock /tmp/audit.lock.before
           cp pnpm-lock.yaml /tmp/pnpm-lock.before
+
       - name: Execute locked Rust/Python/TypeScript qualification
         id: runtime
         continue-on-error: true
@@ -86,6 +91,7 @@ jobs:
           cmp requirements/ci.lock /tmp/ci.lock.before
           cmp requirements/audit.lock /tmp/audit.lock.before
           cmp pnpm-lock.yaml /tmp/pnpm-lock.before
+
       - name: Install hash-locked Python assurance tooling
         id: python_tools
         continue-on-error: true
@@ -93,6 +99,7 @@ jobs:
           set -euxo pipefail
           python -m pip install --disable-pip-version-check --require-hashes -r requirements/audit.lock
           pip-audit --version | grep "$PIP_AUDIT_VERSION"
+
       - name: Install pinned Rust assurance tooling
         id: rust_tools
         continue-on-error: true
@@ -103,12 +110,14 @@ jobs:
           cargo +"$ASSURANCE_RUST_VERSION" install cargo-cyclonedx --version "$CARGO_CYCLONEDX_VERSION" --locked
           cargo deny --version | grep "$CARGO_DENY_VERSION"
           cargo cyclonedx --version | grep "$CARGO_CYCLONEDX_VERSION"
+
       - name: Rust advisory/source/license/bans audit
         id: rust_audit
         continue-on-error: true
         run: |
           set -euxo pipefail
           cargo +"$ASSURANCE_RUST_VERSION" deny --locked check advisories bans sources licenses
+
       - name: Python vulnerability audit and CycloneDX SBOM
         id: python_audit
         continue-on-error: true
@@ -116,6 +125,7 @@ jobs:
           set -euxo pipefail
           mkdir -p cp13-evidence
           pip-audit --require-hashes -r requirements/ci.lock --format cyclonedx-json --output cp13-evidence/python.cdx.json
+
       - name: TypeScript vulnerability and dependency evidence
         id: typescript_audit
         continue-on-error: true
@@ -143,37 +153,56 @@ jobs:
           echo "raw pnpm audit exit=$audit_rc; enforcement is explicit high/critical metadata"
           pnpm --recursive list --depth Infinity --json > cp13-evidence/typescript-dependency-tree.json
           pnpm licenses list --json > cp13-evidence/typescript-licenses.json
-      - name: Generate reproducible Rust CycloneDX SBOMs
-        id: rust_sbom
+
+      - name: Generate Rust CycloneDX SBOMs
+        id: rust_sbom_generate
         continue-on-error: true
         env:
           SOURCE_DATE_EPOCH: '0'
         run: |
           set -euxo pipefail
+          rm -f crates/*/*.cdx.json
+          cargo +"$ASSURANCE_RUST_VERSION" cyclonedx --format json --all --spec-version 1.5
+
+      - name: Validate and collect exact Rust CycloneDX set
+        id: rust_sbom_validate
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euxo pipefail
           rm -rf cp13-evidence/rust
           mkdir -p cp13-evidence/rust
-          cargo +"$ASSURANCE_RUST_VERSION" cyclonedx --format json --all --spec-version 1.5
           python - <<'PY'
-          import json, pathlib, shutil
-          root = pathlib.Path('.')
-          out = root / 'cp13-evidence' / 'rust'
-          count = 0
-          for path in sorted(root.rglob('*.json')):
-              if 'target' in path.parts or 'cp13-evidence' in path.parts:
-                  continue
-              try:
-                  payload = json.loads(path.read_text())
-              except Exception:
-                  continue
+          import json
+          from pathlib import Path
+          import shutil
+
+          expected = [
+              Path('crates/rot-canonical-json/rot-canonical-json.cdx.json'),
+              Path('crates/rot-contracts/rot-contracts.cdx.json'),
+              Path('crates/rot-event/rot-event.cdx.json'),
+              Path('crates/rot-hash/rot-hash.cdx.json'),
+              Path('crates/rot-id/rot-id.cdx.json'),
+              Path('crates/rot-provenance/rot-provenance.cdx.json'),
+              Path('crates/rot-schema-validation/rot-schema-validation.cdx.json'),
+              Path('crates/rot-survival/rot-survival.cdx.json'),
+              Path('crates/rot-temporal/rot-temporal.cdx.json'),
+          ]
+          out = Path('cp13-evidence/rust')
+          for path in expected:
+              if not path.is_file() or path.stat().st_size == 0:
+                  raise SystemExit(f'missing Rust CycloneDX SBOM: {path}')
+              payload = json.loads(path.read_text())
               if payload.get('bomFormat') != 'CycloneDX':
-                  continue
-              rel = str(path).replace('/', '__')
-              shutil.copyfile(path, out / rel)
-              count += 1
-          print(f'collected Rust CycloneDX SBOMs: {count}')
-          if count == 0:
-              raise SystemExit('cargo-cyclonedx emitted no discoverable JSON SBOM')
+                  raise SystemExit(f'invalid CycloneDX document: {path}')
+              destination = out / str(path).replace('/', '__')
+              shutil.copyfile(path, destination)
+          copied = sorted(out.glob('*.json'))
+          if len(copied) != len(expected):
+              raise SystemExit(f'expected {len(expected)} Rust SBOMs, collected {len(copied)}')
+          print(f'validated Rust CycloneDX SBOMs: {len(copied)}')
           PY
+
       - name: Compile machine-readable qualification evidence
         if: always()
         env:
@@ -184,7 +213,8 @@ jobs:
           RUST_AUDIT_OUTCOME: ${{ steps.rust_audit.outcome }}
           PYTHON_AUDIT_OUTCOME: ${{ steps.python_audit.outcome }}
           TYPESCRIPT_AUDIT_OUTCOME: ${{ steps.typescript_audit.outcome }}
-          RUST_SBOM_OUTCOME: ${{ steps.rust_sbom.outcome }}
+          RUST_SBOM_GENERATE_OUTCOME: ${{ steps.rust_sbom_generate.outcome }}
+          RUST_SBOM_VALIDATE_OUTCOME: ${{ steps.rust_sbom_validate.outcome }}
         run: |
           mkdir -p cp13-evidence
           python - <<'PY'
@@ -192,16 +222,48 @@ jobs:
           root = pathlib.Path('.')
           def sha(path): return 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
           payload = {
-            'schema_version':'1','capability':'rot://capability/supply-chain-assurance-cp13',
-            'source_sha':os.environ['GITHUB_SHA'],'run_id':os.environ['GITHUB_RUN_ID'],'authority':'EVIDENCE_ONLY',
-            'toolchains':{'python':os.environ['PYTHON_VERSION'],'node':os.environ['NODE_VERSION'],'pnpm':os.environ['PNPM_VERSION'],'project_rust':os.environ['PROJECT_RUST_VERSION'],'assurance_rust':os.environ['ASSURANCE_RUST_VERSION'],'pip_audit':os.environ['PIP_AUDIT_VERSION'],'cargo_deny':os.environ['CARGO_DENY_VERSION'],'cargo_cyclonedx':os.environ['CARGO_CYCLONEDX_VERSION']},
-            'locks':{'cargo':sha(root/'Cargo.lock'),'python_ci':sha(root/'requirements/ci.lock'),'python_audit':sha(root/'requirements/audit.lock'),'pnpm':sha(root/'pnpm-lock.yaml')},
-            'checks':{'identities':os.environ['IDENTITY_OUTCOME'],'locked_runtime':os.environ['RUNTIME_OUTCOME'],'python_tools':os.environ['PYTHON_TOOLS_OUTCOME'],'rust_tools':os.environ['RUST_TOOLS_OUTCOME'],'rust_audit':os.environ['RUST_AUDIT_OUTCOME'],'python_audit':os.environ['PYTHON_AUDIT_OUTCOME'],'typescript_audit':os.environ['TYPESCRIPT_AUDIT_OUTCOME'],'rust_sbom':os.environ['RUST_SBOM_OUTCOME']},
-            'typescript_sbom':{'status':'DEFERRED','reason':'native pnpm CycloneDX SBOM requires pnpm >=11; CP13 does not justify a package-manager major upgrade solely for SBOM generation','replacement_evidence':['typescript-dependency-tree.json','typescript-licenses.json','typescript-audit.json']}
+            'schema_version':'1',
+            'capability':'rot://capability/supply-chain-assurance-cp13',
+            'source_sha':os.environ['GITHUB_SHA'],
+            'run_id':os.environ['GITHUB_RUN_ID'],
+            'authority':'EVIDENCE_ONLY',
+            'toolchains':{
+              'python':os.environ['PYTHON_VERSION'],
+              'node':os.environ['NODE_VERSION'],
+              'pnpm':os.environ['PNPM_VERSION'],
+              'project_rust':os.environ['PROJECT_RUST_VERSION'],
+              'assurance_rust':os.environ['ASSURANCE_RUST_VERSION'],
+              'pip_audit':os.environ['PIP_AUDIT_VERSION'],
+              'cargo_deny':os.environ['CARGO_DENY_VERSION'],
+              'cargo_cyclonedx':os.environ['CARGO_CYCLONEDX_VERSION']
+            },
+            'locks':{
+              'cargo':sha(root/'Cargo.lock'),
+              'python_ci':sha(root/'requirements/ci.lock'),
+              'python_audit':sha(root/'requirements/audit.lock'),
+              'pnpm':sha(root/'pnpm-lock.yaml')
+            },
+            'checks':{
+              'identities':os.environ['IDENTITY_OUTCOME'],
+              'locked_runtime':os.environ['RUNTIME_OUTCOME'],
+              'python_tools':os.environ['PYTHON_TOOLS_OUTCOME'],
+              'rust_tools':os.environ['RUST_TOOLS_OUTCOME'],
+              'rust_audit':os.environ['RUST_AUDIT_OUTCOME'],
+              'python_audit':os.environ['PYTHON_AUDIT_OUTCOME'],
+              'typescript_audit':os.environ['TYPESCRIPT_AUDIT_OUTCOME'],
+              'rust_sbom_generate':os.environ['RUST_SBOM_GENERATE_OUTCOME'],
+              'rust_sbom_validate':os.environ['RUST_SBOM_VALIDATE_OUTCOME']
+            },
+            'typescript_sbom':{
+              'status':'DEFERRED',
+              'reason':'native pnpm CycloneDX SBOM requires pnpm >=11; CP13 does not justify a package-manager major upgrade solely for SBOM generation',
+              'replacement_evidence':['typescript-dependency-tree.json','typescript-licenses.json','typescript-audit.json']
+            }
           }
           (root/'cp13-evidence/qualification.json').write_text(json.dumps(payload,sort_keys=True,separators=(',',':'))+'\n')
           PY
           find cp13-evidence -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > cp13-evidence/SHA256SUMS
+
       - name: Upload CP13 evidence bundle
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -210,6 +272,7 @@ jobs:
           path: cp13-evidence/
           if-no-files-found: error
           retention-days: 30
+
       - name: Enforce CP13 assurance gate
         if: always()
         env:
@@ -220,9 +283,10 @@ jobs:
           RUST_AUDIT_OUTCOME: ${{ steps.rust_audit.outcome }}
           PYTHON_AUDIT_OUTCOME: ${{ steps.python_audit.outcome }}
           TYPESCRIPT_AUDIT_OUTCOME: ${{ steps.typescript_audit.outcome }}
-          RUST_SBOM_OUTCOME: ${{ steps.rust_sbom.outcome }}
+          RUST_SBOM_GENERATE_OUTCOME: ${{ steps.rust_sbom_generate.outcome }}
+          RUST_SBOM_VALIDATE_OUTCOME: ${{ steps.rust_sbom_validate.outcome }}
         run: |
           set -euxo pipefail
-          for outcome in "$IDENTITY_OUTCOME" "$RUNTIME_OUTCOME" "$PYTHON_TOOLS_OUTCOME" "$RUST_TOOLS_OUTCOME" "$RUST_AUDIT_OUTCOME" "$PYTHON_AUDIT_OUTCOME" "$TYPESCRIPT_AUDIT_OUTCOME" "$RUST_SBOM_OUTCOME"; do
+          for outcome in "$IDENTITY_OUTCOME" "$RUNTIME_OUTCOME" "$PYTHON_TOOLS_OUTCOME" "$RUST_TOOLS_OUTCOME" "$RUST_AUDIT_OUTCOME" "$PYTHON_AUDIT_OUTCOME" "$TYPESCRIPT_AUDIT_OUTCOME" "$RUST_SBOM_GENERATE_OUTCOME" "$RUST_SBOM_VALIDATE_OUTCOME"; do
             test "$outcome" = "success"
           done
