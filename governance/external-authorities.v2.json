@@ -1,0 +1,89 @@
+{
+  "schema_version": "2",
+  "authority": "REFERENCE_MANIFEST_ONLY",
+  "promotion_policy": "FAIL_CLOSED_ON_REQUIRED_UNRESOLVED_OR_DRIFT",
+  "authorities": [
+    {
+      "authority_id": "rot.knowledge",
+      "role": "constitutional_governance_and_change_control",
+      "source_type": "github_repository",
+      "repository_full_name": "rotprods/rot.knowledge",
+      "ref": "main",
+      "pinned_sha": "621550ddf725c0c3d1e41540ee878be124dfe871",
+      "content_path": null,
+      "resolution_status": "PINNED",
+      "required_for_promotion": true
+    },
+    {
+      "authority_id": "CP01",
+      "role": "contract_semantics_reference",
+      "source_type": "github_repository",
+      "repository_full_name": "rotprods/rot.knowledge",
+      "ref": "feat/rot-life-graph-os-foundation",
+      "pinned_sha": "94d62493e5347bc6767a5784e5cab597d7a79147",
+      "content_path": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP01_HARDENING_ADDENDUM_2026-08-28.md",
+      "resolution_status": "CANDIDATE_PINNED",
+      "required_for_promotion": true,
+      "promotion_blockers": [
+        "ACM-CP01 remains IN_PROGRESS / SHADOW_ONLY",
+        "independent exact-head runner execution remains unqualified",
+        "explicit parent-governance promotion decision remains open"
+      ]
+    },
+    {
+      "authority_id": "CP02",
+      "role": "canonical_identity_semantics",
+      "source_type": "github_repository",
+      "repository_full_name": "rotprods/rot.knowledge",
+      "ref": "feat/rot-life-graph-os-foundation",
+      "pinned_sha": "94d62493e5347bc6767a5784e5cab597d7a79147",
+      "content_path": "life-os-control/subsystems/agentic-context-mesh/CP02_CONVERGENCE_CANDIDATE_STATE.json",
+      "resolution_status": "CANDIDATE_PINNED",
+      "required_for_promotion": true,
+      "promotion_blockers": [
+        "ACM-CP02 is CANDIDATE_PUBLISHED_FORMAL_NO_GO / SHADOW_ONLY",
+        "CP01 and CP02 independent exact-head execution remain open",
+        "independent architecture and authority review remains open",
+        "G-0001 CP-0300 compatibility sign-off and owner promotion decision remain open"
+      ]
+    },
+    {
+      "authority_id": "CP03",
+      "role": "durable_event_ledger_semantics",
+      "source_type": "github_repository",
+      "repository_full_name": "rotprods/rot.knowledge",
+      "ref": "feat/rot-life-graph-os-foundation",
+      "pinned_sha": "94d62493e5347bc6767a5784e5cab597d7a79147",
+      "content_path": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP03_SQLITE_REFERENCE_WAVE_2026-08-29.md",
+      "resolution_status": "CANDIDATE_PINNED",
+      "required_for_promotion": true,
+      "promotion_blockers": [
+        "ACM-CP03 remains SHADOW_ONLY and its SQLite backend is not global durable event authority",
+        "ACM-MID01, ACM-MID02 and parent G-0001 compatibility gates remain open",
+        "PostgreSQL/RLS/backend-parity qualification remains open",
+        "independent exact-head execution and owner promotion decision remain open"
+      ]
+    },
+    {
+      "authority_id": "COS2",
+      "role": "graph_semantics_and_algorithms_derived_from_accepted_events",
+      "source_type": "github_repository",
+      "repository_full_name": "rotprods/cos-graph-engine",
+      "ref": "main",
+      "pinned_sha": "3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83",
+      "content_path": null,
+      "resolution_status": "PINNED",
+      "required_for_promotion": true
+    }
+  ],
+  "resolution_notes": [
+    "Schema v2 separates exact locator resolution from promotion qualification through CANDIDATE_PINNED.",
+    "Google Drive ACM operational mirrors were used only to discover candidate locations; live GitHub and revision-pinned rot.knowledge governance were re-read before recording any locator.",
+    "Canonical CP01/CP02/CP03 governance is located in rotprods/rot.knowledge on feat/rot-life-graph-os-foundation at 94d62493e5347bc6767a5784e5cab597d7a79147.",
+    "CP01 runtime evidence maps to rotprods/mission-control feat/acm-contract-kernel at 649cc51478844f62170600c4186ee0ffc221df0c / PR #2 and remains SHADOW_ONLY.",
+    "CP02 runtime evidence maps to rotprods/mission-control feat/acm-identity-authority at 60c0bd68d587998564e3dc5a4f5516a134a35317 / PR #17; older Drive text referring to mission-control PR #4 is stale because PR #4 has been repurposed.",
+    "CP03 runtime evidence maps to rotprods/mission-control feat/acm-cp03-sqlite-reference at b91fe7468d3888c30209c704d2c4c66aa9075198 / PR #23 and explicitly denies global durable-event authority.",
+    "Git history proves CP02 descends from CP01; CP03 and CP02 are not a single linear stack and share CP01-family ancestry rather than a verified CP02-to-CP03 descent.",
+    "CANDIDATE_PINNED entries remain hard promotion blockers until parent governance explicitly promotes them to PINNED with executable evidence."
+  ]
+}
