@@ -1,71 +1,35 @@
 # TASKS — Agent Survival V2
 
-Authority: planning projection. Completion requires implementation + executed evidence + security review + durable state/graph/handoff updates. Reference verification and production qualification are distinct states.
+Authority: planning projection. Reference verification and production qualification are distinct.
 
-## Reconciled status — CP10
-
-- [x] **SV2-001 — Exact-head combined runtime CI**
-  - Latest CP10 implementation candidate: `6992478ada66339470e934052b740cba7db0f2b1`.
-  - Continuity `33439991898`: PASS.
-  - Rust `33439991928`: PASS.
-  - Cross-Language Parity `33439991874`: PASS.
-  - Any later branch head must be requalified; ancestor green is not current proof.
-
-- [x] **SV2-002 — Reconcile/supersede PR topology**
-  - PR #2 and PR #3 are CLOSED/UNMERGED historical/superseded routes.
-  - Canonical train: `main -> PR #1 F1 -> PR #4 Survival V2`.
-
-- [x] **SV2-003 — Survival Rust/TS/Python behavioral parity**
-  - Shared frozen behavioral corpus; structured rejection-code parity; no message-fragment interpretation.
-
-- [x] **SV2-004R — Reference accepted-event store**
-  - Reference replay/idempotency/conflict semantics only. Durable writer authority remains unqualified.
-
-- [x] **SV2-005R — COS one-way projection adapter**
-  - Derived/non-authoritative; no reverse write.
-
-- [x] **SV2-006R — Claims/barriers coordination reference**
-  - Leases, semantic conflicts and monotonic fencing reference tested.
-
-- [x] **SV2-007R — ContextPack compiler/invalidation reference**
-  - Revision seals + `UNTRUSTED_DATA` + structural bounds. Remains `CACHE_ONLY`.
-
-- [ ] **SV2-008 — Empirical agent death drill — P1 HARD GATE**
-  - Verifier/schema/protocol: VERIFIED.
-  - Real fresh zero-context successor <=300s: NOT RUN.
-  - Current CP10 runtime is not independent; no synthetic submission was produced.
-
-- [ ] **SV2-009 — Continuity security gauntlet — P1 PARTIALLY EXECUTED**
-  - Existing: T03 and T09/T12/T13/T14/T15/T16 executable coverage.
-  - CP10 VERIFIED_REFERENCE at `6992478...`: T01/T02 malicious external-content envelope/corpus; T05 URL/SSRF planning boundary; T06 argv-only process planning boundary.
-  - The CP10 planners perform no network/process I/O and do not qualify an executor.
-  - Remaining: T17 Rust/Python reproducibility/audit/SBOM/provenance; broader deterministic property/fuzz corpus; T20 empirical drill; actual executor-specific gates if those capabilities are introduced; final exact-candidate gauntlet.
-
-- [ ] **SV2-010 — Bootstrap/operator UX**
-  - Target commands remain `init/status/context/claim/checkpoint/handoff/recover/doctor`.
-  - Safe non-dangerous primitives may be wrapped next; network/process execution remains unauthorized.
-
-- [x] **SV2-011 — TypeScript supply-chain reproducibility**
-  - Frozen pnpm lock/install exists.
-  - Rust/Python/T17 assurance remains open under SV2-009.
-
-- [ ] **SV2-012 — External governance manifest — IMPLEMENTED / BLOCKED_EXTERNAL**
-  - `rot.knowledge` and `COS2` revision pins remain valid from the durable manifest.
-  - CP01/CP02/CP03 remain `UNRESOLVED`.
-  - CP10 repeated authoritative search and found no unique locator; an unrelated `Clever-Agent` CP01 was rejected as a name collision.
-  - Never infer missing locators.
-
-- [ ] **SV2-013 — Durable accepted-event authority**
-  - Event watermark stays `0`.
-  - Start only after empirical, governance, security and exact-candidate gates.
+## Reconciled status — CP13
+- [x] **SV2-001 — Exact-head combined runtime CI** — semantic candidate `b95de944...` passed Continuity, Rust, Parity, Property Union, Operator CLI and Supply Chain. Every later SHA requires all applicable gates again.
+- [x] **SV2-002 — PR topology** — canonical train remains PR #1 -> PR #4; CP13 lanes #8/#10/#11 integrated without force; superseded lanes preserved as history.
+- [x] **SV2-003 — Rust/TS/Python behavioral parity**.
+- [x] **SV2-004R — Reference accepted-event store** — reference only; durable authority unqualified.
+- [x] **SV2-005R — COS one-way projection adapter**.
+- [x] **SV2-006R — Claims/barriers coordination reference**.
+- [x] **SV2-007R — ContextPack compiler/invalidation reference**.
+- [ ] **SV2-008 — Empirical death drill — HARD GATE** — verifier/schema VERIFIED; real fresh successor NOT RUN.
+- [ ] **SV2-009 — Security gauntlet — HARD GATE**
+  - [x] T01/T02/T03/T05/T06/T09/T12/T13/T14/T15/T16 reference/executable coverage.
+  - [x] T17 exact locks, pinned runtimes/actions, audits and SBOM/evidence gate.
+  - [x] deterministic property union for durable replay/atomicity/fencing.
+  - [ ] T20 genuine independent empirical drill.
+  - [ ] repository required-check/signing enforcement where permissions permit.
+  - [ ] final whole-system exact-candidate gauntlet after external hard gates close.
+- [ ] **SV2-010 — Operator UX — PARTIAL / FAIL-CLOSED**
+  - [x] `status`, `doctor`, `context` read-only.
+  - [ ] `init`, `claim`, `checkpoint`, `handoff` intentionally `AUTHORITY_UNQUALIFIED`.
+  - [ ] `recover` intentionally `CAPABILITY_UNQUALIFIED`.
+- [x] **SV2-011 — Cross-language supply-chain reproducibility** — Cargo/pnpm/Python locks exact; runtime/tooling pins; Action SHA pins; audits and Rust/Python CycloneDX. Native pnpm CycloneDX deferred without independent justification for a major upgrade.
+- [ ] **SV2-012 — External governance manifest — BLOCKED_EXTERNAL** — CP01/CP02/CP03 unresolved; never infer nominal collisions.
+- [ ] **SV2-013 — Durable accepted-event authority** — watermark remains `0`; do not begin qualification until empirical + governance + promotion gates close.
 
 ## Highest-value safe frontier
-1. T17 Rust/Python reproducibility + vulnerability/SBOM/provenance hardening.
-2. Deterministic property/fuzz corpus for event/replay/fencing/checkpoint/authority invariants.
-3. Resolve CP01/CP02/CP03 only if unique authoritative evidence appears.
-4. Run empirical death drill only from a genuinely fresh independent runtime.
-5. Final exact-candidate whole-system gauntlet.
-6. Then qualify a simple single-host durable event writer; distributed complexity remains deferred without a measured trigger.
-
-## Promotion-assurance risk
-The active branch currently has branch protection/status-check enforcement disabled, so exact-head qualification is procedural rather than repository-enforced. Add enforcement before production promotion if repository policy/permissions permit.
+1. Resolve CP01/CP02/CP03 only from unique revision-pinned durable evidence.
+2. Run empirical death drill only from a genuinely fresh independent runtime.
+3. Add repository required-check/signing/provenance enforcement if permissions permit.
+4. Run final exact-candidate adversarial qualification.
+5. Then qualify a simple single-host durable accepted-event writer.
+6. Keep network/process executors and distributed infrastructure deferred until a measured requirement exists.

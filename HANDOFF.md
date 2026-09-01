@@ -1,69 +1,49 @@
-# HANDOFF — GRAPH-REFACTOR-V2 / Agent Survival CP10
+# HANDOFF — GRAPH-REFACTOR-V2 / Agent Survival CP13
 
-Authority: zero-context recovery projection. **VERIFY LIVE TRUTH BEFORE EXECUTION.** This packet invalidates on branch/head/event/claim/contract/governance drift.
+Authority: zero-context recovery projection. **VERIFY LIVE TRUTH BEFORE EXECUTION.** It never outranks live GitHub, machine state/checkpoints, exact-SHA CI or revision-pinned governance evidence.
 
 ## Identity
 - project: `rot://project/agentic-os`
-- objective: `rot://objective/agentic-os/survival-v2-cp10-security-gateways-reference`
+- objective: `rot://objective/agentic-os/survival-v2-cp13-assurance-operator`
 - workstream: `rot://workstream/agentic-os/graph-refactor-v2-survival`
-- checkpoint: `state/checkpoints/cp10-security-gateways-reference-20260831.json`
-- branch: `feat/graph-refactor-v2-survival`
-- active promotion PR: #4, stacked on PR #1
-- F1 base: `015abe49353f744269d10cec7f7d3778a46e963c`
+- checkpoint: `state/checkpoints/cp13-assurance-operator-20260901.json`
+- promotion branch/PR: `feat/graph-refactor-v2-survival` / #4, stacked on PR #1
+- F1 semantic source: `015abe49353f744269d10cec7f7d3778a46e963c`
 - event watermark: `0`
 - whole-system authority: `IMPLEMENTED / SHADOW_ONLY`
 
-## CP10 implemented
-At implementation candidate `6992478ada66339470e934052b740cba7db0f2b1`:
-- Continuity `33439991898`: PASS.
-- Rust `33439991928`: PASS.
-- Cross-Language Parity `33439991874`: PASS.
+## CP13 semantic candidate evidence
+`b95de9444c6c33ba7296db56f416a293a39d6a3a`
 
-New reference surfaces:
-- `python/rot_contracts/security_gateways.py`
-- `python/tests/test_security_gateways_v2.py`
-- `fixtures/security/untrusted-content-v1.json`
-- `docs/SECURITY_GATEWAYS_SURVIVAL_V2.md`
+PASS: Continuity `33454706427`; Rust `33454706438`; Parity `33454706435`; Property `33454706439`; CLI `33454706462`; Supply Chain `33454706523`.
 
-T01/T02 external content is sealed as opaque non-authoritative data. T05 network planning fails closed on schemes, credentials, fragments, trust/provenance, hosts, ports, non-global addresses and bounded redirect/time/size policy; resolved addresses must be revalidated. T06 process planning rejects shells/unlisted executables, enforces cwd/env/time/output bounds and returns argv-only `shell=false` plans.
+Artifact `9781111361`, digest `sha256:891184ffb848fb6b0b640c6bcba96afe1447100f24275e4eb9de6170c639db56`: 9/9 machine checks success, nine Rust CycloneDX 1.5 SBOMs and exact lock identities.
 
-The gauntlet caught audit leakage in the first implementation: raw URL/query and raw argv could be represented in logs. The follow-up hardening removed them from repr/audit surfaces, added argv hashing, deny-domain policy and explicit port policy before CP10 was sealed.
+These runs become ancestor evidence after checkpoint persistence. Re-fetch all six gates on the final branch SHA; store final exact-head qualification as a PR #4 comment rather than another self-invalidating commit.
 
-**No network request, DNS resolver, provider writer, shell or subprocess executor is authorized by CP10.** Real executors remain UNVERIFIED.
+## What changed
+- T17: Rust 1.88.0, `time 0.3.47`, direct `ajv 8.18.0`, exact Cargo/pnpm/Python locks, exact Action SHA pins, cargo-deny/pip-audit/pnpm evidence, Rust/Python CycloneDX. Native TS CycloneDX remains deferred without an independently justified pnpm major upgrade.
+- Property union: exact durable-prefix recovery, duplicate idempotency, rejected-append atomicity, repeated takeover fencing monotonicity.
+- Rust operator CLI read-only: `status`, `doctor`, `context`; all derived/non-authoritative. `doctor` remains partial/reference for checkpoint binding.
+- Rust operator CLI fail-closed: `init`, `claim`, `checkpoint`, `handoff` => `AUTHORITY_UNQUALIFIED`; `recover` => `CAPABILITY_UNQUALIFIED`.
 
 ## Empirical boundary
-This runtime inherited predecessor/chat context. It therefore did **not** qualify as a fresh independent successor and did not run a fake empirical drill. The verifier/measurement harness remains VERIFIED; the real `empirical-zero-context-death-drill` capability remains UNVERIFIED.
+Verifier/schema/harness is VERIFIED. This session inherited predecessor context, so it did not qualify as a fresh independent successor and did not run/fabricate empirical evidence. Real empirical recovery remains `UNVERIFIED / NOT_RUN`.
 
 ## Governance boundary
-- `rot.knowledge/main`: pinned `621550ddf725c0c3d1e41540ee878be124dfe871`.
-- `COS2`: pinned `3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83`.
-- CP01/CP02/CP03: `UNRESOLVED / BLOCKED_EXTERNAL`.
-- CP10 searches found no CP01/02/03 matches in the pinned constitutional repository.
-- A broader owner search surfaced `Clever-Agent` CP01, but inspection proved it means `Forensic upstream inventory` for a different objective. It is a nominal collision, not authority.
+`rot.knowledge/main` pinned `621550ddf725c0c3d1e41540ee878be124dfe871`; COS2 pinned `3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83`; CP01/CP02/CP03 remain `UNRESOLVED / BLOCKED_EXTERNAL`. Never infer locators from names or semantic similarity.
 
-## Concurrency reconciliation
-The active branch stayed at the expected head during both semantic writes; optimistic fast-forward updates succeeded without force. The old `state/session_identity_v2.json` still advertises a 2026-08-29 session as ACTIVE, but there is no corresponding recent heartbeat/completion trail; treat it as a stale projection, not live ownership. CP10 used append-only session events rather than overwriting that pointer.
-
-## Remaining hard blockers
+## Hard blockers
 1. CP01/CP02/CP03 authoritative locators.
 2. Real independent empirical zero-context successor run.
-3. T17 + broader deterministic property/fuzz assurance + final exact-candidate gauntlet.
-4. Durable accepted-event authority. Watermark remains 0.
-
-## Promotion-assurance risks
-- Active branch protection/status-check enforcement is currently disabled.
-- Observed commits are unsigned.
-- Future HTTP execution must connect to the validated/pinned resolved address and revalidate each redirect.
-- Future process execution requires executable-specific argument policy.
+3. Repository required-check/signing enforcement before production promotion if permissions permit.
+4. Durable accepted-event authority; watermark stays 0.
 
 ## Resume recipe
-1. Read `AGENTS.md`, `STATE.md`, `TASKS.md`, `HANDOFF.md`, `state/project_state.json`, the checkpoint named by `latest_checkpoint_id`, `docs/THREAT_MODEL_SURVIVAL_V2.md`, `docs/EMPIRICAL_DEATH_DRILL_V2.md`, `docs/SECURITY_GATEWAYS_SURVIVAL_V2.md`, and `governance/external-authorities.v1.json`.
-2. Re-fetch PR #4 head/base, open competing PRs, active scopes and check runs. Reject stale evidence.
-3. Keep Survival `SHADOW_ONLY`, event watermark `0`, network/process executors UNVERIFIED and distributed infrastructure DEFERRED.
-4. If the current runtime is not genuinely fresh, do not execute or self-attest the empirical drill.
-5. Do not guess CP01/02/03.
-6. Default next non-conflicting workstream: T17 Rust/Python dependency assurance + deterministic property/fuzz corpus.
-7. Before any promotion, require Continuity + Rust + Cross-Language Parity on the same exact final SHA plus applicable security/governance/empirical evidence.
-
-## Next iteration
-Close real uncertainty, not architecture aesthetics. Attack T17/property assurance unless a fresh empirical runtime or uniquely authoritative CP01/02/03 locator becomes available. Preserve exact-SHA evidence and fail closed on promotion.
+1. Read machine state and dynamically resolve `latest_checkpoint_id`.
+2. Re-fetch PR #4 head/base and open topology before mutation.
+3. Reject ancestor CI; require Continuity + Rust + Parity + Supply Chain + Property + CLI on the same current SHA.
+4. Keep watermark 0, Survival SHADOW_ONLY, network/process executors UNVERIFIED and distributed authority DEFERRED.
+5. Do not run empirical from a context-inheriting runtime and do not guess CP01/02/03.
+6. Use the Rust CLI only for read-only diagnostics until writer/recovery capabilities are separately qualified.
+7. After empirical + governance gates close, run final exact-candidate gauntlet; only then begin single-host durable accepted-event writer qualification.

@@ -1,61 +1,45 @@
 # STATE — Agent Survival V2
 
-Authority: human-readable projection only. Live GitHub lifecycle + accepted events/contracts + revision-pinned evidence outrank this file when stale. Reconstruct live truth before mutation.
+Authority: human-readable projection only. Live GitHub lifecycle + machine-readable state/checkpoints + exact-SHA CI + revision-pinned governance evidence outrank this file when stale.
 
 ## Current phase
-`F1_VNEXT_CONTRACT_KERNEL + SURVIVAL_V2_SHADOW / CP10_SECURITY_GATEWAYS_REFERENCE_VERIFIED`
-
-## Current objective
-Close remaining production blockers without crossing authority boundaries: CP01/CP02/CP03 governance resolution, genuine independent empirical recovery, T17/property assurance, final exact-candidate gauntlet, then durable accepted-event qualification.
+`F1_VNEXT_CONTRACT_KERNEL + SURVIVAL_V2_SHADOW / CP13_ASSURANCE_OPERATOR`
 
 ## Canonical topology
-- `main`: bootstrap.
-- PR #1: F1 contract-kernel head/base authority `015abe49353f744269d10cec7f7d3778a46e963c`.
-- PR #2: CLOSED/UNMERGED `SUPERSEDED_UNMERGED_HISTORY`.
-- PR #3: CLOSED/UNMERGED duplicate route.
-- PR #4: sole active Survival V2 route, branch `feat/graph-refactor-v2-survival`, stacked on PR #1.
-- Authoritative event watermark: `0`.
-- Whole-system authority: `IMPLEMENTED / SHADOW_ONLY`.
+- PR #1: F1 base authority `015abe49353f744269d10cec7f7d3778a46e963c`.
+- PR #4: sole active Survival V2 promotion route, branch `feat/graph-refactor-v2-survival`.
+- PR #8/#10/#11: CP13 supply-chain/property/CLI lanes integrated by non-force fast-forward.
+- event watermark: `0`.
+- whole-system authority: `IMPLEMENTED / SHADOW_ONLY`.
 
-## CP10 security-gateway reference evidence
-Implementation candidate `6992478ada66339470e934052b740cba7db0f2b1`:
-- Survival V2 Continuity Gate `33439991898`: PASS.
-- F1 Rust Contract Kernel `33439991928`: PASS, including formatting, clippy and unit tests.
-- F1 Cross-Language Parity `33439991874`: PASS.
+## CP13 semantic candidate
+Pre-persistence candidate: `b95de9444c6c33ba7296db56f416a293a39d6a3a`.
 
-Implemented reference boundaries:
-- T01/T02: deterministic malicious external-content corpus; external payload remains opaque `UNTRUSTED_DATA` with no instruction/evidence/promotion authority.
-- T05: pure URL/network request planner with explicit scheme/method/trust/provenance, host allow/deny, port allowlist, bounded redirects/timeouts/response size, credential/fragment rejection, localhost/non-global rejection and post-resolution IP validation.
-- T06: pure process invocation planner with explicit executable allowlist, hard shell-interpreter rejection, argv-only `shell=false`, cwd/env/time/output bounds and structured rejects.
-- Audit hardening: raw URL/path/query and raw argv are excluded from audit records; argv is represented by count + hash.
+PASS: Continuity `33454706427`; Rust `33454706438`; Parity `33454706435`; Property Union `33454706439`; Operator CLI `33454706462`; Supply Chain `33454706523`.
 
-These are validators/planners only. No HTTP/DNS executor, provider writer, shell, or subprocess executor was authorized or promoted.
+Supply-chain artifact `9781111361`, digest `sha256:891184ffb848fb6b0b640c6bcba96afe1447100f24275e4eb9de6170c639db56`, reports 9/9 checks success and contains nine Rust CycloneDX 1.5 SBOMs.
 
-## Other verified reference capabilities
-- Rust/TypeScript/Python Survival behavioral parity and structured rejection codes.
-- Reference append-only store/replay, one-way COS projection, claims/leases/fencing and ContextPack sealing.
-- Empirical death-drill verifier/schema/measurement harness.
-- T03 high-confidence secret-hygiene gate and T09/T12/T13/T14/T15/T16 security gauntlet.
-- External-authority manifest with revision pins for `rot.knowledge` and `COS2`, failing closed on unresolved required authorities.
-- Frozen pnpm workspace dependency installation.
+Any persistence commit changes the branch SHA. The run IDs above are semantic-candidate evidence only; final exact-head qualification must be re-fetched live and recorded externally on PR #4 so evidence does not invalidate itself.
 
-## Empirical boundary
-The empirical verifier is VERIFIED. `rot://capability/empirical-zero-context-death-drill` is still UNVERIFIED. This CP10 runtime inherited predecessor/chat context and therefore did not execute or fabricate a fresh-successor submission.
+## CP13 completed assurance
+- Rust runtime/MSRV moved to 1.88.0 because patched `time 0.3.47` requires it; `RUSTSEC-2026-0009` is removed.
+- direct TypeScript `ajv` is 8.18.0.
+- Cargo, pnpm and Python CI/audit dependency graphs are exact/hash-bound.
+- Actions are exact-SHA pinned.
+- cargo-deny, pip-audit, pnpm audit/dependency/license evidence and Rust/Python CycloneDX execute in CI.
+- native pnpm CycloneDX remains deliberately deferred rather than forcing a pnpm major upgrade solely for SBOM generation.
+- deterministic durable-store properties add prefix recovery, duplicate idempotency, rejected-append atomicity and repeated takeover fencing.
+- Rust CLI read-only commands: `status`, `doctor`, `context`; all derived/non-authoritative.
+- Rust CLI mutating/recovery commands: `init`, `claim`, `checkpoint`, `handoff`, `recover`; all intentionally fail closed until authority exists.
 
-## Governance boundary
-`rot.knowledge/main` remains pinned to `621550ddf725c0c3d1e41540ee878be124dfe871`; `COS2` remains pinned to `3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83`. Searches for CP01/CP02/CP03 in the pinned constitutional repository returned no matching locator. A broader `Clever-Agent` CP01 was inspected and rejected as a nominal collision (`Forensic upstream inventory`, unrelated objective), not promoted into authority. CP01/CP02/CP03 remain `UNRESOLVED / BLOCKED_EXTERNAL`.
+## Hard blockers
+1. Genuine fresh-runtime empirical zero-context successor drill.
+2. CP01/CP02/CP03 authoritative governance locators.
+3. Durable accepted-event writer qualification; watermark remains `0`.
+4. Repository-level required-check/signing enforcement before production promotion where permissions permit.
 
-## Remaining P1 gaps
-1. T17 Rust/Python dependency reproducibility, vulnerability audit, lock consistency, SBOM/provenance and stronger build/commit provenance.
-2. Broader deterministic property/fuzz corpus for ordering, replay conflict, duplicate identity, stale fencing, checkpoint binding, malformed revisions and authority escalation.
-3. Genuine fresh-runtime empirical death drill.
-4. CP01/CP02/CP03 authoritative locator resolution.
-5. Final exact-candidate whole-system adversarial gauntlet.
-6. Real network/process executors remain UNVERIFIED; if ever needed they require DNS-pinned execution/redirect revalidation and executable-specific argument policy.
-7. Durable accepted-event writer remains unqualified; distributed/multi-host authority remains deferred.
+## Authority ceiling
+Empirical verifier/schema is VERIFIED; real fresh successor is `UNVERIFIED / NOT_RUN`; network/process executors are UNVERIFIED; durable accepted-event writer is UNQUALIFIED; multi-host authority is DEFERRED; whole Survival remains `IMPLEMENTED / SHADOW_ONLY`.
 
-## Repository-enforcement risk
-The active Survival branch currently reports branch protection disabled and required status-check enforcement off. Exact-head qualification is being enforced procedurally by this protocol, not by GitHub rules. Observed commits are also unsigned. Both remain T17/promotion-assurance risks.
-
-## Current executable frontier
-Because CP01/02/03 are externally blocked and this runtime is not empirically independent, the highest-value non-conflicting action is T17 + deterministic property/fuzz assurance. Do not start durable event authority or distributed infrastructure before the hard gates close.
+## Next safe frontier
+Resolve external governance only from unique revision-pinned evidence and run the empirical drill only in a genuinely fresh independent runtime. After both hard gates close, execute the final exact-candidate gauntlet and only then qualify a simple single-host durable accepted-event writer. Do not add distributed infrastructure without a measured trigger.
