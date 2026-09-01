@@ -1,0 +1,4 @@
+GitHub contents API signing probe.
+Base: b276ddf2e0f3c82fec11429f28041eb2b0605536
+Authority: EVIDENCE_ONLY
+Purpose: determine whether the authorized GitHub contents write path produces a cryptographically verified commit before touching the canonical Survival branch.
