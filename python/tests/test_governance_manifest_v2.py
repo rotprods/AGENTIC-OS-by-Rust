@@ -16,7 +16,7 @@ from rot_contracts.survival import SurvivalContractError
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST_PATH = ROOT / "governance" / "external-authorities.v2.json"
 LEGACY_MANIFEST_PATH = ROOT / "governance" / "external-authorities.v1.json"
-GOVERNANCE_CANDIDATE_SHA = "94d62493e5347bc6767a5784e5cab597d7a79147"
+GOVERNANCE_CANDIDATE_SHA = "48b0d1eddb83b165237268c4334d6e19bbd969ec"
 
 
 class GovernanceManifestV2Tests(unittest.TestCase):
@@ -40,9 +40,9 @@ class GovernanceManifestV2Tests(unittest.TestCase):
 
     def test_cp_candidates_are_exactly_located_but_not_promoted(self):
         expected = {
-            "CP01": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP01_HARDENING_ADDENDUM_2026-08-28.md",
-            "CP02": "life-os-control/subsystems/agentic-context-mesh/CP02_CONVERGENCE_CANDIDATE_STATE.json",
-            "CP03": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP03_SQLITE_REFERENCE_WAVE_2026-08-29.md",
+            "CP01": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP01_INDEPENDENT_GITHUB_QUALIFICATION_2026-09-01.md",
+            "CP02": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP02_MID01_INDEPENDENT_DEEP_2026-09-01.md",
+            "CP03": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP03_SQLITE_INDEPENDENT_QUALIFICATION_2026-09-01.md",
         }
         for authority_id, content_path in expected.items():
             item = next(entry for entry in self.manifest["authorities"] if entry["authority_id"] == authority_id)
