@@ -1,0 +1,32 @@
+{
+  "authority": "POLICY_SPECIFICATION_ONLY",
+  "branch": "feat/graph-refactor-v2-survival",
+  "enforcement_status": "EXTERNAL_GITHUB_CONFIGURATION_REQUIRED",
+  "evaluation": "FAIL_CLOSED",
+  "notes": [
+    "This file specifies promotion requirements; it never grants promotion authority.",
+    "A READY report requires the candidate to be the live branch head, the head commit to be cryptographically verified, all required exact-head checks to be green, and either classic branch protection or an applicable active repository ruleset to enforce every required control.",
+    "Unsupported or ambiguous ruleset targeting fails closed."
+  ],
+  "promotion_authority": false,
+  "promotion_pr": 4,
+  "repository": "rotprods/AGENTIC-OS-by-Rust",
+  "required_check_contexts": [
+    "continuity",
+    "rust-contract-kernel",
+    "parity",
+    "durable-store-properties",
+    "operator-cli",
+    "assurance"
+  ],
+  "required_controls": {
+    "enforce_admins": true,
+    "prevent_deletion": true,
+    "prevent_force_push": true,
+    "pull_request": true,
+    "required_signatures": true,
+    "strict_status_checks": true
+  },
+  "required_head_signature": true,
+  "schema_version": "1"
+}
