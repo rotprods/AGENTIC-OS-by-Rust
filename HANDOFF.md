@@ -13,22 +13,13 @@ Authority: zero-context recovery projection. **VERIFY LIVE TRUTH BEFORE EXECUTIO
 - event watermark: `0`
 - whole-system authority: `IMPLEMENTED / SHADOW_ONLY`
 
-## CP15 semantic candidate evidence
-Pre-persistence candidate: `91080a60f70bc9098dfd11bbd4e281345c9398ab`.
-
-PASS:
-- Property Union `33513766213`
-- Operator CLI `33513766240`
-- Supply Chain `33513766209`
-
-Supply Chain also executes the locked Rust/Python/TypeScript qualification and all CP13 assurance tooling. These become ancestor evidence after continuity persistence. Never reuse them as final-head proof.
-
 ## Governance truth
 Manifest: `governance/external-authorities.v2.json`.
 
 Repository-level constitutional pin:
-- `rot.knowledge/main@6fcd62059f087c88454c555380c6eb37b7ad3ec2`
-- this repin followed an exact eight-commit drift audit; no ACM governance path changed.
+- `rot.knowledge/main@afe43178ae492980ad0dead1b727b3092cfc5a13`
+- signed by GitHub;
+- the initial eight-commit drift to `6fcd6205...` and the later one-commit drift to `afe43178...` were both exact-compared; neither touched Agentic Context Mesh governance.
 
 Canonical ACM governance:
 - `rot.knowledge/feat/rot-life-graph-os-foundation@48b0d1eddb83b165237268c4334d6e19bbd969ec`
@@ -40,17 +31,15 @@ CP candidate locators:
 
 All three are `CANDIDATE_PINNED`, not final `PINNED` authority.
 
-Runtime evidence behind the governance:
+Runtime evidence:
 - CP01 `mission-control@649cc514...`: GitHub-hosted rerun job `99857494321`, `npm run ci` PASS.
-- CP02 canonical convergence `mission-control@07d94e9e...`: FAST `33509487746`; independent `deep:convergence` + 20-run flake `33509532612` PASS. Formal MID01 still requires the complete machine manifest and review; parent CP-0300 compatibility remains open.
-- CP03 SQLite reference `mission-control@1e30b4a0...`: FAST `33509684541`; independent deep `33509977149` PASS after correcting the typed JSON error-boundary defect. Persistent reference only; no global event authority.
+- CP02 canonical convergence `mission-control@07d94e9e...`: FAST `33509487746`; independent `deep:convergence` + 20-run flake `33509532612` PASS. Formal MID01 still requires complete machine manifest/review; parent CP-0300 compatibility remains open.
+- CP03 SQLite reference `mission-control@1e30b4a0...`: FAST `33509684541`; independent deep `33509977149` PASS after correcting a typed JSON error-boundary defect. Persistent reference only; no global event authority.
 
 ## Signing path
-PR #14 was an isolated, non-canonical probe. GitHub-native merge with `expected_head_sha` created:
-`619e2a664257783e6a27d7db0e79eb5c93735ce2`
-with `verification.verified=true`, `reason=valid`, PGP signature, committer GitHub.
+PR #14 was an isolated, non-canonical probe. GitHub-native merge with `expected_head_sha` created `619e2a664257783e6a27d7db0e79eb5c93735ce2` with `verification.verified=true`, `reason=valid`, PGP signature, committer GitHub.
 
-Use the same native merge mechanism for CP15 only after the final persistence candidate is exact-head green. This qualifies the write path, not signature enforcement.
+Use the same native merge mechanism for CP15 only after the final lane candidate is exact-head green. This qualifies the write path, not signature enforcement.
 
 ## Empirical boundary
 This conversation inherited predecessor context. It does not qualify as a fresh independent successor and must not execute/self-attest the empirical death drill. Real empirical recovery remains `UNVERIFIED / NOT_RUN`.
@@ -58,16 +47,16 @@ This conversation inherited predecessor context. It does not qualify as a fresh 
 ## Hard blockers
 1. CP01/CP02/CP03 are exactly located but not promotion-qualified.
 2. Real independent empirical zero-context successor run.
-3. GitHub promotion enforcement and signed-head enforcement.
+3. GitHub promotion enforcement and signed-head enforcement; this connector exposes protection/rulesets read-only only.
 4. Durable accepted-event authority; watermark stays `0`.
 
 ## Resume recipe
 1. Read `state/project_state.json`; dynamically resolve `latest_checkpoint_id`; read that checkpoint.
 2. Re-fetch PR #4, PR #13, their heads/bases and all open competing PRs before mutation.
-3. Re-observe `rot.knowledge/main@6fcd6205...`, ACM governance `48b0d1ed...`, and COS2 `3ae197...`; drift fails closed.
+3. Re-observe `rot.knowledge/main@afe43178ae492980ad0dead1b727b3092cfc5a13`, ACM governance `48b0d1ed...`, and COS2 `3ae197...`; drift fails closed.
 4. Never treat `CANDIDATE_PINNED` as promotion authority.
-5. Reject ancestor CI. On the current CP15 candidate require Property + CLI + Supply and any other workflows triggered by the final persistence delta.
+5. Reject ancestor CI. On the current CP15 candidate require Property + CLI + Supply and every workflow actually triggered by the final delta.
 6. Integrate CP15 through the GitHub-native signed merge path with expected head. Do not force-update canonical.
-7. On the resulting canonical SHA verify the commit signature and require Continuity + Rust + Parity + Supply + Property + CLI; then run/re-run Promotion Control Plane Readiness on that same SHA.
+7. On the resulting canonical SHA verify the commit signature and require Continuity + Rust + Cross-Language Parity + Supply + Property + CLI; then run/re-run Promotion Control Plane Readiness on that same SHA.
 8. Keep promotion BLOCKED until GitHub enforcement, CP governance promotion and empirical recovery hard gates all close.
 9. Keep watermark 0; durable writer/network/process/multi-host authority remain unqualified.

@@ -3,7 +3,7 @@
 Authority: planning projection. Reference verification, exact locator resolution and production qualification are distinct.
 
 ## Reconciled status — CP15
-- [x] **SV2-001 — Exact-head combined runtime CI** — CP15 semantic candidate `91080a60...` passed Property Union, Operator CLI and complete Supply Chain assurance; persistence/final integration SHAs must be qualified again.
+- [x] **SV2-001 — Exact-head runtime qualification infrastructure** — CP15 semantic and persistence candidates are continuously requalified after every material change; ancestor CI is never reused as final proof.
 - [x] **SV2-002 — PR topology** — canonical train remains PR #1 -> PR #4; CP15 lane is PR #13. PR #14 is isolated signing evidence only.
 - [x] **SV2-003 — Rust/TS/Python behavioral parity**.
 - [x] **SV2-004R — Reference accepted-event store** — reference only; durable authority unqualified.
@@ -27,7 +27,7 @@ Authority: planning projection. Reference verification, exact locator resolution
   - [ ] `recover` intentionally `CAPABILITY_UNQUALIFIED`.
 - [x] **SV2-011 — Cross-language supply-chain reproducibility** — Cargo/pnpm/Python locks exact; runtime/tooling pins; Action SHA pins; audits and Rust/Python CycloneDX. Native pnpm CycloneDX remains explicitly deferred.
 - [ ] **SV2-012 — External governance manifest — LOCATORS RESOLVED / PROMOTION BLOCKED**
-  - [x] `rot.knowledge/main` current signed pin audited: `6fcd62059...`.
+  - [x] `rot.knowledge/main` current signed pin audited through `afe43178ae492980ad0dead1b727b3092cfc5a13`.
   - [x] CP01 exact canonical governance document pinned at `48b0d1ed...`.
   - [x] CP02 exact canonical governance document pinned at `48b0d1ed...`.
   - [x] CP03 exact canonical governance document pinned at `48b0d1ed...`.
@@ -38,10 +38,9 @@ Authority: planning projection. Reference verification, exact locator resolution
 - [ ] **SV2-013 — Durable accepted-event authority** — watermark remains `0`; do not begin qualification until empirical + governance-promotion + GitHub promotion gates close.
 
 ## Highest-value safe frontier
-1. Persist and exact-head qualify CP15, then integrate through GitHub-native PR merge with `expected_head_sha`.
-2. Verify the resulting canonical commit is cryptographically signed and rerun the six required exact-head gates plus Promotion Control Plane Readiness.
-3. Configure required checks + PR/no-force-push/no-deletion/admin + signed-head enforcement through an authorized GitHub control-plane write path.
+1. Exact-head qualify CP15 after the latest benign `rot.knowledge/main` repin, then integrate through GitHub-native PR merge with `expected_head_sha`.
+2. Verify the resulting canonical commit is cryptographically signed and rerun Continuity + Rust + Parity + Supply + Property + CLI plus Promotion Control Plane Readiness on that exact SHA.
+3. Configure required checks + PR/no-force-push/no-deletion/admin + signed-head enforcement through an authorized GitHub control-plane write path; this connector currently exposes those controls read-only only.
 4. Complete CP01/CP02/CP03 promotion governance without confusing exact locator knowledge for authority.
 5. Run the empirical death drill only from a genuinely fresh independent runtime.
 6. Run the final whole-system adversarial qualification, then qualify a simple single-host durable accepted-event writer.
-7. Keep real network/process executors and distributed infrastructure deferred until a measured requirement exists.

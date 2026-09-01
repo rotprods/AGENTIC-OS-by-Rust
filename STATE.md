@@ -13,35 +13,27 @@ Authority: human-readable projection only. Live GitHub lifecycle + machine-reada
 - event watermark: `0`.
 - whole-system authority: `IMPLEMENTED / SHADOW_ONLY`.
 
-## CP15 semantic candidate
-Candidate before continuity persistence: `91080a60f70bc9098dfd11bbd4e281345c9398ab`.
+## CP15 evidence progression
+Pre-persistence semantic candidate `91080a60f70bc9098dfd11bbd4e281345c9398ab` passed Property `33513766213`, CLI `33513766240` and Supply `33513766209`.
 
-PASS on the same SHA:
-- Store Property Union: `33513766213`
-- Operator CLI Read-Only: `33513766240`
-- CP13 Supply Chain Assurance: `33513766209`
-
-Supply Chain completed the locked Rust/Python/TypeScript qualification, cargo-deny, pip-audit, pnpm high/critical audit, Rust/Python SBOM work and final enforcement gate.
-
-Any persistence commit changes the branch SHA. The run IDs above are semantic-candidate evidence; final exact-head proof must be re-fetched after persistence and again after canonical integration.
+Continuity sealing later exposed a missing serialized `checkpoint_id` through the Operator CLI merge-preview smoke test; the checkpoint was corrected without changing runtime semantics. Any later exact-head run supersedes these ancestor runs as integration proof.
 
 ## External governance resolution
 `governance/external-authorities.v2.json` separates exact location from promotion authority.
 
-- `rot.knowledge/main`: `6fcd62059f087c88454c555380c6eb37b7ad3ec2`, final `PINNED` repository-level constitutional/change-control reference after an eight-commit drift audit.
+- `rot.knowledge/main`: current signed repository-level constitutional/change-control pin `afe43178ae492980ad0dead1b727b3092cfc5a13`. The first eight-commit drift from `621550dd...` to `6fcd6205...` and the subsequent one-commit drift to `afe43178...` were audited; neither compare touched Agentic Context Mesh governance.
 - ACM governance revision: `rotprods/rot.knowledge:feat/rot-life-graph-os-foundation@48b0d1eddb83b165237268c4334d6e19bbd969ec`.
 - CP01: exact document located and `CANDIDATE_PINNED`; immutable runtime `649cc514...` independently passed GitHub-hosted `npm run ci`.
 - CP02: exact document located and `CANDIDATE_PINNED`; canonical convergence runtime `07d94e9e...` passed `npm run deep:convergence` plus 20/20 flake runs. Parent `G-0001 CP-0300` compatibility and complete MID01 machine manifest/review remain open.
 - CP03: exact document located and `CANDIDATE_PINNED`; SQLite reference runtime `1e30b4a0...` passed FAST + immutable deep qualification after a real independent run exposed and closed one typed JSON error-boundary defect. MID02/PostgreSQL/RLS/backend parity and independent security review remain open.
 - COS2 remains pinned `3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83`.
 
-`CANDIDATE_PINNED` is never promotion-qualified. Exact locator resolution closes the old `BLOCKED_EXTERNAL` discovery problem but does not authorize CP01/CP02/CP03 as production governance.
+`CANDIDATE_PINNED` is never promotion-qualified. Exact locator resolution closes the old discovery problem but does not authorize CP01/CP02/CP03 as production governance.
 
 ## GitHub signature path
-Isolated PR #14 proved the native GitHub PR merge path can create a cryptographically verified commit:
-`619e2a664257783e6a27d7db0e79eb5c93735ce2`, `verification.verified=true`, `reason=valid`, GitHub PGP signature.
+Isolated PR #14 proved native GitHub PR merge with `expected_head_sha` can create a cryptographically verified commit: `619e2a664257783e6a27d7db0e79eb5c93735ce2`, `verification.verified=true`, `reason=valid`, GitHub PGP signature.
 
-This proves a signed integration mechanism. It does **not** provide branch/ruleset enforcement, signed-head enforcement, or promotion authority. CP15 should use this path with `expected_head_sha`, then the resulting canonical signature must be re-observed live.
+This proves a signed integration mechanism. It does **not** provide branch/ruleset enforcement, signed-head enforcement, or promotion authority.
 
 ## Hard blockers
 1. Genuine fresh-runtime empirical zero-context successor drill.
@@ -53,4 +45,4 @@ This proves a signed integration mechanism. It does **not** provide branch/rules
 External governance candidate locators and the GitHub signed-merge path are verified evidence. Neither promotes the whole system. Empirical recovery remains `UNVERIFIED / NOT_RUN`; network/process executors are UNVERIFIED; durable accepted-event writer is UNQUALIFIED; multi-host authority is DEFERRED; whole Survival remains `IMPLEMENTED / SHADOW_ONLY`.
 
 ## Next safe frontier
-Seal CP15, integrate it through the verified GitHub-native merge path, verify the resulting canonical signature, and rerun all required exact-head gates plus Promotion Control Plane Readiness. Then attack the remaining durable blockers: GitHub enforcement, CP governance promotion obligations, and the genuinely fresh empirical death drill. Do not qualify a durable writer or distributed infrastructure before those gates close.
+Exact-head qualify the final CP15 lane after the `afe43178...` repin, integrate it through the verified GitHub-native merge path, verify the resulting canonical signature, and rerun all required exact-head gates plus Promotion Control Plane Readiness. Then attack the remaining durable blockers: GitHub enforcement, CP governance promotion obligations, and the genuinely fresh empirical death drill.

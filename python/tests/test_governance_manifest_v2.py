@@ -25,7 +25,7 @@ class GovernanceManifestV2Tests(unittest.TestCase):
         cls.manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
         cls.legacy_manifest = json.loads(LEGACY_MANIFEST_PATH.read_text(encoding="utf-8"))
         cls.observed = {
-            "rot.knowledge": "6fcd62059f087c88454c555380c6eb37b7ad3ec2",
+            "rot.knowledge": "afe43178ae492980ad0dead1b727b3092cfc5a13",
             "CP01": GOVERNANCE_CANDIDATE_SHA,
             "CP02": GOVERNANCE_CANDIDATE_SHA,
             "CP03": GOVERNANCE_CANDIDATE_SHA,
