@@ -38,6 +38,7 @@ def main() -> int:
             "schema_version": "1",
             "authority": "DERIVED_NON_AUTHORITATIVE",
             "promotion_authority": False,
+            "candidate_sha": args.candidate_sha,
             "ready": False,
             "status": "ERROR",
             "blockers": [{"code": "READINESS_EVALUATION_ERROR", "detail": str(exc)}],

@@ -48,10 +48,12 @@ def base_snapshot() -> dict:
         "branch": "feat/graph-refactor-v2-survival",
         "default_branch": "main",
         "head_sha": SHA,
+        "branch_protected": False,
         "head_verified": True,
         "classic_protection": None,
         "classic_required_signatures": False,
         "rulesets": [],
+        "control_plane_errors": {},
         "check_runs": successful_checks(),
     }
 
@@ -72,6 +74,7 @@ class PromotionReadinessV1Tests(unittest.TestCase):
 
     def test_classic_protection_can_satisfy_policy(self) -> None:
         snapshot = base_snapshot()
+        snapshot["branch_protected"] = True
         snapshot["classic_required_signatures"] = True
         snapshot["classic_protection"] = {
             "required_status_checks": {"strict": True, "contexts": CONTEXTS, "checks": []},
@@ -125,6 +128,15 @@ class PromotionReadinessV1Tests(unittest.TestCase):
         snapshot["check_runs"] = successful_checks()[:-1]
         report = evaluate_promotion_readiness(policy(), snapshot, SHA)
         self.assertIn("EXACT_HEAD_CHECKS_MISSING", {item["code"] for item in report["blockers"]})
+
+    def test_unobservable_control_plane_fails_closed(self) -> None:
+        snapshot = base_snapshot()
+        snapshot["control_plane_errors"] = {"rulesets": "HTTP_403"}
+        report = evaluate_promotion_readiness(policy(), snapshot, SHA)
+        codes = {item["code"] for item in report["blockers"]}
+        self.assertFalse(report["ready"])
+        self.assertIn("CONTROL_PLANE_UNOBSERVABLE", codes)
+        self.assertIn("PROMOTION_ENFORCEMENT_MISSING", codes)
 
     def test_ruleset_bypass_actor_fails_admin_enforcement(self) -> None:
         snapshot = base_snapshot()

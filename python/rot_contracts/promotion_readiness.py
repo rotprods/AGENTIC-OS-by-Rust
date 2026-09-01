@@ -194,6 +194,11 @@ def evaluate_promotion_readiness(policy: dict[str, Any], snapshot: dict[str, Any
     if missing:
         block("EXACT_HEAD_CHECKS_MISSING", "missing successful exact-head checks: " + ", ".join(missing))
 
+    control_errors = snapshot.get("control_plane_errors")
+    if isinstance(control_errors, dict) and control_errors:
+        detail = ", ".join(f"{key}={value}" for key, value in sorted(control_errors.items()))
+        block("CONTROL_PLANE_UNOBSERVABLE", "GitHub promotion controls could not be fully read: " + detail)
+
     classic_ok, classic_observed = _classic(required_checks, controls, snapshot)
     ruleset_ok, ruleset_observed = _rulesets(required_checks, controls, snapshot, branch)
     mode = "classic_branch_protection" if classic_ok else "repository_ruleset" if ruleset_ok else None
@@ -213,15 +218,17 @@ def evaluate_promotion_readiness(policy: dict[str, Any], snapshot: dict[str, Any
         "enforcement_mode": mode,
         "blockers": blockers,
         "observations": {
+            "branch_protected": snapshot.get("branch_protected") is True,
             "head_verified": snapshot.get("head_verified") is True,
             "successful_check_contexts": sorted(successes),
+            "control_plane_errors": control_errors if isinstance(control_errors, dict) else {},
             "classic_branch_protection": classic_observed,
             "repository_rulesets": ruleset_observed,
         },
     }
 
 
-def _get(path: str, token: str | None, allow_404: bool = False) -> Any:
+def _headers(token: str | None) -> dict[str, str]:
     headers = {
         "Accept": "application/vnd.github+json",
         "User-Agent": "rot-promotion-readiness-v1",
@@ -229,13 +236,23 @@ def _get(path: str, token: str | None, allow_404: bool = False) -> Any:
     }
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
+def _get(path: str, token: str | None) -> Any:
     try:
-        with urlopen(Request("https://api.github.com" + path, headers=headers), timeout=20) as response:
+        with urlopen(Request("https://api.github.com" + path, headers=_headers(token)), timeout=20) as response:
             return json.load(response)
     except HTTPError as exc:
-        if allow_404 and exc.code == 404:
-            return None
         raise PromotionReadinessError(f"GitHub API HTTP {exc.code}: {path}") from exc
+
+
+def _optional_get(path: str, token: str | None) -> tuple[Any, str | None]:
+    try:
+        with urlopen(Request("https://api.github.com" + path, headers=_headers(token)), timeout=20) as response:
+            return json.load(response), None
+    except HTTPError as exc:
+        return None, f"HTTP_{exc.code}"
 
 
 def collect_live_snapshot(policy: dict[str, Any], candidate_sha: str, token: str | None = None) -> dict[str, Any]:
@@ -245,19 +262,33 @@ def collect_live_snapshot(policy: dict[str, Any], candidate_sha: str, token: str
     repository_data = _get(f"/repos/{owner}/{repo}", token)
     branch_data = _get(f"/repos/{owner}/{repo}/branches/{encoded_branch}", token)
     checks = _get(f"/repos/{owner}/{repo}/commits/{quote(candidate_sha, safe='')}/check-runs?per_page=100", token)
-    protection = _get(f"/repos/{owner}/{repo}/branches/{encoded_branch}/protection", token, True)
-    signatures = _get(
-        f"/repos/{owner}/{repo}/branches/{encoded_branch}/protection/required_signatures",
-        token,
-        True,
-    )
-    summaries = _get(f"/repos/{owner}/{repo}/rulesets?includes_parents=false&per_page=100", token)
+
+    branch_protected = isinstance(branch_data, dict) and branch_data.get("protected") is True
+    errors: dict[str, str] = {}
+    protection = None
+    signatures = None
+    if branch_protected:
+        protection, error = _optional_get(f"/repos/{owner}/{repo}/branches/{encoded_branch}/protection", token)
+        if error:
+            errors["classic_protection"] = error
+        signatures, error = _optional_get(
+            f"/repos/{owner}/{repo}/branches/{encoded_branch}/protection/required_signatures",
+            token,
+        )
+        if error:
+            errors["classic_required_signatures"] = error
+
+    summaries, error = _optional_get(f"/repos/{owner}/{repo}/rulesets?includes_parents=false&per_page=100", token)
+    if error:
+        errors["rulesets"] = error
     rulesets: list[dict[str, Any]] = []
     if isinstance(summaries, list):
         for summary in summaries:
             if isinstance(summary, dict) and summary.get("target") == "branch" and isinstance(summary.get("id"), int):
-                detail = _get(f"/repos/{owner}/{repo}/rulesets/{summary['id']}", token)
-                if isinstance(detail, dict):
+                detail, detail_error = _optional_get(f"/repos/{owner}/{repo}/rulesets/{summary['id']}", token)
+                if detail_error:
+                    errors[f"ruleset:{summary['id']}"] = detail_error
+                elif isinstance(detail, dict):
                     rulesets.append(detail)
 
     verification = (((branch_data or {}).get("commit") or {}).get("commit") or {}).get("verification") or {}
@@ -267,10 +298,12 @@ def collect_live_snapshot(policy: dict[str, Any], candidate_sha: str, token: str
         "branch": branch,
         "default_branch": repository_data.get("default_branch") if isinstance(repository_data, dict) else None,
         "head_sha": (branch_data.get("commit") or {}).get("sha") if isinstance(branch_data, dict) else None,
+        "branch_protected": branch_protected,
         "head_verified": verification.get("verified") is True,
         "classic_protection": protection,
         "classic_required_signatures": isinstance(signatures, dict) and signatures.get("enabled") is True,
         "rulesets": rulesets,
+        "control_plane_errors": errors,
         "check_runs": [
             {"name": x.get("name"), "status": x.get("status"), "conclusion": x.get("conclusion")}
             for x in raw_checks if isinstance(x, dict)
