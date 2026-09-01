@@ -9,7 +9,7 @@
       "source_type": "github_repository",
       "repository_full_name": "rotprods/rot.knowledge",
       "ref": "main",
-      "pinned_sha": "621550ddf725c0c3d1e41540ee878be124dfe871",
+      "pinned_sha": "6fcd62059f087c88454c555380c6eb37b7ad3ec2",
       "content_path": null,
       "resolution_status": "PINNED",
       "required_for_promotion": true
@@ -79,6 +79,7 @@
   "resolution_notes": [
     "Schema v2 separates exact locator resolution from promotion qualification through CANDIDATE_PINNED.",
     "Google Drive ACM operational mirrors were used only to discover candidate locations; live GitHub and revision-pinned rot.knowledge governance were re-read before recording any locator.",
+    "The previous rot.knowledge/main pin 621550ddf725c0c3d1e41540ee878be124dfe871 advanced by eight commits to signed head 6fcd62059f087c88454c555380c6eb37b7ad3ec2; the exact compare was reviewed and changed prompt-library/validation surfaces only, with no life-os-control path change, so v2 repins the repository-level constitutional/change-control authority without changing CP candidate semantics.",
     "Canonical CP01/CP02/CP03 governance is located in rotprods/rot.knowledge on feat/rot-life-graph-os-foundation at 94d62493e5347bc6767a5784e5cab597d7a79147.",
     "CP01 runtime evidence maps to rotprods/mission-control feat/acm-contract-kernel at 649cc51478844f62170600c4186ee0ffc221df0c / PR #2 and remains SHADOW_ONLY.",
     "CP02 runtime evidence maps to rotprods/mission-control feat/acm-identity-authority at 60c0bd68d587998564e3dc5a4f5516a134a35317 / PR #17; older Drive text referring to mission-control PR #4 is stale because PR #4 has been repurposed.",

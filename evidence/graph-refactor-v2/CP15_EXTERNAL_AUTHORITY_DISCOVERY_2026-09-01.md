@@ -6,7 +6,9 @@ Authority: evidence projection only. Live GitHub, revision-pinned `rot.knowledge
 
 CP01, CP02 and CP03 are no longer locator-unknown.
 
-The canonical governance surface is `rotprods/rot.knowledge`, branch `feat/rot-life-graph-os-foundation`, observed at exact SHA:
+The previously pinned `rot.knowledge/main@621550ddf725c0c3d1e41540ee878be124dfe871` had advanced by eight commits to `6fcd62059f087c88454c555380c6eb37b7ad3ec2`. The exact compare was reviewed before repinning: the delta is prompt-library/validator material and contains no `life-os-control` path change. GitHub reports the new main HEAD as cryptographically verified. CP15 therefore repins the repository-level constitutional/change-control authority to `6fcd62059f087c88454c555380c6eb37b7ad3ec2`; CP01/CP02/CP03 remain independently pinned to the governance candidate revision below.
+
+The canonical CP governance surface is `rotprods/rot.knowledge`, branch `feat/rot-life-graph-os-foundation`, observed at exact SHA:
 
 `94d62493e5347bc6767a5784e5cab597d7a79147`
 
