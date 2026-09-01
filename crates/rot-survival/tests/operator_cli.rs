@@ -1,6 +1,6 @@
 use serde_json::{Value, json};
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -17,7 +17,7 @@ fn temp_root(label: &str) -> PathBuf {
     root
 }
 
-fn write_fixture(root: &PathBuf, checkpoint_id: &str) {
+fn write_fixture(root: &Path, checkpoint_id: &str) {
     let source = "a".repeat(40);
     let state = json!({
         "schema_version": "2",
@@ -60,7 +60,7 @@ fn write_fixture(root: &PathBuf, checkpoint_id: &str) {
     }
 }
 
-fn run(root: &PathBuf, command: &str) -> Output {
+fn run(root: &Path, command: &str) -> Output {
     Command::new(env!("CARGO_BIN_EXE_rot-survival"))
         .args(["--root", root.to_str().expect("utf8 temp root"), command])
         .output()
