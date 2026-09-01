@@ -1,10 +1,10 @@
 # TASKS — Agent Survival V2
 
-Authority: planning projection. Reference verification and production qualification are distinct.
+Authority: planning projection. Reference verification, exact locator resolution and production qualification are distinct.
 
-## Reconciled status — CP14
-- [x] **SV2-001 — Exact-head combined runtime CI** — CP14 semantic candidate `5baf4b2c...` passed Continuity, Rust, Parity, Property Union, Operator CLI and Supply Chain. Every later SHA requires all applicable gates again.
-- [x] **SV2-002 — PR topology** — canonical train remains PR #1 -> PR #4; CP14 lane #12 integrated without force; superseded lanes preserved as history.
+## Reconciled status — CP15
+- [x] **SV2-001 — Exact-head combined runtime CI** — CP15 semantic candidate `91080a60...` passed Property Union, Operator CLI and complete Supply Chain assurance; persistence/final integration SHAs must be qualified again.
+- [x] **SV2-002 — PR topology** — canonical train remains PR #1 -> PR #4; CP15 lane is PR #13. PR #14 is isolated signing evidence only.
 - [x] **SV2-003 — Rust/TS/Python behavioral parity**.
 - [x] **SV2-004R — Reference accepted-event store** — reference only; durable authority unqualified.
 - [x] **SV2-005R — COS one-way projection adapter**.
@@ -16,22 +16,32 @@ Authority: planning projection. Reference verification and production qualificat
   - [x] T17 exact locks, pinned runtimes/actions, audits and SBOM/evidence gate.
   - [x] deterministic property union for durable replay/atomicity/fencing.
   - [x] fail-closed promotion control-plane policy + live readiness observer.
+  - [x] isolated GitHub-native merge path empirically proven to produce a verified PGP-signed commit.
   - [ ] T20 genuine independent empirical drill.
   - [ ] external GitHub required-check/PR/no-force-push/no-deletion/admin enforcement.
-  - [ ] cryptographically verified/signed canonical head and signature enforcement.
+  - [ ] signed-head enforcement and final canonical signature re-observation after CP15 integration.
   - [ ] final whole-system exact-candidate gauntlet after external hard gates close.
 - [ ] **SV2-010 — Operator UX — PARTIAL / FAIL-CLOSED**
   - [x] `status`, `doctor`, `context` read-only.
   - [ ] `init`, `claim`, `checkpoint`, `handoff` intentionally `AUTHORITY_UNQUALIFIED`.
   - [ ] `recover` intentionally `CAPABILITY_UNQUALIFIED`.
-- [x] **SV2-011 — Cross-language supply-chain reproducibility** — Cargo/pnpm/Python locks exact; runtime/tooling pins; Action SHA pins; audits and Rust/Python CycloneDX. Native pnpm CycloneDX deferred without independent justification for a major upgrade.
-- [ ] **SV2-012 — External governance manifest — BLOCKED_EXTERNAL** — CP01/CP02/CP03 unresolved; never infer nominal collisions.
-- [ ] **SV2-013 — Durable accepted-event authority** — watermark remains `0`; do not begin qualification until empirical + governance + GitHub promotion gates close.
+- [x] **SV2-011 — Cross-language supply-chain reproducibility** — Cargo/pnpm/Python locks exact; runtime/tooling pins; Action SHA pins; audits and Rust/Python CycloneDX. Native pnpm CycloneDX remains explicitly deferred.
+- [ ] **SV2-012 — External governance manifest — LOCATORS RESOLVED / PROMOTION BLOCKED**
+  - [x] `rot.knowledge/main` current signed pin audited: `6fcd62059...`.
+  - [x] CP01 exact canonical governance document pinned at `48b0d1ed...`.
+  - [x] CP02 exact canonical governance document pinned at `48b0d1ed...`.
+  - [x] CP03 exact canonical governance document pinned at `48b0d1ed...`.
+  - [x] manifest v2 encodes all three as `CANDIDATE_PINNED`, never as final authority.
+  - [ ] CP01 explicit governance release transition.
+  - [ ] CP02 parent CP-0300 compatibility + complete MID01 machine manifest + independent review/owner decision.
+  - [ ] CP03 predecessor compatibility + MID02 + PostgreSQL/RLS/backend parity + independent architecture/security review/owner decision.
+- [ ] **SV2-013 — Durable accepted-event authority** — watermark remains `0`; do not begin qualification until empirical + governance-promotion + GitHub promotion gates close.
 
 ## Highest-value safe frontier
-1. Apply signed-head + required-check/PR/no-force-push/no-deletion/admin enforcement through an authorized GitHub write path; rerun the observer and require `READY`.
-2. Resolve CP01/CP02/CP03 only from unique revision-pinned durable evidence.
-3. Run empirical death drill only from a genuinely fresh independent runtime.
-4. Run final exact-candidate adversarial qualification only after all three external hard-gate families close.
-5. Then qualify a simple single-host durable accepted-event writer.
-6. Keep network/process executors and distributed infrastructure deferred until a measured requirement exists.
+1. Persist and exact-head qualify CP15, then integrate through GitHub-native PR merge with `expected_head_sha`.
+2. Verify the resulting canonical commit is cryptographically signed and rerun the six required exact-head gates plus Promotion Control Plane Readiness.
+3. Configure required checks + PR/no-force-push/no-deletion/admin + signed-head enforcement through an authorized GitHub control-plane write path.
+4. Complete CP01/CP02/CP03 promotion governance without confusing exact locator knowledge for authority.
+5. Run the empirical death drill only from a genuinely fresh independent runtime.
+6. Run the final whole-system adversarial qualification, then qualify a simple single-host durable accepted-event writer.
+7. Keep real network/process executors and distributed infrastructure deferred until a measured requirement exists.
