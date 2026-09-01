@@ -20,14 +20,13 @@
       "source_type": "github_repository",
       "repository_full_name": "rotprods/rot.knowledge",
       "ref": "feat/rot-life-graph-os-foundation",
-      "pinned_sha": "94d62493e5347bc6767a5784e5cab597d7a79147",
-      "content_path": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP01_HARDENING_ADDENDUM_2026-08-28.md",
+      "pinned_sha": "48b0d1eddb83b165237268c4334d6e19bbd969ec",
+      "content_path": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP01_INDEPENDENT_GITHUB_QUALIFICATION_2026-09-01.md",
       "resolution_status": "CANDIDATE_PINNED",
       "required_for_promotion": true,
       "promotion_blockers": [
-        "ACM-CP01 remains IN_PROGRESS / SHADOW_ONLY",
-        "independent exact-head runner execution remains unqualified",
-        "explicit parent-governance promotion decision remains open"
+        "ACM-CP01 independent GitHub-hosted execution now passes but checkpoint governance remains IN_PROGRESS / SHADOW_ONLY",
+        "explicit governance checkpoint transition/release decision remains open"
       ]
     },
     {
@@ -36,15 +35,14 @@
       "source_type": "github_repository",
       "repository_full_name": "rotprods/rot.knowledge",
       "ref": "feat/rot-life-graph-os-foundation",
-      "pinned_sha": "94d62493e5347bc6767a5784e5cab597d7a79147",
-      "content_path": "life-os-control/subsystems/agentic-context-mesh/CP02_CONVERGENCE_CANDIDATE_STATE.json",
+      "pinned_sha": "48b0d1eddb83b165237268c4334d6e19bbd969ec",
+      "content_path": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP02_MID01_INDEPENDENT_DEEP_2026-09-01.md",
       "resolution_status": "CANDIDATE_PINNED",
       "required_for_promotion": true,
       "promotion_blockers": [
-        "ACM-CP02 is CANDIDATE_PUBLISHED_FORMAL_NO_GO / SHADOW_ONLY",
-        "CP01 and CP02 independent exact-head execution remain open",
-        "independent architecture and authority review remains open",
-        "G-0001 CP-0300 compatibility sign-off and owner promotion decision remain open"
+        "ACM-CP02 remains SHADOW_ONLY and formal MID01 review is pending a complete machine manifest",
+        "G-0001 CP-0300 compatibility/sign-off remains open",
+        "independent architecture/authority review and authorized owner promotion decision remain open"
       ]
     },
     {
@@ -53,15 +51,15 @@
       "source_type": "github_repository",
       "repository_full_name": "rotprods/rot.knowledge",
       "ref": "feat/rot-life-graph-os-foundation",
-      "pinned_sha": "94d62493e5347bc6767a5784e5cab597d7a79147",
-      "content_path": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP03_SQLITE_REFERENCE_WAVE_2026-08-29.md",
+      "pinned_sha": "48b0d1eddb83b165237268c4334d6e19bbd969ec",
+      "content_path": "life-os-control/subsystems/agentic-context-mesh/evidence/ACM_CP03_SQLITE_INDEPENDENT_QUALIFICATION_2026-09-01.md",
       "resolution_status": "CANDIDATE_PINNED",
       "required_for_promotion": true,
       "promotion_blockers": [
-        "ACM-CP03 remains SHADOW_ONLY and its SQLite backend is not global durable event authority",
-        "ACM-MID01, ACM-MID02 and parent G-0001 compatibility gates remain open",
+        "ACM-CP03 remains SHADOW_ONLY and SQLite remains PERSISTENT_REFERENCE_NOT_GLOBAL_AUTHORITY",
+        "formal predecessor CP01/CP02 governance compatibility and ACM-MID02 remain open",
         "PostgreSQL/RLS/backend-parity qualification remains open",
-        "independent exact-head execution and owner promotion decision remain open"
+        "independent architecture/security review and authorized owner promotion decision remain open"
       ]
     },
     {
@@ -78,13 +76,12 @@
   ],
   "resolution_notes": [
     "Schema v2 separates exact locator resolution from promotion qualification through CANDIDATE_PINNED.",
-    "Google Drive ACM operational mirrors were used only to discover candidate locations; live GitHub and revision-pinned rot.knowledge governance were re-read before recording any locator.",
-    "The previous rot.knowledge/main pin 621550ddf725c0c3d1e41540ee878be124dfe871 advanced by eight commits to signed head 6fcd62059f087c88454c555380c6eb37b7ad3ec2; the exact compare was reviewed and changed prompt-library/validation surfaces only, with no life-os-control path change, so v2 repins the repository-level constitutional/change-control authority without changing CP candidate semantics.",
-    "Canonical CP01/CP02/CP03 governance is located in rotprods/rot.knowledge on feat/rot-life-graph-os-foundation at 94d62493e5347bc6767a5784e5cab597d7a79147.",
-    "CP01 runtime evidence maps to rotprods/mission-control feat/acm-contract-kernel at 649cc51478844f62170600c4186ee0ffc221df0c / PR #2 and remains SHADOW_ONLY.",
-    "CP02 runtime evidence maps to rotprods/mission-control feat/acm-identity-authority at 60c0bd68d587998564e3dc5a4f5516a134a35317 / PR #17; older Drive text referring to mission-control PR #4 is stale because PR #4 has been repurposed.",
-    "CP03 runtime evidence maps to rotprods/mission-control feat/acm-cp03-sqlite-reference at b91fe7468d3888c30209c704d2c4c66aa9075198 / PR #23 and explicitly denies global durable-event authority.",
-    "Git history proves CP02 descends from CP01; CP03 and CP02 are not a single linear stack and share CP01-family ancestry rather than a verified CP02-to-CP03 descent.",
-    "CANDIDATE_PINNED entries remain hard promotion blockers until parent governance explicitly promotes them to PINNED with executable evidence."
+    "Google Drive ACM operational mirrors were used only to discover candidate locations; live GitHub and revision-pinned rot.knowledge governance were re-read before recording or updating any locator.",
+    "The previous rot.knowledge/main pin 621550ddf725c0c3d1e41540ee878be124dfe871 advanced by eight commits to signed head 6fcd62059f087c88454c555380c6eb37b7ad3ec2; the exact compare changed prompt-library/validation surfaces only and no life-os-control path, so the repository-level constitutional/change-control pin was refreshed without silently changing ACM semantics.",
+    "Canonical CP01/CP02/CP03 governance was reconciled on rotprods/rot.knowledge feat/rot-life-graph-os-foundation at 48b0d1eddb83b165237268c4334d6e19bbd969ec after new independent GitHub-hosted execution evidence became available.",
+    "CP01 runtime candidate remains rotprods/mission-control feat/acm-contract-kernel at 649cc51478844f62170600c4186ee0ffc221df0c / PR #2; rerun job 99857494321 executed npm run ci successfully on the immutable candidate, closing the old independent-runner execution blocker without self-promoting CP01.",
+    "CP02 canonical runtime candidate is rotprods/mission-control feat/acm-cp02-convergence-mid01 at 07d94e9ec5b6e36515704e55d83178d1db276f3e, not the older feat/acm-identity-authority donor branch. Independent run 33509532612 executed npm run deep:convergence plus a 20-run flake campaign successfully after a test-only coverage closure; formal MID01 remains review-pending until its complete machine manifest is reconciled.",
+    "CP03 runtime candidate is rotprods/mission-control feat/acm-cp03-sqlite-reference at 1e30b4a023513fae2f87de193b31de0dc1d89b6d. The first real independent execution of predecessor b91fe746... exposed one typed JSON error-boundary defect; the fixed candidate passed FAST and immutable SQLite deep qualification, while durable_event_authority remains false.",
+    "CANDIDATE_PINNED entries remain hard promotion blockers until their own governance explicitly transitions them to final PINNED authority with all promotion blockers cleared."
   ]
 }
