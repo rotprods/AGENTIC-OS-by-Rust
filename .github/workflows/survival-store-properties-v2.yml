@@ -1,0 +1,32 @@
+name: Survival Store Property Union V2
+
+on:
+  push:
+    branches: [feat/property-union-v2, feat/graph-refactor-v2-survival]
+  pull_request:
+    branches: [feat/cp13-supply-chain-v2, feat/graph-refactor-v2-survival]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: survival-store-properties-v2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  durable-store-properties:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.13.15'
+      - name: Compile durable-store property surface
+        run: python -m compileall -q python/rot_contracts python/tests/test_survival_store_properties_v2.py
+      - name: Execute durable-store property union
+        env:
+          PYTHONPATH: python
+        run: python -m unittest python.tests.test_survival_store_properties_v2 -v
