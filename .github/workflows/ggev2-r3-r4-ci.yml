@@ -26,9 +26,13 @@ jobs:
         run: |
           python -m unittest -v \
             python.tests.test_ggev2_swarm \
+            python.tests.test_ggev2_cross_runtime \
             python.tests.test_ggev2_incidents \
             python.tests.test_ggev2_collectors \
             python.tests.test_ggev2
       - name: Authority boundary static check
         run: |
-          ! grep -R "authority_class.*CANONICAL\|promotion_authority.*true\|accepted_event.*true" python/rot_ai/ggev2_swarm.py python/rot_ai/ggev2_incidents.py
+          ! grep -R "authority_class.*CANONICAL\|promotion_authority.*true\|accepted_event.*true" \
+            python/rot_ai/ggev2_swarm.py \
+            python/rot_ai/ggev2_cross_runtime.py \
+            python/rot_ai/ggev2_incidents.py
