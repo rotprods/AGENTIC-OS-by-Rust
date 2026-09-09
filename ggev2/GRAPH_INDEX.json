@@ -1,0 +1,28 @@
+{
+  "schema_version":"ggev2.graph-index.v1",
+  "source_state_hash":"sha256:7edeb148f42b076948e2619639700f16ff18390d870dbfc99303a6b19e2ecb8d",
+  "root_nodes":[
+    "rot://project/agentic-os",
+    "rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution",
+    "rot://workstream/agentic-os/graph-refactor-v2-survival"
+  ],
+  "node_counts":{"Project":1,"Objective":1,"Workstream":1,"Claim":1,"Blocker":5,"Capability":8},
+  "edge_counts":{"HAS_OBJECTIVE":1,"EXECUTED_BY_WORKSTREAM":1,"CLAIMS_SCOPE_OF":1,"BLOCKS":5,"VERIFIED_FOR":3,"UNVERIFIED_FOR":5},
+  "cos_mapping":{
+    "L0":"VISUALIZABLE",
+    "L1":"EXECUTION_PROJECTED",
+    "L2":"STATE_PROJECTED",
+    "L3":"DEPENDENCY_PROJECTED",
+    "L8":"KNOWLEDGE_PARTIAL",
+    "L9":"SEMANTIC_PARTIAL",
+    "L11":"DEFERRED",
+    "L12":"MEMORY_PARTIAL",
+    "L13":"AGENT_PARTIAL",
+    "L14":"TOOL_DEFERRED",
+    "L15":"WORKFLOW_PARTIAL",
+    "L16":"NOT_APPLICABLE_YET",
+    "L17":"NOT_APPLICABLE",
+    "L18":"NOT_APPLICABLE",
+    "L19":"NOT_APPLICABLE"
+  }
+}
