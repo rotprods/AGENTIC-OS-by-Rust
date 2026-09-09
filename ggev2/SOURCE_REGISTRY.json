@@ -1,0 +1,19 @@
+{
+  "schema_version": "ggev2.sources.v1",
+  "sources": [
+    {"source_id":"github_live","role":"EXECUTION_EVIDENCE","required":true,"authority":"LIVE_LIFECYCLE_AND_EXACT_SHA_EVIDENCE","mutable_by_ggev2":false},
+    {"source_id":"project_state","role":"DURABLE_CONTINUITY_STATE","required":true,"authority":"BOUNDED_PROJECT_STATE_PROJECTION","mutable_by_ggev2":false},
+    {"source_id":"checkpoints","role":"RECOVERY_CHAIN","required":true,"authority":"VERSIONED_RECOVERY_EVIDENCE","mutable_by_ggev2":false},
+    {"source_id":"governance_manifest","role":"EXTERNAL_AUTHORITY_LOCATORS","required":true,"authority":"LOCATOR_AND_DRIFT_POLICY_ONLY","mutable_by_ggev2":false},
+    {"source_id":"accepted_event_ledger","role":"CANONICAL_MUTATION_AUTHORITY","required":false,"authority":"FUTURE_ACCEPTED_EVENTS_ONLY_AFTER_QUALIFICATION","mutable_by_ggev2":false},
+    {"source_id":"cos_graph","role":"DERIVED_GRAPH_PROJECTION","required":false,"authority":"NONE","mutable_by_ggev2":false},
+    {"source_id":"context_pack","role":"DERIVED_AGENT_CONTEXT","required":false,"authority":"NONE","mutable_by_ggev2":false}
+  ],
+  "forbidden": [
+    "GGEV2_TO_CANONICAL_STATE",
+    "COS_TO_CANONICAL_STATE",
+    "CONTEXTPACK_TO_CANONICAL_STATE",
+    "DOCS_TO_AUTHORITY",
+    "EMAIL_TO_AUTHORITY"
+  ]
+}
