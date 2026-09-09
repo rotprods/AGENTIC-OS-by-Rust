@@ -1,0 +1,40 @@
+{
+  "schema_version": "2",
+  "authority_class": "DERIVED_SIGNAL_ONLY",
+  "observed_at": "2026-09-10T00:25:00+02:00",
+  "supersedes_semantics": "repo-only current_heads suppression",
+  "historical_checkpoint": "ggev2/backfill/BACKFILL_PAGE_0001.json",
+  "historical_checkpoint_status": "HISTORICAL_EVIDENCE_PENDING_REF_AWARE_REPLAY",
+  "incident_identity": ["repo", "ref", "workflow", "sha", "failure_family"],
+  "rules": [
+    "A feature or PR branch failure MUST NOT be compared with repository main/default head.",
+    "Run failed subjects preserve their branch/ref hint.",
+    "PR run failed subjects contain a PR title, not a trustworthy ref; ref remains unresolved until GitHub resolves it.",
+    "A signal may be suppressed for SHA supersession only when a newer head is observed on the same resolved ref.",
+    "Unresolved ref is UNKNOWN unless independent current CI evidence proves the same failure active.",
+    "Signals and GGEV2 projections never create canonical authority."
+  ],
+  "live_regression_evidence": {
+    "repository": "rotprods/Clever-Agent",
+    "ref": "wave/cp03/w02-teardown-cleanup",
+    "failed_sha": "bbce074992602f30f54c843bc4f33ff1058ddc61",
+    "current_ref_head": "5655428f35bcd4f214b7a52de4574616845ffc58",
+    "classification": "SUPPRESSED",
+    "reason": "SUPERSEDED_REF_SHA"
+  },
+  "additional_ref_evidence": {
+    "repository": "rotprods/motion-OS",
+    "ref": "feat/p8-6-workflow-supply-chain-hardening-20260909",
+    "observed_failed_sha": "12bdec3048d6a3095acea37670a02a35afcb880a",
+    "current_ref_head": "45cf9c43740996abf399861cbb22ed779abb5ead",
+    "classification": "SUPPRESSED",
+    "reason": "SUPERSEDED_REF_SHA"
+  },
+  "exact_head_test_evidence": {
+    "sha": "b450653a47750c9b2955290e92b79b49c0efdbd9",
+    "ggev2_r3_r4_run_id": 34413084760,
+    "ggev2_r3_r4_result": "PASS",
+    "ggev2_r2_run_id": 34413084711,
+    "ggev2_r2_result": "PASS"
+  }
+}
