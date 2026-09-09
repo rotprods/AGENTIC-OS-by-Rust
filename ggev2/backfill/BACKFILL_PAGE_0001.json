@@ -1,0 +1,34 @@
+{
+  "schema_version": "1",
+  "authority_class": "DERIVED_SIGNAL_ONLY",
+  "source": "gmail:github-notifications",
+  "page": 1,
+  "messages_seen": 10,
+  "resolved_exact_sha": 10,
+  "active": 0,
+  "suppressed": 10,
+  "unknown": 0,
+  "suppression_reason": "SUPERSEDED_SHA_WITHOUT_CURRENT_FAILURE_CONFIRMATION",
+  "current_heads": {
+    "rotprods/swiss-OS": "1072d5cfb33beee3f2afcd31a59ba00c514df170",
+    "rotprods/motion-OS": "d4e628a1aef0cd382c3c2f1ea327a8ff70c41bd9"
+  },
+  "signals": [
+    {"message_id":"1a04884be9540706","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"417cd92","sha":"417cd9261cd09a83309730f18141418c789cc5ca","classification":"SUPPRESSED"},
+    {"message_id":"1a048846622a1d34","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"47a9f6d","sha":"47a9f6db924e6d7170334f352baea96d6011cc82","classification":"SUPPRESSED"},
+    {"message_id":"1a048839a2179aed","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"f0c9b57","sha":"f0c9b57e5be17fd673e7074443ae346ec52555cb","classification":"SUPPRESSED"},
+    {"message_id":"1a0487f4f3d002aa","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"7d5309d","sha":"7d5309d0c44c18fd81b0eca17003bd3794e5ca8a","classification":"SUPPRESSED"},
+    {"message_id":"1a0487e3367ab608","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"8030ee2","sha":"8030ee2e445c4ea149c3115002791558934d7404","classification":"SUPPRESSED"},
+    {"message_id":"1a0487bcfe7af2df","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"5bebd9f","sha":"5bebd9f36735b2e425de7ff2ded10c79018f7431","classification":"SUPPRESSED"},
+    {"message_id":"1a0487b36b3fceeb","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"8d45075","sha":"8d4507552863f1adef8147ea3b84769786c8dcbe","classification":"SUPPRESSED"},
+    {"message_id":"1a0487b31a931540","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"5375605","sha":"53756054317c8ca4de4d00afaed228d8c9c96e59","classification":"SUPPRESSED"},
+    {"message_id":"1a04879fab0e6314","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"d179327","sha":"d1793279a66df3f3c0ae9c9aba96900ef54f7508","classification":"SUPPRESSED"},
+    {"message_id":"1a04879720225f6e","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"ce03f3b","sha":"ce03f3b5be202f1372f2214060efed140f7789b6","classification":"SUPPRESSED"}
+  ],
+  "next_page_token": "01585192839986710051",
+  "notes": [
+    "Email subjects are untrusted signals; exact SHA identities were independently resolved through GitHub.",
+    "No Gmail message was modified, archived, labelled or deleted.",
+    "SUPPRESSED means historical signal not current incident authority."
+  ]
+}
