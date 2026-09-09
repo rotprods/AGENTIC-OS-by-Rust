@@ -1,0 +1,79 @@
+{
+  "schema_version": "2",
+  "authority_class": "DERIVED_SIGNAL_ONLY",
+  "observed_at": "2026-09-10T01:11:00+02:00",
+  "scope": "bounded_live_verified_frontier",
+  "classification_model": ["repo", "ref", "workflow", "exact_sha", "failure_family"],
+  "state_machine": ["ACTIVE", "SUPPRESSED", "UNKNOWN", "REMEDIATION_EXECUTING", "REMEDIATION_SUPERSEDED", "DEGRADED_EXTERNAL"],
+  "incidents": [
+    {
+      "repository": "rotprods/swiss-OS",
+      "ref": "main",
+      "workflow": "repo-guard",
+      "exact_sha": "8d898e5cf5fb69efb151d26236f8659a52d3c233",
+      "classification": "ACTIVE",
+      "failure_family": "MATERIAL_RUNTIME_LINEAGE",
+      "reason": "CURRENT_REF_FAILURE_CONFIRMED",
+      "root_causes": ["MATERIAL_CHANGE_REQUIRES_ONE_ACTIVE_OR_TERMINALIZED_CLAIM:0"],
+      "provider_failure": false,
+      "superseded_remediation": {
+        "pull_request": 456,
+        "head_sha": "6c6deb94b2391527244c5aa3fe05b8a3075d1f40",
+        "state": "REMEDIATION_SUPERSEDED",
+        "closed_without_merge": true,
+        "reason": "token16 lifecycle advanced and was released on main; merging stale ACTIVE heartbeat/claim scope would reintroduce obsolete coordination state"
+      },
+      "next_safe_action": "resolve lineage of the token16 release mutation with an existing terminalization/release artifact; do not resurrect token16 ACTIVE state"
+    },
+    {
+      "repository": "rotprods/OCULOPS",
+      "ref": "chore/remove-orphan-rehearsal-gitlink-20260909",
+      "pull_request": 146,
+      "workflow": "CI",
+      "signal_sha": "1b0b17e35803282452eb80828fc0ffa510fe1859",
+      "classification": "REMEDIATION_EXECUTING",
+      "failure_family": "APPLICATION_TEST_AND_LINT",
+      "provider_failure": false,
+      "verified_failures": [
+        "ControlTower ReferenceError: correlationFilter accessed before initialization",
+        "useAgentVault role-filter test contaminated by persisted sessionStorage filters"
+      ],
+      "repair_head_sha": "b37ff9df3e6606ae316780da6508ec2bd4faa0be",
+      "repair_strategy": "extend existing one-shot qualified source repair; preserve ROLE_CAPABILITY_MAP semantics and isolate test storage",
+      "ci_state": "IN_PROGRESS"
+    },
+    {
+      "repository": "rotprods/mission-control",
+      "ref": "qualification/r2-sw03-exact-head",
+      "signal_sha": "f4087f444a53970d8791ebcf630fb11db13f3015",
+      "current_ref_sha": "987577f9ff3e75abdea954ef97442822b74eb587",
+      "classification": "SUPPRESSED",
+      "reason": "SUPERSEDED_REF_SHA"
+    },
+    {
+      "repository": "rotprods/oasis-lead-engine",
+      "ref": "fix/oasis-containment-20260907",
+      "signal_sha": "192f4e0135e2441a4569c3d58364bf2ed99b743b",
+      "current_ref_sha": "47f7d639ccb90c07e47aad99b7120dfef74cf1e6",
+      "classification": "SUPPRESSED",
+      "reason": "SUPERSEDED_REF_SHA"
+    }
+  ],
+  "metrics": {
+    "verified_causal_groups": 4,
+    "active": 1,
+    "remediation_executing": 1,
+    "remediation_superseded": 1,
+    "suppressed": 2,
+    "unknown": 0
+  },
+  "safety": {
+    "email_signal_is_authority": false,
+    "same_ref_required_for_supersession": true,
+    "exact_sha_required_for_active": true,
+    "stale_repairs_must_not_merge": true,
+    "provider_failures_separated": true
+  },
+  "next_page_token": "00827070705753448810",
+  "next_required_gate": "finish OCULOPS repair validation, inspect swiss token16 release lineage without reactivation, then continue Gmail cursor replay"
+}
