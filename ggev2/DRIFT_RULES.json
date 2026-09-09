@@ -1,0 +1,15 @@
+{
+  "schema_version":"ggev2.drift.v1",
+  "rules":[
+    {"rule_id":"DRIFT_HEAD_SHA","severity":"P1","when":"snapshot.github.head_sha != live.github.head_sha","state":"STALE","blocks_mutation":true},
+    {"rule_id":"DRIFT_PROJECT_STATE_SHA","severity":"P1","when":"snapshot.project_state_sha != live.project_state_sha","state":"STALE","blocks_mutation":true},
+    {"rule_id":"DRIFT_CHECKPOINT","severity":"P1","when":"latest_checkpoint_id changes","state":"STALE","blocks_mutation":true},
+    {"rule_id":"DRIFT_GOVERNANCE","severity":"P1","when":"pinned external authority revision changes or becomes unresolved","state":"BLOCKED","blocks_mutation":true},
+    {"rule_id":"DRIFT_EVENT_WATERMARK","severity":"P1","when":"snapshot.event_watermark != canonical.event_watermark","state":"STALE","blocks_mutation":true},
+    {"rule_id":"DRIFT_ACTIVE_CLAIMS","severity":"P2","when":"active claims differ","state":"STALE","blocks_mutation":true},
+    {"rule_id":"DRIFT_BLOCKERS","severity":"P2","when":"blocker set differs","state":"STALE","blocks_mutation":false},
+    {"rule_id":"DRIFT_CI","severity":"P2","when":"required exact-head quality gate result changes","state":"STALE","blocks_mutation":true}
+  ],
+  "freshness_states":["FRESH","STALE","BLOCKED","UNKNOWN"],
+  "default_on_missing_required_source":"BLOCKED"
+}
