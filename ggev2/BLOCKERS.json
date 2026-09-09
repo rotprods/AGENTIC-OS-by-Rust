@@ -1,0 +1,11 @@
+{
+  "schema_version":"ggev2.blockers.v1",
+  "source_state_hash":"sha256:7edeb148f42b076948e2619639700f16ff18390d870dbfc99303a6b19e2ecb8d",
+  "blockers":[
+    {"id":"rot://blocker/agentic-os/cp01-cp03-governance-not-promotion-qualified","severity":"P1","class":"GOVERNANCE","blocks":["PROMOTION","DURABLE_EVENT_AUTHORITY"]},
+    {"id":"rot://blocker/agentic-os/death-drill-not-empirically-executed","severity":"P1","class":"RECOVERY","blocks":["EMPIRICALLY_QUALIFIED"]},
+    {"id":"rot://blocker/agentic-os/durable-event-authority-not-qualified","severity":"P1","class":"AUTHORITY","blocks":["EVENT_WATERMARK_ADVANCE"]},
+    {"id":"rot://blocker/agentic-os/github-promotion-enforcement-not-active","severity":"P1","class":"CONTROL_PLANE","blocks":["PROMOTION"]},
+    {"id":"rot://blocker/agentic-os/signed-head-enforcement-not-active","severity":"P1","class":"SUPPLY_CHAIN","blocks":["PROMOTION"]}
+  ]
+}
