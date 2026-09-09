@@ -1,0 +1,57 @@
+{
+  "schema_version": "2",
+  "authority_class": "DERIVED_OBSERVATION_ONLY",
+  "observed_at": "2026-09-10T01:05:00+02:00",
+  "status": "CROSS_RUNTIME_SNAPSHOT_ACTIVE",
+  "runtimes": [
+    {
+      "runtime_id": "runtime:agentic-os",
+      "repository": "rotprods/AGENTIC-OS-by-Rust",
+      "ref": "feat/ggev2-r3-live-swarm",
+      "emitter": "python/rot_ai/ggev2_emit.py",
+      "verification_result": "PASS",
+      "authority_boundary": "OBSERVATION_ONLY"
+    },
+    {
+      "runtime_id": "runtime:mission-control",
+      "repository": "rotprods/mission-control",
+      "ref": "feat/ggev2-r3-telemetry-emitter",
+      "pull_request": 50,
+      "head_sha": "e023d53991c11e108ba50f903850b97dd0e18f67",
+      "verification_result": "PASS",
+      "mergeable": true,
+      "authority_boundary": "OBSERVATION_ONLY"
+    },
+    {
+      "runtime_id": "runtime:cos-graph-engine",
+      "repository": "rotprods/cos-graph-engine",
+      "ref": "feat/ggev2-r3-telemetry-emitter",
+      "pull_request": 106,
+      "head_sha": "f4f6870a8156dea44c20ab57c2f66c1bacc36a12",
+      "verification_result": "PASS_ISOLATED_BRIDGE_GATE",
+      "repo_ci_state": "DEGRADED_EXTERNAL_SETUP_NODE",
+      "mergeable": true,
+      "authority_boundary": "OBSERVATION_ONLY"
+    }
+  ],
+  "graph_contract": {
+    "node_types": ["Runtime", "Emitter", "Observation", "Agent", "Session", "Claim", "Repository", "Ref"],
+    "edge_types": ["EMITS", "OBSERVES", "REPORTS_AGENT", "REPORTS_SESSION", "REPORTS_CLAIM", "RUNS_IN_REPOSITORY", "RUNS_ON_REF"],
+    "forbidden_authority_edges": ["OWNS", "GRANTS", "LEASES", "PROMOTES", "ACCEPTS_CANONICAL_EVENT"],
+    "identity_key": ["runtime", "agent_id", "session_id", "claim_id", "repo", "ref", "sha"]
+  },
+  "ingestion_policy": {
+    "dedupe": "canonical observation hash",
+    "conflict_policy": "retain conflicting observations and emit collision finding; never choose canonical owner from telemetry alone",
+    "staleness_policy": "derive stale/live status from heartbeat timestamps without mutating source runtime",
+    "cross_runtime_claim_collision": "finding_only",
+    "promotion_authority": false
+  },
+  "metrics": {
+    "runtimes_registered": 3,
+    "bridges_verified": 3,
+    "external_degraded_runtimes": 1,
+    "canonical_authority_edges_created": 0
+  },
+  "next_required_gate": "ingest concrete observation batches from all three emitters and prove deterministic dedupe/collision output under replay"
+}
