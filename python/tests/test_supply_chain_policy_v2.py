@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = ROOT / ".github" / "workflows"
-USES_LINE = re.compile(r"^\s*-\s+uses:\s+([^\s]+)@([^\s#]+)")
+USES_LINE = re.compile(r"^\s*(?:-\s+)?uses:\s+([^\s]+)@([^\s#]+)")
 CARGO_LOCK_SHA256 = "03b42bf650a8f52960ce8a92bc9f36848b215640ab58f4c673b09ddf5f05f370"
 
 APPROVED_FIRST_PARTY_NODE24 = {
@@ -35,6 +35,21 @@ class SupplyChainPolicyV2Tests(unittest.TestCase):
                     target, revision = match.groups()
                     uses.append((workflow, number, target, revision))
         return uses
+
+    def test_action_inventory_covers_both_named_and_unnamed_yaml_step_forms(self) -> None:
+        inventory = {(target, revision) for _, _, target, revision in self._workflow_uses()}
+        self.assertIn(
+            ("actions/setup-node", APPROVED_FIRST_PARTY_NODE24["actions/setup-node"]),
+            inventory,
+            "named-step `uses:` form escaped the Action inventory",
+        )
+        self.assertIn(
+            ("actions/upload-artifact", APPROVED_FIRST_PARTY_NODE24["actions/upload-artifact"]),
+            inventory,
+            "named-step `uses:` form escaped the Action inventory",
+        )
+        self.assertTrue(any(target == "dtolnay/rust-toolchain" for target, _ in inventory))
+        self.assertTrue(any(target == "Swatinem/rust-cache" for target, _ in inventory))
 
     def test_external_github_actions_are_commit_sha_pinned(self) -> None:
         offenders: list[str] = []
