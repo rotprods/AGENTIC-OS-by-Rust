@@ -1,65 +1,85 @@
 # TASKS — Agent Survival V2
 
-Authority: planning projection. Reference verification, exact locator resolution, GitHub lifecycle state and production qualification are distinct.
+Authority: planning projection. Live PR/branch topology, `state/project_state.json`, latest checkpoint and exact-SHA executed CI outrank stale task prose.
 
-## Reconciled status — CP16
-- [x] **SV2-001 — Exact-head runtime qualification infrastructure** — ancestor CI is never reused as final proof.
-- [x] **SV2-002 — Canonical PR topology** — PR #1 -> PR #4 remains the promotion train; CP15 integration is consumed at `d19009055fb86e33836706fd0f09991869311431`; CP16 is isolated as PR #28 until live GitHub says otherwise.
-- [x] **SV2-003 — Rust/TS/Python behavioral parity**.
-- [x] **SV2-004R — Reference accepted-event store** — reference only; durable authority unqualified.
+## Current mode
+`CP17_ATOMIC_CLOSE -> GOAL_DRAIN -> CONVERGENCE_ONLY`
+
+Issue #29 supersedes the historical CP18 expansion plan. **Do not start CP18.**
+
+## CP17 retained work
+- [x] **SV2-001 — Exact-head runtime qualification infrastructure** — PR workflows explicitly execute `CANDIDATE_SHA`; synthetic merge refs are non-authority.
+- [x] **SV2-003 — Rust/TS/Python behavioral parity reference**.
+- [x] **SV2-004R — Reference accepted-event store** — production authority remains unqualified.
 - [x] **SV2-005R — COS one-way projection adapter**.
-- [x] **SV2-006R — Claims/barriers coordination reference**.
+- [x] **SV2-006R — Claims/fencing coordination reference**.
 - [x] **SV2-007R — ContextPack compiler/invalidation reference**.
-- [ ] **SV2-008 — Empirical death drill — HARD GATE** — verifier/schema implemented; real fresh successor remains NOT RUN in this session.
-- [ ] **SV2-009 — Security / promotion gauntlet — HARD GATE**
-  - [x] T01/T02/T03/T05/T06/T09/T12/T13/T14/T15/T16 reference/executable coverage.
-  - [x] T17 exact locks, pinned runtimes/actions, audits and SBOM/evidence gate as last qualified before CP16; re-audit runtime deprecation findings when observed.
-  - [x] deterministic property union for durable replay/atomicity/fencing.
-  - [x] fail-closed promotion control-plane policy + live readiness observer.
-  - [x] isolated GitHub-native merge path empirically proven capable of producing a verified PGP-signed commit.
-  - [ ] T20 genuine independent empirical drill.
-  - [ ] external GitHub required-check/PR/no-force-push/no-deletion/admin enforcement.
-  - [ ] signed-head enforcement.
-  - [ ] final whole-system exact-candidate gauntlet after external hard gates close.
-- [ ] **SV2-010 — Operator UX — PARTIAL / FAIL-CLOSED**
-  - [x] `status`, `doctor`, `context` read-only.
-  - [ ] `init`, `claim`, `checkpoint`, `handoff` intentionally `AUTHORITY_UNQUALIFIED`.
-  - [ ] `recover` intentionally `CAPABILITY_UNQUALIFIED`.
-- [x] **SV2-011 — Cross-language supply-chain reproducibility** — Cargo/pnpm/Python locks exact; runtime/tooling pins; Action SHA pins; audits and Rust/Python CycloneDX. Native pnpm CycloneDX remains explicitly deferred.
-- [ ] **SV2-012 — External governance manifest — LOCATORS RESOLVED / PROMOTION BLOCKED**
-  - [x] CP01 exact canonical governance document candidate located.
-  - [x] CP02 exact canonical governance document candidate located.
-  - [x] CP03 exact canonical governance document candidate located.
-  - [x] manifest v2 encodes all three as `CANDIDATE_PINNED`, never final authority.
-  - [ ] CP01 explicit governance release transition.
-  - [ ] CP02 parent CP-0300 compatibility + complete MID01 machine manifest + independent review/owner decision.
-  - [ ] CP03 predecessor compatibility + MID02 + PostgreSQL/RLS/backend parity + independent architecture/security review/owner decision.
-- [ ] **SV2-013 — Durable accepted-event authority** — watermark remains `0`; do not begin qualification until empirical + governance-promotion + GitHub promotion gates close.
-- [x] **SV2-014 — CP10/CP16 checkpoint continuity authority repair**
-  - [x] latest checkpoint dynamically resolved from `state.latest_checkpoint_id`; no hardcoded CP filename.
-  - [x] latest checkpoint binds the pre-pointer state by rewinding only `latest_checkpoint_id` to the parent.
-  - [x] drift in blockers/authority/watermark/capabilities/source/claims/workstreams/next actions invalidates the binding.
-  - [x] malformed ID, traversal, missing checkpoint, ID mismatch, payload/state hash tamper fail closed.
-  - [x] deterministic sequential checkpoint transitions tested.
-  - [x] cycles/self-parent/orphan/fork/partial-write/rollback families covered.
-  - [x] current latest path remains URI-derived; legacy ancestors may be indexed only by unique internal ID from the bounded checkpoint directory so immutable CP5 history is preserved without becoming current path authority.
-  - [x] stale ContextPack checkpoint pointer explicitly tested as freshness invalidation.
-- [x] **SV2-015 — Survival child-lane pre-merge core gates**
-  - [x] Continuity now triggers on PRs targeting `feat/graph-refactor-v2-survival`.
-  - [x] F1 Rust now triggers on PRs targeting Survival.
-  - [x] F1 Parity now triggers on PRs targeting Survival.
-  - [x] Supply/Property/CLI already had this behavior.
-- [x] **SV2-016 — Consumed-transition continuity rule** — canonical current state/docs may not keep an unconditional instruction to perform an already-consumed checkpoint integration transition.
+- [ ] **SV2-008 — Empirical death drill HARD GATE** — must come from a genuinely fresh independent runtime.
+- [ ] **SV2-009 — Security/promotion gauntlet HARD GATE** — reference coverage exists; external promotion/signing and empirical recovery remain open.
+- [ ] **SV2-010 — Operator UX PARTIAL** — read-only commands only; mutators intentionally unqualified.
+- [x] **SV2-011 — T17 supply-chain provenance** — Node24-native exact Action SHAs, Ubuntu 24.04, hash-locked Python closure, frozen pnpm, exact executed-head evidence.
+- [ ] **SV2-012 — External governance manifest** — candidate locators resolved; promotion blocked.
+- [ ] **SV2-013 — Durable accepted-event authority** — watermark `0`; hard-gated.
+- [x] **SV2-014 — Checkpoint continuity verifier/lineage**.
+- [x] **SV2-015 — Survival child-lane core gates**.
+- [x] **SV2-016 — Consumed-transition replay rule**.
+- [x] **SV2-017 — Executed-source CI authority**.
 
-## Cross-lane maintenance
-- [ ] **GGEV2 snapshot refresh** — PR #18 was reconstructed as based on canonical Survival `d19009055...`. If PR #28 is merged and Survival advances, refresh/rebuild its exact-source snapshot before treating it as semantically current. Do not force-rewrite compatible concurrent work.
+## CP17 escaped defect wave
+- [x] reproduce final-persistence Continuity failure on exact checkout;
+- [x] prove historical CP17 `state_hash` was raw-state hash rather than canonical normalized-state hash;
+- [x] isolate normalization delta to set-like `decisions`;
+- [x] keep verifier fail-closed; do not weaken contract;
+- [x] add permanent `test_checkpoint_builder_normalization_v2.py` regression;
+- [x] persist `CP17_CHECKPOINT_BINDING_RCA_2026-09-10.md` with BUG / ROOT_CAUSE / FAILURE_FAMILY / INVARIANT / EVIDENCE;
+- [x] canonicalize durable set-like state ordering;
+- [x] replace stale CP18 next-action state with `GOAL_DRAIN / CONVERGENCE_ONLY`;
+- [x] attach child checkpoint `cp17-continuity-repair-goal-drain-20260910` without rewriting malformed historical CP17 evidence;
+- [x] advance latest-checkpoint pointer only after child persistence;
+- [x] prove latest-checkpoint binding + new permanent regressions pass after pointer advance;
+- [x] remove temporary diagnostic test;
+- [ ] update remaining human projections/PR metadata to the repaired GOAL_DRAIN state;
+- [ ] freeze one exact final PR #30 head;
+- [ ] require Continuity + Rust + Parity + Supply + Property + CLI all SUCCESS on that exact head;
+- [ ] perform adversarial exact-head review and live base/head preflight;
+- [ ] if safe, integrate PR #30 into `feat/graph-refactor-v2-survival` with expected-head/CAS semantics;
+- [ ] verify resulting canonical Survival branch head and post-integration workflows;
+- [ ] persist terminal CP17 integration evidence/handoff.
 
-## Highest-value safe frontier
-1. Configure required exact-head checks + PR/no-force-push/no-deletion/admin + signed-head enforcement through an authorized GitHub control-plane write path and independently observe the controls active.
-2. Complete CP01/CP02/CP03 promotion governance without confusing exact locator knowledge for authority.
-3. Accept/verify the empirical death drill only from a genuinely fresh independent runtime.
-4. Run the final whole-system exact-candidate adversarial qualification after those hard gates close.
-5. Qualify a simple single-host durable accepted-event writer only after all hard gates pass; keep event watermark `0` until then.
+## CP17 evidence
+Implementation ancestor `ee695f8e14538faf1b354a637891f80cb0cd98c0` passed:
+- Continuity `34503887361`
+- Rust `34503887335`
+- Parity `34503887336`
+- Supply `34503887274`
+- Property `34503887429`
+- CLI `34503887378`
 
-## Lifecycle rule for CP16
-PR #28 lifecycle is external live state, not a durable unconditional task. Always fetch it first. OPEN means candidate-only; MERGED means transition consumed; changed head/base means requalification is mandatory. Never replay a merge because an old handoff says to do so.
+Escaped checkpoint defect reproduction:
+- exact head `441eb74e82bc739e3bc26d53a9bee51af5450480`
+- Continuity run `34508524387`
+- job `102976560947`
+- raw/pre-pointer hash `sha256:8dae1f5f43a6a3e5d820b912fc12b2bef08be3cf7c539836192858d6d8d67262`
+- normalized hash `sha256:569eb151d9d2791de4e54f6e7dace80b0b5ae868fbe03a5d9b652eb1af68b167`
+- only `decisions` changed under normalization.
+
+Repair-pointer head `3d77c29fb711137bdd43ccab786e91533f858d28` proved the latest repair checkpoint binding and both permanent normalization regressions pass; its only Continuity failure came from the now-deleted temporary diagnostic asserting the old checkpoint was still latest. This is intermediate repair evidence, not final qualification.
+
+## Post-CP17 convergence queue
+Do not create feature waves from this queue. First classify existing live work.
+
+1. Enumerate all remaining open PRs/branches in AGENTIC-OS-by-Rust, especially Survival/GGEV2 #4/#18/#19/#20 and adjacent assurance lanes.
+2. For each, classify exactly one of: `PROMOTE_CANDIDATE`, `DONOR_PORT`, `SUPERSEDED`, `EVIDENCE_ONLY`, `SALVAGE_REBASE`, `BLOCKED_EXTERNAL`.
+3. Diff stale/stacked lanes for unique invariants/tests/evidence before closure or supersession.
+4. Port only unique value into the surviving canonical lineage; do not create parallel authorities.
+5. Close or merge only after exact-head evidence and semantic ownership are reconciled. Never merge merely to reduce PR count.
+6. Continue the same process repo-by-repo until the portfolio approaches `OPEN_PRS=0` through genuine convergence.
+
+## External blockers that convergence cannot fake away
+- CP01/CP02/CP03 promotion governance.
+- GitHub required-check, PR-only, no-force-push, no-deletion/admin and signed-head enforcement.
+- Genuine independent empirical zero-context recovery drill.
+- Durable accepted-event production authority.
+- Real network/process executor and multi-host authority qualification.
+
+Lifecycle rule: PR #30 OPEN means candidate-only; MERGED means transition consumed; head/base drift means requalification. Every lifecycle decision starts with a live fetch.
