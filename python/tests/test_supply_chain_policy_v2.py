@@ -81,6 +81,14 @@ class SupplyChainPolicyV2Tests(unittest.TestCase):
                 )
         self.assertEqual(offenders, [], "every checkout use must disable credential persistence")
 
+    def test_permanent_workflows_pin_ubuntu_runner_generation(self) -> None:
+        offenders: list[str] = []
+        for workflow in sorted(WORKFLOWS.glob("*.yml")):
+            text = workflow.read_text()
+            if "runs-on: ubuntu-latest" in text or "runs-on: ubuntu-24.04" not in text:
+                offenders.append(str(workflow.relative_to(ROOT)))
+        self.assertEqual(offenders, [], "permanent workflows must pin the Ubuntu 24.04 runner generation")
+
     def test_permanent_workflows_do_not_request_contents_write(self) -> None:
         offenders: list[str] = []
         for workflow in sorted(WORKFLOWS.glob("*.yml")):
@@ -92,23 +100,42 @@ class SupplyChainPolicyV2Tests(unittest.TestCase):
     def test_rust_ci_enforces_frozen_dependency_graph(self) -> None:
         text = (WORKFLOWS / "f1-rust-ci.yml").read_text()
         self.assertIn(CARGO_LOCK_SHA256, text)
+        self.assertIn("toolchain: 1.88.0", text)
         self.assertIn("cargo metadata --locked", text)
         self.assertIn("cargo clippy --workspace --all-targets --all-features --locked", text)
         self.assertIn("cargo test --workspace --all-targets --all-features --locked", text)
         self.assertIn("cmp /tmp/Cargo.lock.before Cargo.lock", text)
         self.assertTrue((ROOT / "Cargo.lock").is_file())
 
-    def test_python_continuity_ci_is_isolated_and_hash_locked(self) -> None:
+    def test_python_continuity_ci_matches_hash_lock_provenance(self) -> None:
         workflow = (WORKFLOWS / "survival-v2-ci.yml").read_text()
         requirements = (ROOT / "requirements" / "continuity.txt").read_text()
+        self.assertIn("runs-on: ubuntu-24.04", workflow)
+        self.assertIn("PYTHON_VERSION: '3.12.3'", workflow)
+        self.assertIn(f"actions/setup-python@{APPROVED_FIRST_PARTY_NODE24['actions/setup-python']}", workflow)
         self.assertIn("python -m venv /tmp/survival-v2-venv", workflow)
         self.assertIn("--require-hashes", workflow)
         self.assertIn("--only-binary=:all:", workflow)
         self.assertIn("requirements/continuity.txt", workflow)
-        self.assertNotIn("python -m pip install --disable-pip-version-check jsonschema==4.25.1", workflow)
+        self.assertNotIn("jsonschema==4.25.1", workflow)
+        self.assertIn("Python 3.12.3 / ubuntu-24.04", requirements)
         package_lines = [line for line in requirements.splitlines() if line and not line.startswith(("#", " "))]
         self.assertGreaterEqual(len(package_lines), 6)
         self.assertEqual(requirements.count("--hash=sha256:"), 6)
+
+    def test_cross_language_parity_pins_python_node_pnpm_and_hash_locked_python_closure(self) -> None:
+        workflow = (WORKFLOWS / "f1-parity-ci.yml").read_text()
+        self.assertIn("runs-on: ubuntu-24.04", workflow)
+        self.assertIn("PYTHON_VERSION: '3.13.15'", workflow)
+        self.assertIn("NODE_VERSION: '24.20.0'", workflow)
+        self.assertIn("PNPM_VERSION: '10.15.0'", workflow)
+        self.assertIn(f"actions/setup-python@{APPROVED_FIRST_PARTY_NODE24['actions/setup-python']}", workflow)
+        self.assertIn(f"actions/setup-node@{APPROVED_FIRST_PARTY_NODE24['actions/setup-node']}", workflow)
+        self.assertIn("--require-hashes -r requirements/ci.lock", workflow)
+        self.assertIn('corepack prepare "pnpm@$PNPM_VERSION" --activate', workflow)
+        self.assertIn("pnpm install --frozen-lockfile", workflow)
+        self.assertIn("cmp pnpm-lock.yaml /tmp/pnpm-lock.before", workflow)
+        self.assertNotIn("pip install --disable-pip-version-check jsonschema==4.25.1", workflow)
 
 
 if __name__ == "__main__":
