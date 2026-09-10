@@ -1,0 +1,33 @@
+{
+  "schema_version": "1",
+  "program_id": "HARDNESS-V1-SELF-HOSTING",
+  "authority": "DERIVED_POLICY_ONLY",
+  "hardness_level": "H5",
+  "north_star": "No material change may gain higher authority unless rigor proportional to risk, blast radius and history is executed and evidenced on the exact candidate revision.",
+  "goals": [
+    {"goal_id":"H-G1","name":"Profiles","state":"IMPLEMENTED","dod":["H0-H5 defined","monotonic inheritance tested"]},
+    {"goal_id":"H-G2","name":"Compiler","state":"IMPLEMENTED","dod":["risk->level deterministic","unknown risk blocks","plan hash deterministic"]},
+    {"goal_id":"H-G3","name":"Promotion","state":"IMPLEMENTED","dod":["exact-head evidence required","failed/missing gates block","production requires H5"]},
+    {"goal_id":"H-G4","name":"Learning","state":"IMPLEMENTED","dod":["Bug->Invariant->Regression->Rule complete","incomplete records rejected"]},
+    {"goal_id":"H-G5","name":"Gauntlet","state":"ACTIVE","dod":["self-tests green","critical branches exercised","CI exact-head green"]},
+    {"goal_id":"H-G6","name":"Integration","state":"BLOCKED","dod":["/autoprompting consumes plans","GGEV2 displays hardness state","no authority duplication"]}
+  ],
+  "checkpoints": [
+    {"id":"CP-H0","name":"Live truth and isolated scope","state":"PASS"},
+    {"id":"CP-H1","name":"Profiles and skill ontology","state":"PASS_IMPLEMENTED"},
+    {"id":"CP-H2","name":"Policy and promotion engine","state":"PASS_IMPLEMENTED"},
+    {"id":"CP-H3","name":"Learning loop","state":"PASS_IMPLEMENTED"},
+    {"id":"CP-H4","name":"Adversarial gauntlet","state":"ACTIVE"},
+    {"id":"CP-H5","name":"Exact-head qualification","state":"NOT_RUN"},
+    {"id":"CP-H6","name":"Integration-ready","state":"BLOCKED"}
+  ],
+  "waves": [
+    {"wave_id":"H-W1","objective":"core compiler and invariants","state":"IMPLEMENTED"},
+    {"wave_id":"H-W2","objective":"self-hosting adversarial tests and CI","state":"ACTIVE"},
+    {"wave_id":"H-W3","objective":"autoprompting compiler adapter","state":"READY_AFTER_H-W2"},
+    {"wave_id":"H-W4","objective":"GGEV2 hardness projection","state":"READY_AFTER_H-W3"},
+    {"wave_id":"H-W5","objective":"property/mutation/fuzz assurance expansion","state":"READY_AFTER_H-W2"}
+  ],
+  "current_frontier": ["run self-hosting CI","fix every failing invariant without bypass","persist exact-head evidence","then implement autoprompting adapter"],
+  "promotion": "NO_GO_UNTIL_CP_H5"
+}
