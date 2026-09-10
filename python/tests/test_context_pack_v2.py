@@ -105,7 +105,8 @@ class ContextPackV2Tests(unittest.TestCase):
         changed = copy.deepcopy(current)
         changed["latest_checkpoint_id"] = "rot://checkpoint/agentic-os/cp-b"
         changed_projection = build_survival_projection(changed)
-        with self.assertRaisesRegex(SurvivalContractError, "state hash"):
+        self.assertNotEqual(projection["projection_hash"], changed_projection["projection_hash"])
+        with self.assertRaisesRegex(SurvivalContractError, "stale projection"):
             verify_context_pack(packet, live_state=changed, live_projection=changed_projection, live_claim_snapshot=snapshot, live_contracts_hash=CONTRACTS)
 
     def test_claim_snapshot_change_invalidates_pack(self):
