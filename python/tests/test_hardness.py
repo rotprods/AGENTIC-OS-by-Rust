@@ -6,10 +6,14 @@ from rot_ai.hardness import (
     AUTHORITY_ORDER,
     BASE_SKILLS,
     HARDNESS_LEVELS,
+    MAX_AUTHORITY_BY_LEVEL,
+    SKILL_CATALOG,
     EvidenceRecord,
     HardnessError,
     WorkContext,
+    compile_execution_packet,
     compile_hardness,
+    compile_skill_graph,
     evaluate_promotion,
     learn_failure,
 )
@@ -60,6 +64,24 @@ class HardnessCompilerTests(unittest.TestCase):
     def test_plan_is_deterministic(self):
         context = ctx(requested_level="H5", historical_failure_families=("same-ref", "stale-writer"))
         self.assertEqual(compile_hardness(context).plan_hash, compile_hardness(context).plan_hash)
+
+    def test_execution_packet_is_deterministic_and_lifecycle_partitioned(self):
+        context = ctx(requested_level="H5", risk_classes=("production-critical",))
+        left = compile_execution_packet(context)
+        right = compile_execution_packet(context)
+        self.assertEqual(left["packet_hash"], right["packet_hash"])
+        self.assertEqual(set(left["lifecycle"]), {"BEFORE", "DURING", "AFTER", "LEARNING"})
+        self.assertIn("preflight", left["lifecycle"]["BEFORE"])
+        self.assertIn("runtime-guard", left["lifecycle"]["DURING"])
+        self.assertIn("promotion", left["lifecycle"]["AFTER"])
+        self.assertIn("retrospective", left["lifecycle"]["LEARNING"])
+
+    def test_every_compiled_skill_has_contract(self):
+        plan = compile_hardness(ctx(requested_level="H5"))
+        graph = compile_skill_graph(plan)
+        compiled = [spec for specs in graph.values() for spec in specs]
+        self.assertEqual(len(compiled), len(plan.required_skills))
+        self.assertTrue(all(spec.required_inputs and spec.outputs for spec in compiled))
 
     def test_invalid_sha_rejected(self):
         with self.assertRaisesRegex(HardnessError, "lowercase full SHA"):
@@ -127,6 +149,18 @@ class PromotionTests(unittest.TestCase):
         )
         self.assertEqual(decision.decision, "GO")
 
+    def test_h0_cannot_jump_to_verified(self):
+        evidence = [self.evidence(gate) for gate in self.plan.required_gates]
+        decision = evaluate_promotion(
+            context=self.context,
+            plan=self.plan,
+            evidence=evidence,
+            current_authority="PROPOSED",
+            requested_authority="VERIFIED",
+        )
+        self.assertEqual(decision.decision, "NO_GO")
+        self.assertIn("HARDNESS_AUTHORITY_CEILING:H0:IMPLEMENTED", decision.blockers)
+
     def test_production_requires_h5(self):
         evidence = [self.evidence(gate) for gate in self.plan.required_gates]
         decision = evaluate_promotion(
@@ -137,7 +171,23 @@ class PromotionTests(unittest.TestCase):
             requested_authority="PRODUCTION_AUTHORITY",
         )
         self.assertEqual(decision.decision, "NO_GO")
-        self.assertIn("PRODUCTION_REQUIRES_H5", decision.blockers)
+        self.assertIn("HARDNESS_AUTHORITY_CEILING:H0:IMPLEMENTED", decision.blockers)
+
+    def test_h5_can_recommend_production_with_all_exact_evidence(self):
+        context = ctx(requested_level="H5", risk_classes=("production-critical",))
+        plan = compile_hardness(context)
+        evidence = [
+            EvidenceRecord(gate, context.repo, context.ref, context.candidate_sha, "PASS", f"ev:{gate}")
+            for gate in plan.required_gates
+        ]
+        decision = evaluate_promotion(
+            context=context,
+            plan=plan,
+            evidence=evidence,
+            current_authority="EMPIRICALLY_QUALIFIED",
+            requested_authority="PRODUCTION_AUTHORITY",
+        )
+        self.assertEqual(decision.decision, "GO")
 
     def test_authority_regression_is_not_a_promotion(self):
         with self.assertRaises(HardnessError) as raised:
@@ -181,9 +231,20 @@ class RegistrySanityTests(unittest.TestCase):
     def test_every_level_adds_at_least_one_skill(self):
         self.assertTrue(all(BASE_SKILLS[level] for level in HARDNESS_LEVELS))
 
+    def test_every_registered_skill_has_valid_lifecycle(self):
+        self.assertTrue(all(spec.lifecycle in {"BEFORE", "DURING", "AFTER", "LEARNING"} for spec in SKILL_CATALOG.values()))
+
+    def test_all_profile_skills_exist_in_catalog(self):
+        profile_skills = {skill for skills in BASE_SKILLS.values() for skill in skills}
+        self.assertEqual(profile_skills, set(SKILL_CATALOG))
+
     def test_authority_order_is_strict(self):
         values = [AUTHORITY_ORDER[key] for key in ("PROPOSED", "IMPLEMENTED", "EXECUTED", "VERIFIED", "EMPIRICALLY_QUALIFIED", "PRODUCTION_AUTHORITY")]
         self.assertEqual(values, sorted(set(values)))
+
+    def test_authority_ceilings_are_monotonic(self):
+        values = [AUTHORITY_ORDER[MAX_AUTHORITY_BY_LEVEL[level]] for level in HARDNESS_LEVELS]
+        self.assertEqual(values, sorted(values))
 
 
 if __name__ == "__main__":
