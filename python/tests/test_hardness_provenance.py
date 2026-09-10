@@ -1,7 +1,7 @@
 from __future__ import annotations
 import unittest
-from rot_ai.hardness import EvidenceRecord, WorkContext, compile_hardness, evaluate_promotion
-from rot_ai.hardness_provenance import ProviderObservation, qualify_provider_observation, qualify_github_run_payload
+from rot_ai.hardness import EvidenceRecord, HardnessError, WorkContext, compile_hardness, evaluate_promotion
+from rot_ai.hardness_provenance import QualifiedEvidence, ProviderObservation, qualify_provider_observation, qualify_github_run_payload
 
 SHA="c"*40
 
@@ -15,6 +15,13 @@ class ProvenanceTests(unittest.TestCase):
         decision=evaluate_promotion(context=ctx,plan=plan,evidence=evidence,current_authority="EXECUTED",requested_authority="VERIFIED")
         self.assertEqual(decision.decision,"NO_GO")
         self.assertTrue(any(b.startswith("UNVERIFIED_EVIDENCE_PROVENANCE") for b in decision.blockers))
+
+    def test_direct_qualified_evidence_construction_is_forbidden(self):
+        ctx=context()
+        record=EvidenceRecord("unit",ctx.repo,ctx.ref,ctx.candidate_sha,"PASS","forged:qualified")
+        with self.assertRaises(HardnessError) as raised:
+            QualifiedEvidence(record,"github-actions","123","sha256:"+"0"*64)
+        self.assertEqual(raised.exception.code,"QUALIFIED_EVIDENCE_CONSTRUCTION_FORBIDDEN")
 
     def test_verified_provider_observations_allow_bounded_h4_promotion(self):
         ctx=context(); plan=compile_hardness(ctx)
