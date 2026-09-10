@@ -21,16 +21,20 @@ jobs:
         with:
           persist-credentials: false
       - name: Compile Python sources
-        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/autoprompting.py python/tests/test_hardness.py python/tests/test_autoprompting.py
-      - name: Run Hardness self-hosting tests
+        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/autoprompting.py python/rot_ai/ggev2_hardness.py python/tests/test_hardness.py python/tests/test_hardness_properties.py python/tests/test_autoprompting.py python/tests/test_ggev2_hardness.py
+      - name: Run Hardness self-hosting and adversarial tests
         env:
           PYTHONPATH: python
-        run: python -m unittest -v python.tests.test_hardness python.tests.test_autoprompting
+        run: python -m unittest -v python.tests.test_hardness python.tests.test_hardness_properties python.tests.test_autoprompting python.tests.test_ggev2_hardness
       - name: Authority boundary check
         run: |
           python - <<'PY'
           from pathlib import Path
-          sources = [Path('python/rot_ai/hardness.py'), Path('python/rot_ai/autoprompting.py')]
+          sources = [
+              Path('python/rot_ai/hardness.py'),
+              Path('python/rot_ai/autoprompting.py'),
+              Path('python/rot_ai/ggev2_hardness.py'),
+          ]
           forbidden = ['git push', 'merge_pull_request', 'update_ref(', 'accepted_event_writer']
           found=[]
           for path in sources:
