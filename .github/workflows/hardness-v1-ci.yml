@@ -21,11 +21,11 @@ jobs:
         with:
           persist-credentials: false
       - name: Compile Python sources
-        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/hardness_assurance.py python/rot_ai/hardness_recovery.py python/rot_ai/hardness_supply_chain.py python/rot_ai/autoprompting.py python/rot_ai/ggev2_hardness.py python/rot_ai/cgev2_hardness.py python/tests/test_hardness.py python/tests/test_hardness_properties.py python/tests/test_hardness_assurance.py python/tests/test_hardness_recovery.py python/tests/test_hardness_supply_chain.py python/tests/test_autoprompting.py python/tests/test_ggev2_hardness.py python/tests/test_cgev2_hardness.py
-      - name: Run Hardness self-hosting, mutation, fuzz, chaos, supply-chain and adversarial tests
+        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/hardness_provenance.py python/rot_ai/hardness_assurance.py python/rot_ai/hardness_recovery.py python/rot_ai/hardness_supply_chain.py python/rot_ai/autoprompting.py python/rot_ai/ggev2_hardness.py python/rot_ai/cgev2_hardness.py python/tests/test_hardness.py python/tests/test_hardness_provenance.py python/tests/test_hardness_properties.py python/tests/test_hardness_assurance.py python/tests/test_hardness_recovery.py python/tests/test_hardness_supply_chain.py python/tests/test_autoprompting.py python/tests/test_ggev2_hardness.py python/tests/test_cgev2_hardness.py
+      - name: Run Hardness self-hosting, provenance, mutation, fuzz, chaos, supply-chain and adversarial tests
         env:
           PYTHONPATH: python
-        run: python -m unittest -v python.tests.test_hardness python.tests.test_hardness_properties python.tests.test_hardness_assurance python.tests.test_hardness_recovery python.tests.test_hardness_supply_chain python.tests.test_autoprompting python.tests.test_ggev2_hardness python.tests.test_cgev2_hardness
+        run: python -m unittest -v python.tests.test_hardness python.tests.test_hardness_provenance python.tests.test_hardness_properties python.tests.test_hardness_assurance python.tests.test_hardness_recovery python.tests.test_hardness_supply_chain python.tests.test_autoprompting python.tests.test_ggev2_hardness python.tests.test_cgev2_hardness
       - name: Repository supply-chain preflight
         env:
           PYTHONPATH: python
@@ -34,38 +34,20 @@ jobs:
           import os
           from pathlib import Path
           from rot_ai.hardness_supply_chain import scan_repository_supply_chain
-          result = scan_repository_supply_chain(
-              root=Path('.'),
-              repo=os.environ['GITHUB_REPOSITORY'],
-              ref=os.environ.get('GITHUB_HEAD_REF') or os.environ['GITHUB_REF_NAME'],
-              candidate_sha=os.environ['GITHUB_SHA'],
-          )
+          result=scan_repository_supply_chain(root=Path('.'),repo=os.environ['GITHUB_REPOSITORY'],ref=os.environ.get('GITHUB_HEAD_REF') or os.environ['GITHUB_REF_NAME'],candidate_sha=os.environ['GITHUB_SHA'])
           print(f'supply-chain status={result.status} workflows={result.workflow_files} external_actions={result.external_actions}')
-          for finding in result.findings:
-              print(f'{finding.severity} {finding.code} {finding.path}: {finding.detail}')
-          if result.status != 'PASS':
-              raise SystemExit(1)
+          for finding in result.findings: print(f'{finding.severity} {finding.code} {finding.path}: {finding.detail}')
+          if result.status!='PASS': raise SystemExit(1)
           PY
       - name: Authority boundary check
         run: |
           python - <<'PY'
           from pathlib import Path
-          sources = [
-              Path('python/rot_ai/hardness.py'),
-              Path('python/rot_ai/hardness_assurance.py'),
-              Path('python/rot_ai/hardness_recovery.py'),
-              Path('python/rot_ai/hardness_supply_chain.py'),
-              Path('python/rot_ai/autoprompting.py'),
-              Path('python/rot_ai/ggev2_hardness.py'),
-              Path('python/rot_ai/cgev2_hardness.py'),
-          ]
-          forbidden = ['git push', 'merge_pull_request', 'update_ref(', 'accepted_event_writer']
-          found=[]
+          sources=[Path(x) for x in ['python/rot_ai/hardness.py','python/rot_ai/hardness_provenance.py','python/rot_ai/hardness_assurance.py','python/rot_ai/hardness_recovery.py','python/rot_ai/hardness_supply_chain.py','python/rot_ai/autoprompting.py','python/rot_ai/ggev2_hardness.py','python/rot_ai/cgev2_hardness.py']]
+          forbidden=['git push','merge_pull_request','update_ref(','accepted_event_writer']; found=[]
           for path in sources:
-              text=path.read_text()
-              found.extend(f'{path}:{token}' for token in forbidden if token in text)
-          if found:
-              raise SystemExit(f'Hardness authority boundary violated: {found}')
+              text=path.read_text(); found.extend(f'{path}:{token}' for token in forbidden if token in text)
+          if found: raise SystemExit(f'Hardness authority boundary violated: {found}')
           print('authority boundary: PASS')
           PY
       - name: Self-hosting manifest sanity
@@ -73,13 +55,8 @@ jobs:
           python - <<'PY'
           import json
           data=json.load(open('hardness/self-hosting-plan.v1.json'))
-          assert data['hardness_level']=='H5'
-          assert data['authority']=='DERIVED_POLICY_ONLY'
-          assert data['promotion'].startswith('NO_GO')
+          assert data['hardness_level']=='H5'; assert data['authority']=='DERIVED_POLICY_ONLY'; assert data['promotion'].startswith('NO_GO')
           states={cp['id']:cp['state'] for cp in data['checkpoints']}
-          assert states['CP-H4'] in {'ACTIVE','PASS'}
-          assert states['CP-H5'] in {'NOT_RUN','PASS_CORE_EXACT_HEAD'}
-          assert states['CP-H6'] in {'BLOCKED','PARTIAL_INTEGRATION_READY'}
-          assert states.get('CP-H7') in {None,'BLOCKED_ON_EXECUTION'}
+          assert states['CP-H4'] in {'ACTIVE','PASS'}; assert states['CP-H5'] in {'NOT_RUN','PASS_CORE_EXACT_HEAD'}; assert states['CP-H6'] in {'BLOCKED','PARTIAL_INTEGRATION_READY'}; assert states.get('CP-H7') in {None,'BLOCKED_ON_EXECUTION'}
           print('self-hosting manifest: PASS')
           PY
