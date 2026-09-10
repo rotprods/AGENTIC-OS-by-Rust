@@ -1,0 +1,49 @@
+name: Hardness V1 Self-Hosting Gate
+
+on:
+  pull_request:
+  push:
+    branches: [feat/hardness-v1-self-hosting]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hardness-v1-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hardness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Compile Python sources
+        run: python -m compileall -q python/rot_ai/hardness.py python/tests/test_hardness.py
+      - name: Run Hardness self-hosting tests
+        env:
+          PYTHONPATH: python
+        run: python -m unittest -v python.tests.test_hardness
+      - name: Authority boundary check
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path('python/rot_ai/hardness.py').read_text()
+          forbidden = ['git push', 'merge_pull_request', 'update_ref(', 'accepted_event_writer']
+          found = [token for token in forbidden if token in source]
+          if found:
+              raise SystemExit(f'Hardness authority boundary violated: {found}')
+          print('authority boundary: PASS')
+          PY
+      - name: Self-hosting manifest sanity
+        run: |
+          python - <<'PY'
+          import json
+          data=json.load(open('hardness/self-hosting-plan.v1.json'))
+          assert data['hardness_level']=='H5'
+          assert data['promotion'].startswith('NO_GO')
+          assert any(cp['id']=='CP-H5' and cp['state']=='NOT_RUN' for cp in data['checkpoints'])
+          print('self-hosting manifest: PASS')
+          PY
