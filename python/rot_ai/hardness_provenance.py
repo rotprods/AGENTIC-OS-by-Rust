@@ -8,6 +8,7 @@ from typing import Mapping
 from .hardness import EvidenceRecord, HardnessError, WorkContext
 
 TRUSTED_PROVIDERS = {"github-actions", "hardness-local-verifier"}
+_QUALIFIED_EVIDENCE_SEAL = object()
 
 
 @dataclass(frozen=True)
@@ -22,13 +23,33 @@ class ProviderObservation:
     artifact_hash: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, init=False)
 class QualifiedEvidence:
     record: EvidenceRecord
     provider: str
     provider_run_id: str
     observation_hash: str
-    provenance_verified: bool = True
+    provenance_verified: bool
+
+    def __init__(
+        self,
+        record: EvidenceRecord,
+        provider: str,
+        provider_run_id: str,
+        observation_hash: str,
+        *,
+        _seal: object | None = None,
+    ) -> None:
+        if _seal is not _QUALIFIED_EVIDENCE_SEAL:
+            raise HardnessError(
+                "QUALIFIED_EVIDENCE_CONSTRUCTION_FORBIDDEN",
+                "QualifiedEvidence must be minted by a trusted verifier",
+            )
+        object.__setattr__(self, "record", record)
+        object.__setattr__(self, "provider", provider)
+        object.__setattr__(self, "provider_run_id", provider_run_id)
+        object.__setattr__(self, "observation_hash", observation_hash)
+        object.__setattr__(self, "provenance_verified", True)
 
 
 def qualify_provider_observation(*, context: WorkContext, observation: ProviderObservation) -> QualifiedEvidence:
@@ -60,7 +81,13 @@ def qualify_provider_observation(*, context: WorkContext, observation: ProviderO
         evidence_id=f"qualified:{observation.provider}:{observation.provider_run_id}:{observation.gate}",
         artifact_hash=observation.artifact_hash,
     )
-    return QualifiedEvidence(record, observation.provider, observation.provider_run_id, observation_hash)
+    return QualifiedEvidence(
+        record,
+        observation.provider,
+        observation.provider_run_id,
+        observation_hash,
+        _seal=_QUALIFIED_EVIDENCE_SEAL,
+    )
 
 
 def qualify_github_run_payload(*, context: WorkContext, gate: str, payload: Mapping[str, object]) -> QualifiedEvidence:
