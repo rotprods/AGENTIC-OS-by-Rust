@@ -1,62 +1,75 @@
-# HANDOFF — GRAPH-REFACTOR-V2 / Agent Survival CP15
+# HANDOFF — GRAPH-REFACTOR-V2 / Agent Survival CP16
 
 Authority: zero-context recovery projection. **VERIFY LIVE TRUTH BEFORE EXECUTION.** It never outranks live GitHub, machine state/checkpoints, exact-SHA CI or revision-pinned governance evidence.
 
 ## Identity
 - project: `rot://project/agentic-os`
-- objective: `rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution`
+- objective: `rot://objective/agentic-os/survival-v2-cp16-post-integration-continuity-reconciliation`
 - workstream: `rot://workstream/agentic-os/graph-refactor-v2-survival`
-- checkpoint: `state/checkpoints/cp15-governance-candidate-resolution-20260901.json`
-- promotion branch/PR: `feat/graph-refactor-v2-survival` / #4, stacked on PR #1
-- CP15 lane: `feat/cp15-governance-candidate-pins-v2` / PR #13
+- expected latest checkpoint after CP16 seal: `state/checkpoints/cp16-post-integration-continuity-reconciliation-20260910.json`
+- canonical Survival branch/PR: `feat/graph-refactor-v2-survival` / PR #4, stacked on PR #1
+- CP16 candidate lane: `feat/cp16-post-integration-continuity-reconcile-20260910` / PR #28
+- CP16 base reconstructed at creation: `d19009055fb86e33836706fd0f09991869311431`
 - F1 semantic source: `015abe49353f744269d10cec7f7d3778a46e963c`
 - event watermark: `0`
 - whole-system authority: `IMPLEMENTED / SHADOW_ONLY`
 
+Every SHA/PR state above is **VERIFY LIVE BEFORE USE**.
+
+## Consumed transition
+CP15 is already integrated into canonical Survival at reconstructed GitHub-verified merge commit `d19009055fb86e33836706fd0f09991869311431`. The former instruction to integrate CP15 is stale and has been removed from the canonical successor surfaces. **Never replay CP15 integration.**
+
+## CP16 result
+The CP16 lane repairs three continuity-authority families:
+
+1. Latest checkpoint is dynamically resolved; its ID/path/schema/document hash/state hash are verified. State binding seals the immediately pre-pointer state and rewinds only `latest_checkpoint_id` to the checkpoint parent, avoiding an impossible fixed point without ignoring unrelated state drift.
+2. Checkpoint lineage topology detects duplicate IDs, cycles, self-parent, orphan parents, sibling forks, pointer-behind partial writes and pointer-ahead/missing-file writes. The selected latest path is always URI-derived. Immutable legacy ancestors are discovered only by scanning the bounded checkpoint directory and indexing unique internal IDs; this preserves CP5's historical filename alias and CP11 failed-construction evidence without granting either current path authority.
+3. Child PRs targeting the Survival branch now execute Continuity + F1 Rust + F1 Parity pre-merge, closing the former asymmetry with Supply/Property/CLI.
+
+A stale ContextPack carrying an older checkpoint pointer is also explicitly covered: the pointer change alters the projection/state seal and fails freshness validation.
+
+## CP16 lifecycle — mandatory conditional handling
+**Do not infer whether CP16 is integrated from this file. Fetch PR #28 and PR #4 live first.**
+
+- If PR #28 is OPEN: CP16 is candidate-only. Compare its base with live PR #4 head and require the exact candidate head's applicable gates. Integration, if authorized, is an external GitHub lifecycle action and is deliberately not stored as an unconditional project `next_safe_action`.
+- If PR #28 is MERGED: the integration transition is CONSUMED. Never attempt it again. Reconstruct the resulting PR #4 head/signature/check-runs and treat older candidate SHAs as ancestor evidence only.
+- If PR #28 head/base changed, is closed unmerged, or conflicts with a moved Survival head: stop stale-write behavior, refresh, compare semantic deltas, preserve compatible work and rebuild/requalify as needed.
+
+## Concurrency boundary
+At CP16 reconstruction, GGEV2 PR #18 was based on Survival `d19009055...` and changed a disjoint GGEV2 file surface. If canonical Survival advances after CP16 integration, PR #18's exact-source-derived snapshot must be treated stale/rebuild-required before semantic integration. Do not force-overwrite it.
+
 ## Governance truth
-Manifest: `governance/external-authorities.v2.json`.
+Manifest remains `governance/external-authorities.v2.json`.
 
-Repository-level constitutional pin:
-- `rot.knowledge/main@afe43178ae492980ad0dead1b727b3092cfc5a13`
-- signed by GitHub;
-- the initial eight-commit drift to `6fcd6205...` and the later one-commit drift to `afe43178...` were both exact-compared; neither touched Agentic Context Mesh governance.
+Last CP15 reconstructed pins — all **VERIFY LIVE BEFORE USE**:
+- repository constitutional/change-control: `rot.knowledge/main@afe43178ae492980ad0dead1b727b3092cfc5a13`;
+- ACM governance: `rotprods/rot.knowledge:feat/rot-life-graph-os-foundation@48b0d1eddb83b165237268c4334d6e19bbd969ec`;
+- COS2: `3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83`.
 
-Canonical ACM governance:
-- `rot.knowledge/feat/rot-life-graph-os-foundation@48b0d1eddb83b165237268c4334d6e19bbd969ec`
-
-CP candidate locators:
-- CP01 -> `evidence/ACM_CP01_INDEPENDENT_GITHUB_QUALIFICATION_2026-09-01.md`
-- CP02 -> `evidence/ACM_CP02_MID01_INDEPENDENT_DEEP_2026-09-01.md`
-- CP03 -> `evidence/ACM_CP03_SQLITE_INDEPENDENT_QUALIFICATION_2026-09-01.md`
-
-All three are `CANDIDATE_PINNED`, not final `PINNED` authority.
-
-Runtime evidence:
-- CP01 `mission-control@649cc514...`: GitHub-hosted rerun job `99857494321`, `npm run ci` PASS.
-- CP02 canonical convergence `mission-control@07d94e9e...`: FAST `33509487746`; independent `deep:convergence` + 20-run flake `33509532612` PASS. Formal MID01 still requires complete machine manifest/review; parent CP-0300 compatibility remains open.
-- CP03 SQLite reference `mission-control@1e30b4a0...`: FAST `33509684541`; independent deep `33509977149` PASS after correcting a typed JSON error-boundary defect. Persistent reference only; no global event authority.
-
-## Signing path
-PR #14 was an isolated, non-canonical probe. GitHub-native merge with `expected_head_sha` created `619e2a664257783e6a27d7db0e79eb5c93735ce2` with `verification.verified=true`, `reason=valid`, PGP signature, committer GitHub.
-
-Use the same native merge mechanism for CP15 only after the final lane candidate is exact-head green. This qualifies the write path, not signature enforcement.
+CP01/CP02/CP03 remain `CANDIDATE_PINNED`, not final promotion authority. Exact location is not authority.
 
 ## Empirical boundary
-This conversation inherited predecessor context. It does not qualify as a fresh independent successor and must not execute/self-attest the empirical death drill. Real empirical recovery remains `UNVERIFIED / NOT_RUN`.
+This CP16 conversation inherited predecessor context. It is not a fresh independent successor and must not execute/self-attest the empirical death drill. Real empirical recovery remains `UNVERIFIED / NOT_RUN` unless raw evidence from a separate fresh runtime passes the existing verifier.
 
 ## Hard blockers
-1. CP01/CP02/CP03 are exactly located but not promotion-qualified.
-2. Real independent empirical zero-context successor run.
-3. GitHub promotion enforcement and signed-head enforcement; this connector exposes protection/rulesets read-only only.
-4. Durable accepted-event authority; watermark stays `0`.
+1. CP01/CP02/CP03 promotion governance remains open.
+2. Real independent empirical zero-context successor run remains open.
+3. GitHub required-check/PR/no-force-push/no-deletion/admin and signed-head enforcement remain open unless independently re-observed active.
+4. Durable accepted-event authority remains unqualified; event watermark stays `0`.
+5. Network/process executors and multi-host authority remain unqualified/deferred.
+
+## Gauntlet residuals
+- Complete self-consistent repository+state rollback is not detectable without an external monotonic authority/control plane.
+- A valid acyclic parent ID has no trustworthy temporal ordering beyond explicit ancestry under the current ID contract; semantic future-parent prevention belongs to a future stronger checkpoint schema/durable writer.
+- Partial-write defects are detectable but automated mutating recovery remains intentionally unqualified.
 
 ## Resume recipe
-1. Read `state/project_state.json`; dynamically resolve `latest_checkpoint_id`; read that checkpoint.
-2. Re-fetch PR #4, PR #13, their heads/bases and all open competing PRs before mutation.
-3. Re-observe `rot.knowledge/main@afe43178ae492980ad0dead1b727b3092cfc5a13`, ACM governance `48b0d1ed...`, and COS2 `3ae197...`; drift fails closed.
-4. Never treat `CANDIDATE_PINNED` as promotion authority.
-5. Reject ancestor CI. On the current CP15 candidate require Property + CLI + Supply and every workflow actually triggered by the final delta.
-6. Integrate CP15 through the GitHub-native signed merge path with expected head. Do not force-update canonical.
-7. On the resulting canonical SHA verify the commit signature and require Continuity + Rust + Cross-Language Parity + Supply + Property + CLI; then run/re-run Promotion Control Plane Readiness on that same SHA.
-8. Keep promotion BLOCKED until GitHub enforcement, CP governance promotion and empirical recovery hard gates all close.
-9. Keep watermark 0; durable writer/network/process/multi-host authority remain unqualified.
+1. Fetch PR #4 and PR #28 live, including heads/bases/lifecycle. Then fetch all open competing PRs before mutation.
+2. Read `state/project_state.json`; resolve `latest_checkpoint_id` dynamically; require the latest checkpoint at its canonical URI-derived path; verify schema, latest binding and lineage topology.
+3. Read `STATE.md`, `TASKS.md`, this `HANDOFF.md`, CP16 evidence and the live exact-SHA check runs. If any contradict live GitHub/machine state, fail closed and reconcile.
+4. Never execute a consumed integration transition. CP15 is already consumed; CP16 status is determined only from live PR #28 lifecycle.
+5. Re-observe external governance revisions; drift fails closed. Never promote `CANDIDATE_PINNED` by naming similarity or prose.
+6. Require Continuity + Rust + Parity + Supply + Property + CLI on the exact relevant candidate/canonical SHA; CANCELLED/SKIPPED/ancestor green is not final proof. Re-run/observe Promotion Control Plane Readiness on the same canonical candidate when promotion is evaluated.
+7. Preserve event watermark `0`. Do not introduce durable writer, network/process executor or distributed authority before their explicit hard gates.
+8. If canonical Survival advanced, refresh downstream GGEV2 exact-source snapshots before integrating them.
+9. Highest-value safe work after CP16 is external GitHub enforcement, CP governance promotion obligations and independent empirical recovery; then final whole-system gauntlet, then durable writer qualification.

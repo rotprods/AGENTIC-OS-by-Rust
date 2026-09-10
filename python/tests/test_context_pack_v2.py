@@ -96,6 +96,19 @@ class ContextPackV2Tests(unittest.TestCase):
         with self.assertRaisesRegex(SurvivalContractError, "watermark"):
             verify_context_pack(packet, live_state=changed, live_projection=build_survival_projection(changed), live_claim_snapshot=snapshot, live_contracts_hash=CONTRACTS)
 
+    def test_checkpoint_pointer_change_invalidates_pack_even_when_source_and_watermark_are_unchanged(self):
+        current = state()
+        current["latest_checkpoint_id"] = "rot://checkpoint/agentic-os/cp-a"
+        projection = build_survival_projection(current)
+        snapshot = claims().snapshot(logical_tick=1)
+        packet = compile_context_pack(current, projection=projection, claim_snapshot=snapshot, contracts_hash=CONTRACTS, session_id="s", workstream_id="w", relevant_context={})
+        changed = copy.deepcopy(current)
+        changed["latest_checkpoint_id"] = "rot://checkpoint/agentic-os/cp-b"
+        changed_projection = build_survival_projection(changed)
+        self.assertNotEqual(projection["projection_hash"], changed_projection["projection_hash"])
+        with self.assertRaisesRegex(SurvivalContractError, "stale projection"):
+            verify_context_pack(packet, live_state=changed, live_projection=changed_projection, live_claim_snapshot=snapshot, live_contracts_hash=CONTRACTS)
+
     def test_claim_snapshot_change_invalidates_pack(self):
         current = state(); projection = build_survival_projection(current); registry = claims(); snapshot = registry.snapshot(logical_tick=1)
         packet = compile_context_pack(current, projection=projection, claim_snapshot=snapshot, contracts_hash=CONTRACTS, session_id="s", workstream_id="w", relevant_context={})

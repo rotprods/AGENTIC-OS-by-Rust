@@ -2,7 +2,7 @@ name: Survival V2 Continuity Gate
 
 on:
   pull_request:
-    branches: [feat/f1-contract-kernel-vnext, main]
+    branches: [feat/f1-contract-kernel-vnext, feat/graph-refactor-v2-survival, main]
   push:
     branches: [feat/graph-refactor-v2-survival]
 
@@ -51,6 +51,7 @@ jobs:
           from jsonschema import Draft202012Validator, FormatChecker
           from rot_contracts.continuity_files import (
               resolve_latest_checkpoint_path,
+              verify_checkpoint_lineage_topology,
               verify_latest_checkpoint_binding,
           )
 
@@ -69,5 +70,7 @@ jobs:
           if errors:
               raise SystemExit(f'{checkpoint_path} schema errors: ' + '; '.join(error.message for error in errors))
           verify_latest_checkpoint_binding(state, checkpoint)
+          lineage = verify_checkpoint_lineage_topology(root, state)
           print(f'validated latest checkpoint: {checkpoint_path}')
+          print(f'validated checkpoint lineage depth: {len(lineage)}')
           PY

@@ -2,7 +2,7 @@ name: F1 Cross-Language Parity
 
 on:
   pull_request:
-    branches: [main]
+    branches: [feat/graph-refactor-v2-survival, main]
   push:
     branches: [feat/f1-contract-kernel-vnext, feat/graph-refactor-v2-survival]
 
