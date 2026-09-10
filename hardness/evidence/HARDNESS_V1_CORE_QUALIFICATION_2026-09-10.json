@@ -1,0 +1,34 @@
+{
+  "schema_version": "1",
+  "evidence_id": "HARDNESS-V1-CORE-QUAL-20260910",
+  "authority": "EVIDENCE_ONLY_NO_PROMOTION",
+  "qualified_candidate_sha": "db769f584a03c387256527c30c13e899463a717c",
+  "repo": "rotprods/AGENTIC-OS-by-Rust",
+  "ref": "feat/hardness-v1-self-hosting",
+  "result": "PASS_CORE_EXACT_HEAD",
+  "gates": [
+    {"workflow":"Hardness V1 Self-Hosting Gate","run_id":34467543000,"result":"SUCCESS"},
+    {"workflow":"GGEV2 R2 Portfolio Collectors","run_id":34467542994,"result":"SUCCESS"},
+    {"workflow":"GGEV2 R3-R4 Swarm and Incident Engine","run_id":34467542955,"result":"SUCCESS"}
+  ],
+  "verified_claims": [
+    "H0-H5 profile inheritance is monotonic under the deterministic test matrix.",
+    "Unknown risk classes fail closed with blockers.",
+    "Exact repo+ref+SHA evidence is required for every required gate.",
+    "FAIL, SKIPPED, CANCELLED, NOT_RUN and misleading PASS-like strings do not count as PASS.",
+    "Per-hardness authority ceilings prevent low-rigor promotion jumps.",
+    "Hardness execution packets and autoprompt packets are deterministic for identical inputs.",
+    "GGEV2 Hardness projection is DERIVED_READ_ONLY and cannot mutate/promote authority.",
+    "Escaped-bug learning records require root cause, broken invariant, regression test, failure family and protocol rule."
+  ],
+  "not_verified_by_this_evidence": [
+    "real mutation testing campaign",
+    "real fuzz campaign",
+    "chaos/recovery campaign",
+    "empirical fresh-agent death drill",
+    "full supply-chain qualification",
+    "production authority"
+  ],
+  "promotion_implication": "NONE_AUTOMATIC",
+  "full_h5_state": "NO_GO"
+}
