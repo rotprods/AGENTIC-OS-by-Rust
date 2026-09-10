@@ -2,7 +2,7 @@ name: Survival V2 Continuity Gate
 
 on:
   pull_request:
-    branches: [feat/f1-contract-kernel-vnext, main]
+    branches: [feat/f1-contract-kernel-vnext, feat/graph-refactor-v2-survival, main]
   push:
     branches: [feat/graph-refactor-v2-survival]
 
