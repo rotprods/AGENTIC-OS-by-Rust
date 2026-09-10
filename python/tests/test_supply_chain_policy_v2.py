@@ -96,6 +96,35 @@ class SupplyChainPolicyV2Tests(unittest.TestCase):
                 )
         self.assertEqual(offenders, [], "every checkout use must disable credential persistence")
 
+    def test_pull_request_workflows_bind_checkout_to_exact_head_not_synthetic_merge_ref(self) -> None:
+        offenders: list[str] = []
+        exact_expression = "CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}"
+        for workflow in sorted(WORKFLOWS.glob("*.yml")):
+            text = workflow.read_text()
+            if "pull_request:" not in text:
+                continue
+            required_fragments = (
+                exact_expression,
+                "ref: ${{ env.CANDIDATE_SHA }}",
+                "Verify exact candidate checkout",
+                'git rev-parse HEAD)" = "$CANDIDATE_SHA"',
+            )
+            missing = [fragment for fragment in required_fragments if fragment not in text]
+            if missing:
+                offenders.append(f"{workflow.relative_to(ROOT)} missing={missing}")
+        self.assertEqual(
+            offenders,
+            [],
+            "pull_request qualification must execute the exact head SHA, never refs/pull/*/merge",
+        )
+
+    def test_supply_evidence_binds_to_candidate_sha_not_github_merge_sha(self) -> None:
+        workflow = (WORKFLOWS / "cp13-supply-chain.yml").read_text()
+        self.assertIn("'source_sha':os.environ['CANDIDATE_SHA']", workflow)
+        self.assertIn("name: cp13-supply-chain-${{ env.CANDIDATE_SHA }}", workflow)
+        self.assertNotIn("'source_sha':os.environ['GITHUB_SHA']", workflow)
+        self.assertNotIn("name: cp13-supply-chain-${{ github.sha }}", workflow)
+
     def test_permanent_workflows_pin_ubuntu_runner_generation(self) -> None:
         offenders: list[str] = []
         for workflow in sorted(WORKFLOWS.glob("*.yml")):
