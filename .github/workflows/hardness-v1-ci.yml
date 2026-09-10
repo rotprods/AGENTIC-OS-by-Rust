@@ -50,7 +50,11 @@ jobs:
           import json
           data=json.load(open('hardness/self-hosting-plan.v1.json'))
           assert data['hardness_level']=='H5'
+          assert data['authority']=='DERIVED_POLICY_ONLY'
           assert data['promotion'].startswith('NO_GO')
-          assert any(cp['id']=='CP-H5' and cp['state']=='NOT_RUN' for cp in data['checkpoints'])
+          states={cp['id']:cp['state'] for cp in data['checkpoints']}
+          assert states['CP-H4'] in {'ACTIVE','PASS'}
+          assert states['CP-H5'] in {'NOT_RUN','PASS_CORE_EXACT_HEAD'}
+          assert states['CP-H6'] in {'BLOCKED','PARTIAL_INTEGRATION_READY'}
           print('self-hosting manifest: PASS')
           PY
