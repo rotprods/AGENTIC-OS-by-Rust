@@ -21,17 +21,18 @@ jobs:
         with:
           persist-credentials: false
       - name: Compile Python sources
-        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/autoprompting.py python/rot_ai/ggev2_hardness.py python/tests/test_hardness.py python/tests/test_hardness_properties.py python/tests/test_autoprompting.py python/tests/test_ggev2_hardness.py
-      - name: Run Hardness self-hosting and adversarial tests
+        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/hardness_assurance.py python/rot_ai/autoprompting.py python/rot_ai/ggev2_hardness.py python/tests/test_hardness.py python/tests/test_hardness_properties.py python/tests/test_hardness_assurance.py python/tests/test_autoprompting.py python/tests/test_ggev2_hardness.py
+      - name: Run Hardness self-hosting, mutation, fuzz and adversarial tests
         env:
           PYTHONPATH: python
-        run: python -m unittest -v python.tests.test_hardness python.tests.test_hardness_properties python.tests.test_autoprompting python.tests.test_ggev2_hardness
+        run: python -m unittest -v python.tests.test_hardness python.tests.test_hardness_properties python.tests.test_hardness_assurance python.tests.test_autoprompting python.tests.test_ggev2_hardness
       - name: Authority boundary check
         run: |
           python - <<'PY'
           from pathlib import Path
           sources = [
               Path('python/rot_ai/hardness.py'),
+              Path('python/rot_ai/hardness_assurance.py'),
               Path('python/rot_ai/autoprompting.py'),
               Path('python/rot_ai/ggev2_hardness.py'),
           ]
@@ -56,5 +57,6 @@ jobs:
           assert states['CP-H4'] in {'ACTIVE','PASS'}
           assert states['CP-H5'] in {'NOT_RUN','PASS_CORE_EXACT_HEAD'}
           assert states['CP-H6'] in {'BLOCKED','PARTIAL_INTEGRATION_READY'}
+          assert states.get('CP-H7') in {None,'BLOCKED_ON_EXECUTION'}
           print('self-hosting manifest: PASS')
           PY
