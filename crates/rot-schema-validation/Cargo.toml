@@ -3,12 +3,10 @@ name = "rot-schema-validation"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-license.workspace = true
+publish = false
 
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
 jsonschema.workspace = true
-rot-event = { path = "../rot-event" }
-
-[dev-dependencies]
+rot-event = { version = "0.1.0", path = "../rot-event" }

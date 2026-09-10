@@ -1,0 +1,37 @@
+name: Survival Store Property Union V2
+
+on:
+  push:
+    branches: [feat/property-union-v3, feat/graph-refactor-v2-survival]
+  pull_request:
+    branches: [feat/graph-refactor-v2-survival]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: survival-store-properties-v2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  durable-store-properties:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
+          persist-credentials: false
+      - name: Verify exact candidate checkout
+        run: test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13.15'
+      - name: Compile durable-store property surface
+        run: python -m compileall -q python/rot_contracts python/tests/test_survival_store_properties_v2.py
+      - name: Execute durable-store property union
+        env:
+          PYTHONPATH: python
+        run: python -m unittest python.tests.test_survival_store_properties_v2 -v

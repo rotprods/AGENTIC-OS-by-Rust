@@ -1,0 +1,114 @@
+{
+  "schema_version": "2",
+  "authority": "FIXTURE_ONLY",
+  "purpose": "Shared behavioral corpus for Survival V2 Rust-TypeScript-Python parity. This fixture is acceleration, not event authority.",
+  "seed": {
+    "project_id": "rot://project/agentic-os",
+    "north_star": "zero-context recovery",
+    "current_objective_id": "rot://objective/agentic-os/cp4",
+    "observed_source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "event_watermark": 0,
+    "authority_state": "IMPLEMENTED",
+    "active_workstreams": [],
+    "active_claims": [],
+    "blockers": [],
+    "verified_capabilities": [],
+    "unverified_capabilities": ["survival-reducer"],
+    "decisions": [],
+    "latest_checkpoint_id": null,
+    "projection_hash": null,
+    "next_safe_actions": ["run-survival-tests"]
+  },
+  "cases": [
+    {
+      "name": "deterministic_replay",
+      "operation": "reduce_events",
+      "events": [
+        {"event_id":"e1","sequence":1,"event_type":"workstream.started","project_id":"rot://project/agentic-os","payload":{"workstream_id":"rot://workstream/survival"}},
+        {"event_id":"e2","sequence":2,"event_type":"claim.acquired","project_id":"rot://project/agentic-os","payload":{"claim_id":"rot://claim/survival-schema"}},
+        {"event_id":"e3","sequence":3,"event_type":"capability.verified","project_id":"rot://project/agentic-os","payload":{"capability_id":"survival-reducer"}},
+        {"event_id":"e4","sequence":4,"event_type":"next_actions.set","project_id":"rot://project/agentic-os","payload":{"next_safe_actions":["build-cos-projection"]}}
+      ],
+      "expect": {
+        "status": "PASS",
+        "event_watermark": 4,
+        "active_workstreams": ["rot://workstream/survival"],
+        "active_claims": ["rot://claim/survival-schema"],
+        "verified_capabilities": ["survival-reducer"],
+        "unverified_capabilities": [],
+        "next_safe_actions": ["build-cos-projection"]
+      }
+    },
+    {
+      "name": "duplicate_event_idempotent",
+      "operation": "reduce_events",
+      "events": [
+        {"event_id":"same","sequence":1,"event_type":"blocker.added","project_id":"rot://project/agentic-os","payload":{"blocker_id":"b1"}},
+        {"event_id":"same","sequence":1,"event_type":"blocker.added","project_id":"rot://project/agentic-os","payload":{"blocker_id":"b1"}}
+      ],
+      "expect": {"status":"PASS","event_watermark":1,"blockers":["b1"]}
+    },
+    {
+      "name": "duplicate_event_collision",
+      "operation": "reduce_events",
+      "events": [
+        {"event_id":"same","sequence":1,"event_type":"blocker.added","project_id":"rot://project/agentic-os","payload":{"blocker_id":"b1"}},
+        {"event_id":"same","sequence":2,"event_type":"blocker.added","project_id":"rot://project/agentic-os","payload":{"blocker_id":"b2"}}
+      ],
+      "expect": {"status":"REJECT","error_code":"EVENT_ID_COLLISION"}
+    },
+    {
+      "name": "sequence_gap_rejected",
+      "operation": "reduce_events",
+      "events": [
+        {"event_id":"e1","sequence":1,"event_type":"blocker.added","project_id":"rot://project/agentic-os","payload":{"blocker_id":"b1"}},
+        {"event_id":"e3","sequence":3,"event_type":"blocker.added","project_id":"rot://project/agentic-os","payload":{"blocker_id":"b3"}}
+      ],
+      "expect": {"status":"REJECT","error_code":"SEQUENCE_DISCONTINUITY"}
+    },
+    {
+      "name": "cross_project_rejected",
+      "operation": "reduce_events",
+      "events": [
+        {"event_id":"e1","sequence":1,"event_type":"blocker.added","project_id":"rot://project/other","payload":{"blocker_id":"b1"}}
+      ],
+      "expect": {"status":"REJECT","error_code":"CROSS_PROJECT"}
+    },
+    {
+      "name": "unknown_event_rejected",
+      "operation": "reduce_events",
+      "events": [
+        {"event_id":"e1","sequence":1,"event_type":"magic.happened","project_id":"rot://project/agentic-os","payload":{}}
+      ],
+      "expect": {"status":"REJECT","error_code":"UNSUPPORTED_EVENT"}
+    },
+    {
+      "name": "freshness_exact_match",
+      "operation": "assert_fresh",
+      "local": {"observed_source_sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","event_watermark":9,"projection_hash":"sha256:1111111111111111111111111111111111111111111111111111111111111111"},
+      "live": {"observed_source_sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","event_watermark":9,"projection_hash":"sha256:1111111111111111111111111111111111111111111111111111111111111111"},
+      "expect": {"status":"PASS"}
+    },
+    {
+      "name": "freshness_source_mismatch",
+      "operation": "assert_fresh",
+      "local": {"observed_source_sha":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","event_watermark":9,"projection_hash":null},
+      "live": {"observed_source_sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","event_watermark":9,"projection_hash":null},
+      "expect": {"status":"REJECT","error_code":"STALE_SOURCE"}
+    },
+    {
+      "name": "freshness_watermark_mismatch",
+      "operation": "assert_fresh",
+      "local": {"observed_source_sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","event_watermark":8,"projection_hash":null},
+      "live": {"observed_source_sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","event_watermark":9,"projection_hash":null},
+      "expect": {"status":"REJECT","error_code":"STALE_WATERMARK"}
+    },
+    {
+      "name": "freshness_projection_omission_rejected",
+      "operation": "assert_fresh",
+      "local": {"observed_source_sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","event_watermark":9,"projection_hash":null},
+      "live": {"observed_source_sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","event_watermark":9,"projection_hash":"sha256:1111111111111111111111111111111111111111111111111111111111111111"},
+      "expect": {"status":"REJECT","error_code":"STALE_PROJECTION"}
+    }
+  ]
+}

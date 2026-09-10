@@ -6,11 +6,13 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "verify:goldens": "node dist/verify-goldens.js",
-    "verify:schemas": "node dist/verify-schemas.js"
+    "verify:schemas": "node dist/verify-schemas.js",
+    "verify:survival-schemas": "node dist/verify-survival-schemas.js",
+    "verify:survival-behavior": "node dist/verify-survival-behavior.js"
   },
   "devDependencies": {
     "@types/node": "24.3.0",
-    "ajv": "8.17.1",
+    "ajv": "8.18.0",
     "typescript": "5.9.2"
   }
 }

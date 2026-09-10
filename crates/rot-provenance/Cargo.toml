@@ -3,9 +3,9 @@ name = "rot-provenance"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-license.workspace = true
+publish = false
 
 [dependencies]
 serde.workspace = true
-rot-contracts = { path = "../rot-contracts" }
-rot-id = { path = "../rot-id" }
+rot-contracts = { version = "0.1.0", path = "../rot-contracts" }
+rot-id = { version = "0.1.0", path = "../rot-id" }
