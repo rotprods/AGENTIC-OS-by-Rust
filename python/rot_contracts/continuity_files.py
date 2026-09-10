@@ -30,7 +30,7 @@ def _checkpoint_slug(checkpoint_id: Any) -> str:
 
 
 def resolve_checkpoint_id_path(root: Path, checkpoint_id: Any, *, require_exists: bool = True) -> Path:
-    """Resolve one canonical checkpoint URI to its only allowed repository path."""
+    """Resolve one canonical checkpoint URI to its only allowed current-authority path."""
     slug = _checkpoint_slug(checkpoint_id)
     checkpoint_dir = (root / "state" / "checkpoints").resolve()
     candidate = (checkpoint_dir / f"{slug}.json").resolve()
@@ -72,22 +72,32 @@ def verify_latest_checkpoint_binding(state: dict[str, Any], checkpoint: dict[str
 
 
 def verify_checkpoint_lineage_topology(root: Path, state: dict[str, Any]) -> list[str]:
-    """Verify checkpoint identity/topology without promoting historical payloads to authority.
+    """Verify unambiguous checkpoint ancestry without rewriting historical evidence.
 
-    Historical checkpoints may deliberately preserve failed construction evidence. Therefore this
-    function does not re-certify every historical state/checkpoint hash. It verifies only the
-    structural facts required for unambiguous continuity: canonical URI<->filename identity,
-    unique IDs, existing parents, one linear ancestry for the selected latest checkpoint, no
-    cycles/forks, and no unconsumed child beyond the state pointer.
+    Current authority is stricter than legacy history: the checkpoint selected by
+    `state.latest_checkpoint_id` MUST live at the path derived from its canonical URI. Some early
+    immutable checkpoints predate that naming invariant (for example CP5), so ancestors are found
+    only by scanning the already-bounded `state/checkpoints/` directory and indexing their internal
+    canonical IDs. Legacy aliases never become path authority, cannot escape the directory, and
+    cannot be selected as latest unless a canonical URI-derived file also exists.
+
+    Historical checkpoint payload hashes are intentionally not re-certified here because failed
+    construction evidence (notably CP11) is preserved in the lineage. This function validates
+    structural continuity only: canonical IDs, unique identity, existing parents, a cycle/fork-free
+    ancestry for the selected latest checkpoint, and absence of an unconsumed child checkpoint.
     """
     checkpoint_dir = (root / "state" / "checkpoints").resolve()
     if not checkpoint_dir.is_dir():
         raise SurvivalContractError("checkpoint directory does not exist", code="CHECKPOINT_DIRECTORY_NOT_FOUND")
 
     documents: dict[str, dict[str, Any]] = {}
+    paths: dict[str, Path] = {}
     children: dict[str, list[str]] = {}
 
     for path in sorted(checkpoint_dir.glob("*.json")):
+        resolved_path = path.resolve()
+        if resolved_path.parent != checkpoint_dir:
+            raise SurvivalContractError("checkpoint scan escaped canonical directory", code="CHECKPOINT_PATH_ESCAPE")
         try:
             document = json.loads(path.read_text())
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
@@ -102,12 +112,7 @@ def verify_checkpoint_lineage_topology(root: Path, state: dict[str, Any]) -> lis
             )
 
         checkpoint_id = document.get("checkpoint_id")
-        canonical_path = resolve_checkpoint_id_path(root, checkpoint_id, require_exists=False)
-        if canonical_path != path.resolve():
-            raise SurvivalContractError(
-                f"checkpoint filename does not match checkpoint_id: {path.name}",
-                code="CHECKPOINT_FILENAME_MISMATCH",
-            )
+        _checkpoint_slug(checkpoint_id)
         if checkpoint_id in documents:
             raise SurvivalContractError("duplicate checkpoint identity", code="DUPLICATE_CHECKPOINT_ID")
 
@@ -116,11 +121,19 @@ def verify_checkpoint_lineage_topology(root: Path, state: dict[str, Any]) -> lis
             _checkpoint_slug(parent)
             children.setdefault(parent, []).append(checkpoint_id)
         documents[checkpoint_id] = document
+        paths[checkpoint_id] = resolved_path
 
     latest = state.get("latest_checkpoint_id") if isinstance(state, dict) else None
     _checkpoint_slug(latest)
     if latest not in documents:
         raise SurvivalContractError("latest checkpoint file does not exist", code="CHECKPOINT_NOT_FOUND")
+
+    canonical_latest_path = resolve_checkpoint_id_path(root, latest, require_exists=False)
+    if paths[latest] != canonical_latest_path or not canonical_latest_path.is_file():
+        raise SurvivalContractError(
+            "latest checkpoint filename does not match canonical checkpoint_id",
+            code="CHECKPOINT_FILENAME_MISMATCH",
+        )
 
     lineage: list[str] = []
     seen: set[str] = set()
