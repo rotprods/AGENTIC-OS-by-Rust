@@ -21,11 +21,31 @@ jobs:
         with:
           persist-credentials: false
       - name: Compile Python sources
-        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/hardness_assurance.py python/rot_ai/hardness_recovery.py python/rot_ai/autoprompting.py python/rot_ai/ggev2_hardness.py python/tests/test_hardness.py python/tests/test_hardness_properties.py python/tests/test_hardness_assurance.py python/tests/test_hardness_recovery.py python/tests/test_autoprompting.py python/tests/test_ggev2_hardness.py
-      - name: Run Hardness self-hosting, mutation, fuzz, chaos and adversarial tests
+        run: python -m compileall -q python/rot_ai/hardness.py python/rot_ai/hardness_assurance.py python/rot_ai/hardness_recovery.py python/rot_ai/hardness_supply_chain.py python/rot_ai/autoprompting.py python/rot_ai/ggev2_hardness.py python/tests/test_hardness.py python/tests/test_hardness_properties.py python/tests/test_hardness_assurance.py python/tests/test_hardness_recovery.py python/tests/test_hardness_supply_chain.py python/tests/test_autoprompting.py python/tests/test_ggev2_hardness.py
+      - name: Run Hardness self-hosting, mutation, fuzz, chaos, supply-chain and adversarial tests
         env:
           PYTHONPATH: python
-        run: python -m unittest -v python.tests.test_hardness python.tests.test_hardness_properties python.tests.test_hardness_assurance python.tests.test_hardness_recovery python.tests.test_autoprompting python.tests.test_ggev2_hardness
+        run: python -m unittest -v python.tests.test_hardness python.tests.test_hardness_properties python.tests.test_hardness_assurance python.tests.test_hardness_recovery python.tests.test_hardness_supply_chain python.tests.test_autoprompting python.tests.test_ggev2_hardness
+      - name: Repository supply-chain preflight
+        env:
+          PYTHONPATH: python
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from rot_ai.hardness_supply_chain import scan_repository_supply_chain
+          result = scan_repository_supply_chain(
+              root=Path('.'),
+              repo=os.environ['GITHUB_REPOSITORY'],
+              ref=os.environ.get('GITHUB_HEAD_REF') or os.environ['GITHUB_REF_NAME'],
+              candidate_sha=os.environ['GITHUB_SHA'],
+          )
+          print(f'supply-chain status={result.status} workflows={result.workflow_files} external_actions={result.external_actions}')
+          for finding in result.findings:
+              print(f'{finding.severity} {finding.code} {finding.path}: {finding.detail}')
+          if result.status != 'PASS':
+              raise SystemExit(1)
+          PY
       - name: Authority boundary check
         run: |
           python - <<'PY'
@@ -34,6 +54,7 @@ jobs:
               Path('python/rot_ai/hardness.py'),
               Path('python/rot_ai/hardness_assurance.py'),
               Path('python/rot_ai/hardness_recovery.py'),
+              Path('python/rot_ai/hardness_supply_chain.py'),
               Path('python/rot_ai/autoprompting.py'),
               Path('python/rot_ai/ggev2_hardness.py'),
           ]
