@@ -1,0 +1,66 @@
+{
+  "schema_version": "1",
+  "authority": "OBSERVATION_ONLY",
+  "observed_at": "2026-09-09T23:15:00+02:00",
+  "observations": [
+    {
+      "source_id": "drive:AGENTIC_PROJECT_REGISTRY",
+      "source_type": "drive_projection",
+      "freshness": "OBSERVED",
+      "resource_id": "1Bj-vLGPBZwADudrTErea7oe0yz0Z9ghCm2nJLMVCGys",
+      "title": "AGENTIC_PROJECT_REGISTRY",
+      "authority": "HUMAN_OPERATIONAL_MIRROR",
+      "notes": "Registry exists and is readable; it remains a projection and cannot overwrite GitHub/event authority."
+    },
+    {
+      "source_id": "drive:AGENTIC_SYSTEMS_OS:STATE",
+      "source_type": "drive_projection",
+      "freshness": "OBSERVED",
+      "resource_id": "1rLvYNivB_zGzamhGNs4xWvb-T9oQHPlKdoRxL1lCOVA",
+      "title": "STATE — AGENTIC_SYSTEMS_OS",
+      "authority": "HUMAN_OPERATIONAL_MIRROR"
+    },
+    {
+      "source_id": "todoist:task:6hP7jxX688h88mqX",
+      "source_type": "todoist_projection",
+      "freshness": "OBSERVED",
+      "resource_id": "6hP7jxX688h88mqX",
+      "title": "ACM-MON-01 · Event Monitor Control Plane v0.1 — SHADOW",
+      "authority": "EXECUTION_PROJECTION"
+    },
+    {
+      "source_id": "gmail:label:ROT-MONITOR/QUEUE/GITHUB-FAILURE",
+      "source_type": "gmail_signal_queue",
+      "freshness": "OBSERVED",
+      "messages_total": 5269,
+      "messages_unread": 5258,
+      "threads_total": 5145,
+      "threads_unread": 5134,
+      "authority": "UNTRUSTED_SIGNAL_INPUT",
+      "notes": "Volume is operational load only. Individual emails must be resolved against current provider state before becoming incidents."
+    },
+    {
+      "source_id": "gmail:label:ROT-MONITOR/SNAPSHOT/2026-08-28",
+      "source_type": "gmail_evidence_snapshot",
+      "freshness": "STALE",
+      "messages_total": 50,
+      "messages_unread": 50,
+      "authority": "HISTORICAL_EVIDENCE_ONLY",
+      "notes": "Historical evidence sample retained; not current operational truth."
+    }
+  ],
+  "derived_findings": [
+    {
+      "id": "finding:gmail-signal-backlog",
+      "severity": "P2",
+      "category": "SIGNAL_QUEUE_BACKLOG",
+      "evidence": "5269 queued GitHub failure/action-required messages; 5258 unread"
+    },
+    {
+      "id": "finding:cross-tool-authority-boundary",
+      "severity": "INFO",
+      "category": "AUTHORITY_BOUNDARY_HEALTHY",
+      "evidence": "Drive and Todoist are explicitly represented as projections; Gmail as untrusted signal input."
+    }
+  ]
+}

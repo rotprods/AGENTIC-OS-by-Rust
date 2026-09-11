@@ -1,0 +1,67 @@
+{
+  "schema_version": "2",
+  "authority_class": "DERIVED_SIGNAL_ONLY",
+  "observed_at": "2026-09-10T01:05:00+02:00",
+  "scope": "bounded_live_verified_incidents",
+  "classification_model": ["repo", "ref", "workflow", "exact_sha", "failure_family"],
+  "incidents": [
+    {
+      "repository": "rotprods/swiss-OS",
+      "ref": "main",
+      "workflow": "repo-guard",
+      "failure_family": "MATERIAL_RUNTIME_LINEAGE",
+      "signal_sha": "8331a08436618d56757943042f1ab296f703becf",
+      "classification": "ACTIVE",
+      "reason": "CURRENT_REF_FAILURE_CONFIRMED",
+      "provider_failure": false,
+      "root_causes": [
+        "MATERIAL_CHANGE_MISSING_ITERATION_RECEIPT:SES-20260909T223900Z-CRM-ENTITY-016",
+        "MISSING_SESSION_HEARTBEAT:SES-20260909T223900Z-CRM-ENTITY-016"
+      ],
+      "remediation": {
+        "pull_request": 456,
+        "ref": "state/crm-entity-resolution-token16-20260910",
+        "head_sha": "6c6deb94b2391527244c5aa3fe05b8a3075d1f40",
+        "status": "REMEDIATION_IN_PROGRESS",
+        "material_lineage_gate": "PASS",
+        "heartbeat_liveness_gate": "PASS",
+        "blocking_gate": "DETERMINISTIC_AGENT_RUNTIME_GRAPH",
+        "blocking_reason": "canonical runtime graph as_of predates token16 heartbeat; generated candidate projection_revision=31fd2d73d09b1c3e49b3802dc4455f2126d6aa013b8635574065e462942029ec is not yet promoted",
+        "keep_receipt_persisted": false,
+        "merge_allowed": false
+      }
+    },
+    {
+      "repository": "rotprods/Clever-Agent",
+      "ref": "wave/cp03/w02-teardown-cleanup",
+      "workflow": "cp03-w02-teardown",
+      "signal_sha": "bbce074992602f30f54c843bc4f33ff1058ddc61",
+      "current_ref_sha": "5655428f35bcd4f214b7a52de4574616845ffc58",
+      "classification": "SUPPRESSED",
+      "reason": "SUPERSEDED_REF_SHA"
+    },
+    {
+      "repository": "rotprods/motion-OS",
+      "ref": "feat/p8-6-workflow-supply-chain-hardening-20260909",
+      "signal_sha": "12bdec3048d6a3095acea37670a02a35afcb880a",
+      "current_ref_sha": "45cf9c43740996abf399861cbb22ed779abb5ead",
+      "classification": "SUPPRESSED",
+      "reason": "SUPERSEDED_REF_SHA"
+    }
+  ],
+  "metrics": {
+    "verified_causal_groups": 3,
+    "active": 1,
+    "suppressed": 2,
+    "unknown": 0,
+    "active_under_remediation": 1
+  },
+  "safety": {
+    "email_signal_is_authority": false,
+    "sha_resolution_required": true,
+    "same_ref_required_for_supersession": true,
+    "provider_failure_separated": true,
+    "auto_merge_on_signal": false
+  },
+  "next_required_gate": "continue bounded Gmail cursor replay and resolve exact refs/SHAs while closing swiss-OS PR 456 only after deterministic runtime graph and full repo-guard pass"
+}

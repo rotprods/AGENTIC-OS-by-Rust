@@ -1,0 +1,50 @@
+{
+  "schema_version": "1",
+  "program_id": "HARDNESS-V1-SELF-HOSTING",
+  "authority": "DERIVED_POLICY_ONLY",
+  "hardness_level": "H5",
+  "north_star": "No material change may gain higher authority unless rigor proportional to risk, blast radius and history is executed and evidenced on the exact candidate revision.",
+  "goals": [
+    {"goal_id":"H-G1","name":"Profiles","state":"VERIFIED","dod":["H0-H5 defined","monotonic inheritance tested"]},
+    {"goal_id":"H-G2","name":"Compiler","state":"VERIFIED","dod":["risk->level deterministic","unknown risk blocks","plan hash deterministic","skill graph contracts complete"]},
+    {"goal_id":"H-G3","name":"Promotion","state":"VERIFIED","dod":["exact-head evidence required","failed/missing/substituted gates block","authority ceiling enforced"]},
+    {"goal_id":"H-G4","name":"Learning","state":"VERIFIED_CORE","dod":["Bug->Invariant->Regression->Rule complete","incomplete records rejected"]},
+    {"goal_id":"H-G5","name":"Gauntlet","state":"VERIFIED_CORE","dod":["self-tests green","deterministic property matrix green","evidence substitution attacks green","inherited GGEV2 regression gates green"]},
+    {"goal_id":"H-G6","name":"Integration","state":"IMPLEMENTED_CORE","dod":["/autoprompting consumes Hardness plans","GGEV2 projects Hardness read-only","no authority duplication"]},
+    {"goal_id":"H-G7","name":"H5 empirical executors","state":"ACTIVE","dod":["real mutation campaign","real fuzz campaign","chaos campaign","fresh-agent death drill","supply-chain qualification"]}
+  ],
+  "checkpoints": [
+    {"id":"CP-H0","name":"Live truth and isolated scope","state":"PASS"},
+    {"id":"CP-H1","name":"Profiles and skill ontology","state":"PASS"},
+    {"id":"CP-H2","name":"Policy and promotion engine","state":"PASS"},
+    {"id":"CP-H3","name":"Learning loop core","state":"PASS"},
+    {"id":"CP-H4","name":"Adversarial core gauntlet","state":"PASS"},
+    {"id":"CP-H5","name":"Core exact-head qualification","state":"PASS_CORE_EXACT_HEAD","qualified_sha":"db769f584a03c387256527c30c13e899463a717c","evidence_runs":[34467543000,34467542994,34467542955]},
+    {"id":"CP-H6","name":"Integration-ready core","state":"PARTIAL_INTEGRATION_READY"},
+    {"id":"CP-H7","name":"Full H5 empirical qualification","state":"BLOCKED_ON_EXECUTION"}
+  ],
+  "waves": [
+    {"wave_id":"H-W1","objective":"core compiler and invariants","state":"VERIFIED"},
+    {"wave_id":"H-W2","objective":"self-hosting adversarial/property tests and CI","state":"VERIFIED_CORE"},
+    {"wave_id":"H-W3","objective":"autoprompting compiler adapter","state":"VERIFIED_CORE"},
+    {"wave_id":"H-W4","objective":"GGEV2 hardness projection","state":"VERIFIED_CORE"},
+    {"wave_id":"H-W5","objective":"real mutation and fuzz executors","state":"READY"},
+    {"wave_id":"H-W6","objective":"chaos/recovery/death-drill executors","state":"READY_AFTER_H-W5"},
+    {"wave_id":"H-W7","objective":"supply-chain and final exact-candidate evidence bundle","state":"READY_AFTER_H-W5"},
+    {"wave_id":"H-W8","objective":"CGEV2 default-protocol integration and project adoption","state":"READY_AFTER_H-W7"}
+  ],
+  "residual_risks": [
+    "The H5 catalog currently compiles mutation/fuzz/chaos/death-drill obligations but does not yet execute all of them as first-class Hardness adapters.",
+    "A self-hosting CI PASS demonstrates the policy/compiler core, not empirical production qualification.",
+    "Hardness remains DERIVED_POLICY_ONLY and cannot self-promote canonical authority."
+  ],
+  "current_frontier": [
+    "implement bounded mutation executor adapter",
+    "implement deterministic fuzz executor adapter",
+    "implement chaos/recovery campaign adapter",
+    "run fresh-agent zero-context death drill",
+    "qualify supply-chain and final exact candidate",
+    "only then integrate Hardness as CGEV2 default execution policy"
+  ],
+  "promotion": "NO_GO_FULL_H5_UNTIL_CP_H7"
+}

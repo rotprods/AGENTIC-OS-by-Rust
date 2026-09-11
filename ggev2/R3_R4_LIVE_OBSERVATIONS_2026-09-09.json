@@ -1,0 +1,45 @@
+{
+  "schema_version": "1",
+  "authority_class": "DERIVED_OBSERVATION_ONLY",
+  "observed_at": "2026-09-09T21:42:00Z",
+  "gmail_monitor_queue": {
+    "label": "ROT-MONITOR/QUEUE/GITHUB-FAILURE",
+    "messages_total": 5269,
+    "messages_unread": 5258,
+    "classification": "UNTRUSTED_SIGNAL_INPUT",
+    "sample_size": 10,
+    "sample": [
+      {"message_id":"1a04884be9540706","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"417cd92"},
+      {"message_id":"1a048846622a1d34","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"47a9f6d"},
+      {"message_id":"1a048839a2179aed","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"f0c9b57"},
+      {"message_id":"1a0487f4f3d002aa","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"7d5309d"},
+      {"message_id":"1a0487e3367ab608","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"8030ee2"},
+      {"message_id":"1a0487bcfe7af2df","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"5bebd9f"},
+      {"message_id":"1a0487b36b3fceeb","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"8d45075"},
+      {"message_id":"1a0487b31a931540","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"5375605"},
+      {"message_id":"1a04879fab0e6314","repo":"rotprods/swiss-OS","workflow":"repo-guard","short_sha":"d179327"},
+      {"message_id":"1a04879720225f6e","repo":"rotprods/motion-OS","workflow":"Merge Safe","short_sha":"ce03f3b"}
+    ]
+  },
+  "current_repo_heads": {
+    "rotprods/swiss-OS": {
+      "main_sha": "1072d5cfb33beee3f2afcd31a59ba00c514df170",
+      "commit_verified": true,
+      "branch_protected": false
+    },
+    "rotprods/motion-OS": {
+      "main_sha": "d4e628a1aef0cd382c3c2f1ea327a8ff70c41bd9",
+      "commit_verified": false,
+      "branch_protected": false
+    }
+  },
+  "classification": {
+    "sample_status": "UNKNOWN_PENDING_FULL_SHA_RESOLUTION",
+    "reason": "Gmail subjects expose abbreviated SHAs. R4 forbids treating abbreviated provider text as canonical commit identity.",
+    "required_next_step": "Resolve each short SHA through GitHub, then compare exact commit identity and current CI before ACTIVE/SUPPRESSED classification."
+  },
+  "swarm_visibility": {
+    "status": "PARTIAL",
+    "reason": "R3 telemetry protocol is implemented but existing runtimes do not yet emit canonical BOOT/CLAIM/HEARTBEAT/EVIDENCE/PREFLIGHT/HANDOFF observations into a shared stream."
+  }
+}

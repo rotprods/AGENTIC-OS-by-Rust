@@ -1,0 +1,44 @@
+{
+  "schema_version": "1",
+  "authority_class": "DERIVED_OBSERVATION_ONLY",
+  "observed_at": "2026-09-10T00:25:00+02:00",
+  "status": "PARTIAL_LIVE_ADOPTION",
+  "adopters": [
+    {
+      "runtime": "AGENTIC-OS-by-Rust",
+      "repository": "rotprods/AGENTIC-OS-by-Rust",
+      "branch": "feat/ggev2-r3-live-swarm",
+      "emitter": "python/rot_ai/ggev2_emit.py",
+      "verification_sha": "f380963c1d6e3daff9e6a355028bc174a7af872f",
+      "verification_run_id": 34409561385,
+      "verification_result": "PASS",
+      "authority_boundary": "OBSERVATION_ONLY"
+    },
+    {
+      "runtime": "mission-control",
+      "repository": "rotprods/mission-control",
+      "branch": "feat/ggev2-r3-telemetry-emitter",
+      "pull_request": 50,
+      "verification_sha": "e023d53991c11e108ba50f903850b97dd0e18f67",
+      "verification_run_id": 34409147409,
+      "verification_result": "PASS",
+      "authority_boundary": "OBSERVATION_ONLY"
+    },
+    {
+      "runtime": "cos-graph-engine",
+      "repository": "rotprods/cos-graph-engine",
+      "branch": "feat/ggev2-r3-telemetry-emitter",
+      "pull_request": 106,
+      "verification_sha": "f4f6870a8156dea44c20ab57c2f66c1bacc36a12",
+      "verification_run_id": 34409473196,
+      "verification_result": "PASS_ISOLATED_BRIDGE_GATE",
+      "repo_ci_state": "DEGRADED_EXTERNAL_SETUP_NODE",
+      "authority_boundary": "OBSERVATION_ONLY"
+    }
+  ],
+  "canonical_claim_authority_created": false,
+  "canonical_event_authority_created": false,
+  "promotion_authority_created": false,
+  "agent_visibility": "PARTIAL",
+  "next_required_gate": "ingest emitted runtime observations into one cross-runtime swarm snapshot without promoting observation telemetry to ownership authority"
+}

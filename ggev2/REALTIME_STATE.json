@@ -1,0 +1,92 @@
+{
+  "schema_version": "ggev2.realtime.v1",
+  "source_revision": "d19009055fb86e33836706fd0f09991869311431",
+  "projection_revision": 1,
+  "freshness": "BLOCKED",
+  "authority_state": "IMPLEMENTED",
+  "event_watermark": 0,
+  "project": {
+    "project_id": "rot://project/agentic-os",
+    "north_star": "Any authorized zero-context runtime can reconstruct the same bounded state, event horizon, ownership, evidence, graph context and next safe action without hidden chat memory.",
+    "current_objective_id": "rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution"
+  },
+  "source_observations": [
+    {"source_id":"checkpoints","status":"FRESH","revision":"rot://checkpoint/agentic-os/cp15-governance-candidate-resolution-20260901","evidence_refs":["state/checkpoints/cp15-governance-candidate-resolution-20260901.json"]},
+    {"source_id":"github_live","status":"FRESH","revision":"d19009055fb86e33836706fd0f09991869311431","evidence_refs":["github:rotprods/AGENTIC-OS-by-Rust#4"]},
+    {"source_id":"governance_manifest","status":"BLOCKED","revision":"a13b03852e77234b0590d4c9985ddd918736363f","evidence_refs":["governance/external-authorities.v2.json"]},
+    {"source_id":"project_state","status":"FRESH","revision":"7f6e1bfa76b11ab5d47bd11b169440465b9d0228","evidence_refs":["state/project_state.json"]}
+  ],
+  "active_objectives": ["rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution"],
+  "active_workstreams": ["rot://workstream/agentic-os/graph-refactor-v2-survival"],
+  "active_claims": ["rot://claim/agentic-os/survival-v2-contract-surface"],
+  "blockers": [
+    "rot://blocker/agentic-os/cp01-cp03-governance-not-promotion-qualified",
+    "rot://blocker/agentic-os/death-drill-not-empirically-executed",
+    "rot://blocker/agentic-os/durable-event-authority-not-qualified",
+    "rot://blocker/agentic-os/github-promotion-enforcement-not-active",
+    "rot://blocker/agentic-os/signed-head-enforcement-not-active"
+  ],
+  "governance": {
+    "status": "BLOCKED",
+    "manifest": "governance/external-authorities.v2.json",
+    "authorities": {"rot.knowledge":"PINNED","CP01":"CANDIDATE_PINNED","CP02":"CANDIDATE_PINNED","CP03":"CANDIDATE_PINNED","COS2":"PINNED"}
+  },
+  "quality_gates": {
+    "continuity": "PASS",
+    "rust_contract_kernel": "PASS",
+    "cross_language_parity": "PASS",
+    "store_property_union": "PASS",
+    "operator_cli": "PASS",
+    "supply_chain": "PASS",
+    "promotion_control_plane": "BLOCKED_ENFORCEMENT"
+  },
+  "graph": {
+    "nodes": [
+      {"id":"rot://blocker/agentic-os/cp01-cp03-governance-not-promotion-qualified","type":"Blocker"},
+      {"id":"rot://blocker/agentic-os/death-drill-not-empirically-executed","type":"Blocker"},
+      {"id":"rot://blocker/agentic-os/durable-event-authority-not-qualified","type":"Blocker"},
+      {"id":"rot://blocker/agentic-os/github-promotion-enforcement-not-active","type":"Blocker"},
+      {"id":"rot://blocker/agentic-os/signed-head-enforcement-not-active","type":"Blocker"},
+      {"id":"rot://capability/durable-accepted-event-writer","type":"Capability"},
+      {"id":"rot://capability/empirical-zero-context-death-drill","type":"Capability"},
+      {"id":"rot://capability/multi-host-authority","type":"Capability"},
+      {"id":"rot://capability/network-executor","type":"Capability"},
+      {"id":"rot://capability/process-executor","type":"Capability"},
+      {"id":"rot://capability/survival-v2-promotion-control-plane-readiness-observer","type":"Capability"},
+      {"id":"rot://capability/survival-v2-rust-operator-cli-readonly","type":"Capability"},
+      {"id":"rot://capability/survival-v2-t17-supply-chain-assurance","type":"Capability"},
+      {"id":"rot://claim/agentic-os/survival-v2-contract-surface","type":"Claim"},
+      {"id":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"Objective"},
+      {"id":"rot://project/agentic-os","type":"Project"},
+      {"id":"rot://workstream/agentic-os/graph-refactor-v2-survival","type":"Workstream"}
+    ],
+    "edges": [
+      {"from":"rot://blocker/agentic-os/cp01-cp03-governance-not-promotion-qualified","to":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"BLOCKS"},
+      {"from":"rot://blocker/agentic-os/death-drill-not-empirically-executed","to":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"BLOCKS"},
+      {"from":"rot://blocker/agentic-os/durable-event-authority-not-qualified","to":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"BLOCKS"},
+      {"from":"rot://blocker/agentic-os/github-promotion-enforcement-not-active","to":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"BLOCKS"},
+      {"from":"rot://blocker/agentic-os/signed-head-enforcement-not-active","to":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"BLOCKS"},
+      {"from":"rot://claim/agentic-os/survival-v2-contract-surface","to":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"CLAIMS_SCOPE_OF"},
+      {"from":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","to":"rot://workstream/agentic-os/graph-refactor-v2-survival","type":"EXECUTED_BY_WORKSTREAM"},
+      {"from":"rot://project/agentic-os","to":"rot://objective/agentic-os/survival-v2-cp15-governance-candidate-resolution","type":"HAS_OBJECTIVE"},
+      {"from":"rot://capability/durable-accepted-event-writer","to":"rot://project/agentic-os","type":"UNVERIFIED_FOR"},
+      {"from":"rot://capability/empirical-zero-context-death-drill","to":"rot://project/agentic-os","type":"UNVERIFIED_FOR"},
+      {"from":"rot://capability/multi-host-authority","to":"rot://project/agentic-os","type":"UNVERIFIED_FOR"},
+      {"from":"rot://capability/network-executor","to":"rot://project/agentic-os","type":"UNVERIFIED_FOR"},
+      {"from":"rot://capability/process-executor","to":"rot://project/agentic-os","type":"UNVERIFIED_FOR"},
+      {"from":"rot://capability/survival-v2-promotion-control-plane-readiness-observer","to":"rot://project/agentic-os","type":"VERIFIED_FOR"},
+      {"from":"rot://capability/survival-v2-rust-operator-cli-readonly","to":"rot://project/agentic-os","type":"VERIFIED_FOR"},
+      {"from":"rot://capability/survival-v2-t17-supply-chain-assurance","to":"rot://project/agentic-os","type":"VERIFIED_FOR"}
+    ]
+  },
+  "drift": [{"source_id":"governance_manifest","status":"BLOCKED","revision":"a13b03852e77234b0590d4c9985ddd918736363f"}],
+  "next_safe_actions": [
+    "configure GitHub promotion enforcement",
+    "execute independent death drill",
+    "qualify CP01/CP02/CP03 governance",
+    "final exact-candidate gauntlet",
+    "qualify durable accepted-event writer"
+  ],
+  "generated_at": "2026-09-09T18:44:00Z",
+  "state_hash": "sha256:7edeb148f42b076948e2619639700f16ff18390d870dbfc99303a6b19e2ecb8d"
+}

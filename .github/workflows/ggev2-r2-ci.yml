@@ -1,0 +1,37 @@
+name: GGEV2 R2 Portfolio Collectors
+
+on:
+  pull_request:
+  push:
+    branches:
+      - feat/ggev2-r2-portfolio-collectors
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ggev2-r2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Run GGEV2 R1 + R2 tests
+        env:
+          PYTHONPATH: python
+        run: python -m unittest python.tests.test_ggev2 python.tests.test_ggev2_collectors -v
+      - name: Assert R2 remains projection-only
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          snap = json.loads(Path('ggev2/PORTFOLIO_SNAPSHOT.json').read_text())
+          assert snap['authority'] == 'DERIVED_READ_ONLY'
+          assert snap['agent_visibility']['status'] == 'PARTIAL'
+          print('projection-only portfolio boundary: PASS')
+          PY

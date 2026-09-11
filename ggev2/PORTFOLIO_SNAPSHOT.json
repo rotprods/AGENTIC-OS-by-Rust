@@ -1,0 +1,70 @@
+{
+  "schema_version": "1",
+  "authority": "DERIVED_READ_ONLY",
+  "observed_at": "2026-09-09T23:15:00+02:00",
+  "repositories": {
+    "rotprods/AGENTIC-OS-by-Rust": {
+      "role": "agentic_os_runtime",
+      "branch": "feat/graph-refactor-v2-survival",
+      "head_sha": "d19009055fb86e33836706fd0f09991869311431",
+      "protected": false,
+      "commit_verified": true,
+      "authority_state": "IMPLEMENTED",
+      "event_watermark": 0
+    },
+    "rotprods/mission-control": {
+      "role": "mission_control_runtime",
+      "branch": "main",
+      "head_sha": "2fe8c77549e7cc3f950d263a0b74c9fa7ab537e6",
+      "protected": false,
+      "commit_verified": true,
+      "checkpoint_hint": "R10.6.2 collab/ops migration"
+    },
+    "rotprods/cos-graph-engine": {
+      "role": "cos_graph_semantics",
+      "branch": "main",
+      "head_sha": "3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83",
+      "protected": true,
+      "commit_verified": false,
+      "authority": "DERIVED_GRAPH_SEMANTICS"
+    },
+    "rotprods/rot.knowledge": {
+      "role": "constitutional_governance",
+      "branch": "main",
+      "head_sha": "afe43178ae492980ad0dead1b727b3092cfc5a13",
+      "authority": "CONSTITUTIONAL_CHANGE_CONTROL"
+    }
+  },
+  "governance": {
+    "CP01": "CANDIDATE_PINNED",
+    "CP02": "CANDIDATE_PINNED",
+    "CP03": "CANDIDATE_PINNED",
+    "COS2": "PINNED"
+  },
+  "agent_visibility": {
+    "status": "PARTIAL",
+    "reason": "No canonical cross-runtime heartbeat stream exists yet; active agent state is inferred from repository/project surfaces and must not be treated as complete."
+  },
+  "portfolio_blockers": [
+    {
+      "id": "blocker:agentic-os:github-promotion-enforcement",
+      "severity": "P1",
+      "category": "PROMOTION_ENFORCEMENT_MISSING"
+    },
+    {
+      "id": "blocker:agentic-os:death-drill",
+      "severity": "P1",
+      "category": "EMPIRICAL_RECOVERY_NOT_RUN"
+    },
+    {
+      "id": "blocker:agentic-os:governance-promotion",
+      "severity": "P1",
+      "category": "EXTERNAL_GOVERNANCE_NOT_PROMOTION_QUALIFIED"
+    },
+    {
+      "id": "blocker:mission-control:main-protection",
+      "severity": "P1",
+      "category": "BRANCH_PROTECTION_MISSING"
+    }
+  ]
+}

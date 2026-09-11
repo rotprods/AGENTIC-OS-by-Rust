@@ -1,0 +1,17 @@
+{
+  "schema_version":"ggev2.authority.v1",
+  "hierarchy":[
+    {"rank":1,"surface":"accepted_event_ledger","authority":"CANONICAL_MUTATION_AUTHORITY_WHEN_QUALIFIED"},
+    {"rank":2,"surface":"versioned_contracts_and_governance","authority":"CONSTRAINT_AUTHORITY"},
+    {"rank":3,"surface":"github_live_exact_sha_evidence","authority":"EXECUTION_EVIDENCE"},
+    {"rank":4,"surface":"project_state_and_checkpoints","authority":"DURABLE_CONTINUITY_PROJECTION"},
+    {"rank":5,"surface":"ggev2","authority":"DERIVED_REALTIME_CONTROL_PLANE"},
+    {"rank":6,"surface":"cos_graph_contextpack_ui","authority":"DERIVED_PRESENTATION_AND_RETRIEVAL"}
+  ],
+  "rules":[
+    "LOWER_RANK_NUMBER_DOES_NOT_ALLOW_UNQUALIFIED_PROMOTION",
+    "DERIVED_SURFACES_NEVER_REVERSE_WRITE_AUTHORITY",
+    "EXACT_SHA_EVIDENCE_DOES_NOT_EQUAL_PRODUCTION_AUTHORITY",
+    "MISSING_AUTHORITY_EVIDENCE_FAILS_CLOSED"
+  ]
+}

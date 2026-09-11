@@ -1,0 +1,29 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://rot.local/schemas/ggev2/realtime-state.v1.json",
+  "title":"GGEV2 Realtime State v1",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","generated_at","source_revision","projection_revision","freshness","authority_state","event_watermark","project","source_observations","active_objectives","active_workstreams","active_claims","blockers","governance","quality_gates","graph","drift","next_safe_actions","state_hash"],
+  "properties":{
+    "schema_version":{"const":"ggev2.realtime.v1"},
+    "generated_at":{"type":"string","format":"date-time"},
+    "source_revision":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "projection_revision":{"type":"integer","minimum":1},
+    "freshness":{"enum":["FRESH","STALE","BLOCKED","UNKNOWN"]},
+    "authority_state":{"type":"string","minLength":1},
+    "event_watermark":{"type":"integer","minimum":0},
+    "project":{"type":"object","additionalProperties":false,"required":["project_id","north_star","current_objective_id"],"properties":{"project_id":{"type":"string","minLength":1},"north_star":{"type":"string","minLength":1},"current_objective_id":{"type":"string","minLength":1}}},
+    "source_observations":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["source_id","status","revision"],"properties":{"source_id":{"type":"string"},"status":{"enum":["FRESH","STALE","BLOCKED","UNKNOWN"]},"revision":{"type":["string","null"]},"evidence_refs":{"type":"array","items":{"type":"string"}}}}},
+    "active_objectives":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "active_workstreams":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "active_claims":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "blockers":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "governance":{"type":"object"},
+    "quality_gates":{"type":"object"},
+    "graph":{"type":"object"},
+    "drift":{"type":"array","items":{"type":"object"}},
+    "next_safe_actions":{"type":"array","items":{"type":"string"}},
+    "state_hash":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"}
+  }
+}

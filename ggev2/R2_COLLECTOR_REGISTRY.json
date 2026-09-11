@@ -1,0 +1,73 @@
+{
+  "schema_version": "1",
+  "authority": "CONFIGURATION_ONLY",
+  "collectors": [
+    {
+      "collector_id": "github.portfolio",
+      "source": "GitHub",
+      "mode": "READ_ONLY",
+      "status": "IMPLEMENTED_REFERENCE",
+      "produces": ["Repository", "Branch", "PullRequest", "Commit", "WorkflowRun", "Issue", "ProtectionObservation"],
+      "freshness_slo_seconds": 300,
+      "authority": "EXECUTABLE_TRUTH_FOR_REPO_STATE",
+      "notes": "Provider-owned GitHub facts are evidence authority for GitHub lifecycle; GGEV2 remains a projection."
+    },
+    {
+      "collector_id": "mission-control.state",
+      "source": "rotprods/mission-control",
+      "mode": "READ_ONLY",
+      "status": "OBSERVED",
+      "produces": ["ProjectProjection", "Mission", "Checkpoint", "Incident", "AgentPresenceHint"],
+      "freshness_slo_seconds": 300,
+      "authority": "DERIVED_RUNTIME_PROJECTION"
+    },
+    {
+      "collector_id": "cos.graph",
+      "source": "rotprods/cos-graph-engine",
+      "mode": "READ_ONLY",
+      "status": "OBSERVED",
+      "produces": ["GraphSemantics", "GraphProjection", "AlgorithmRevision"],
+      "freshness_slo_seconds": 3600,
+      "authority": "DERIVED_GRAPH_SEMANTICS"
+    },
+    {
+      "collector_id": "drive.registry",
+      "source": "Google Drive",
+      "mode": "READ_ONLY",
+      "status": "ADAPTER_CONTRACT_READY",
+      "produces": ["ProjectRegistryProjection", "HandoffProjection", "DocumentEvidence"],
+      "freshness_slo_seconds": 900,
+      "authority": "HUMAN_OPERATIONAL_MIRROR",
+      "notes": "Cannot overwrite GitHub/event authority. Revision/watermark required."
+    },
+    {
+      "collector_id": "todoist.execution",
+      "source": "Todoist",
+      "mode": "READ_ONLY",
+      "status": "ADAPTER_CONTRACT_READY",
+      "produces": ["TaskProjection", "ObjectiveProjection", "CheckpointProjection"],
+      "freshness_slo_seconds": 900,
+      "authority": "EXECUTION_PROJECTION"
+    },
+    {
+      "collector_id": "gmail.signal",
+      "source": "Gmail",
+      "mode": "READ_ONLY",
+      "status": "ADAPTER_CONTRACT_READY",
+      "produces": ["NotificationSignal", "FailureOccurrence"],
+      "freshness_slo_seconds": 300,
+      "authority": "UNTRUSTED_SIGNAL_INPUT",
+      "notes": "Email content can suggest a failure but never proves current-head failure. Must resolve through authoritative provider state."
+    },
+    {
+      "collector_id": "agent.heartbeat",
+      "source": "Agent runtimes",
+      "mode": "APPEND_OBSERVATION_ONLY",
+      "status": "NOT_YET_CANONICAL",
+      "produces": ["Agent", "Session", "Claim", "Lease", "Heartbeat", "Handoff"],
+      "freshness_slo_seconds": 900,
+      "authority": "RUNTIME_SELF_OBSERVATION_PENDING_EVENT_AUTHORITY",
+      "notes": "Until accepted-event authority exists, GGEV2 must label agent visibility PARTIAL."
+    }
+  ]
+}
