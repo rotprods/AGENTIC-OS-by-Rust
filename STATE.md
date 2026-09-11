@@ -1,48 +1,69 @@
-# STATE — Agent Survival V2
+# STATE — HARDNESS V1 / CGEV2-GGEV2 ASSURANCE
 
-Authority: human-readable projection only. Live GitHub lifecycle + machine-readable state/checkpoints + exact-SHA CI + revision-pinned governance evidence outrank this file when stale.
+Authority: human-readable projection only. **VERIFY LIVE TRUTH BEFORE EXECUTION.** Live GitHub, exact-SHA CI, durable contracts and evidence outrank this file when stale.
+
+## North Star
+No material change may gain higher authority unless rigor proportional to risk, blast radius and history is executed and evidenced on the exact candidate revision.
 
 ## Current phase
-`F1_VNEXT_CONTRACT_KERNEL + SURVIVAL_V2_SHADOW / CP15_GOVERNANCE_CANDIDATE_RESOLUTION`
+`HARDNESS_V1_H5_SELF_HOSTING / H-W8_PROVIDER_PROVENANCE_NEXT`
 
-## Canonical topology
-- PR #1: F1 base authority `015abe49353f744269d10cec7f7d3778a46e963c`.
-- PR #4: sole Survival V2 promotion route, branch `feat/graph-refactor-v2-survival`.
-- PR #13: CP15 governance-candidate lane; integrate only after final exact-head qualification.
-- PR #14: isolated provenance probe only; merged on `probe/*` branches and did not modify canonical Survival.
-- event watermark: `0`.
-- whole-system authority: `IMPLEMENTED / SHADOW_ONLY`.
+## Topology
+- repo: `rotprods/AGENTIC-OS-by-Rust`
+- PR #24: Hardness V1 self-hosting assurance layer, draft/open at predecessor close.
+- issue #23: Hardness program.
+- issue #25: bounded mutation/fuzz adapters — closed completed by predecessor after exact-head self-hosting evidence.
+- issue #26: chaos/recovery/death-drill/supply-chain; empirical independent death drill remains open.
+- successor packet: `prompts/NEXT_ITERATION_METAPROMPT_HARDNESS_H5.md`.
+- learning record: `evidence/HARDNESS_APRENDE_SESSION_2026-09-11.md`.
 
-## CP15 evidence progression
-Pre-persistence semantic candidate `91080a60f70bc9098dfd11bbd4e281345c9398ab` passed Property `33513766213`, CLI `33513766240` and Supply `33513766209`.
+## Implemented capabilities
+- H0-H5 risk profiles with monotonic escalation;
+- SkillSpecs and BEFORE/DURING/AFTER/LEARNING lifecycle compilation;
+- bounded promotion authority ceilings;
+- exact-head evidence identity;
+- CGEV2 shadow integration and GGEV2 projection;
+- deterministic fuzz;
+- bounded semantic mutation;
+- chaos/recovery contract;
+- independent death-drill evaluator;
+- supply-chain preflight / CP13 reuse;
+- `/autoprompting` next-iteration compilation;
+- H4/H5 plain caller evidence rejection;
+- verifier-minted `QualifiedEvidence` and forbidden direct construction.
 
-Continuity sealing later exposed a missing serialized `checkpoint_id` through the Operator CLI merge-preview smoke test; the checkpoint was corrected without changing runtime semantics. Any later exact-head run supersedes these ancestor runs as integration proof.
+## Learning state
+Closed failure families:
+- `EVIDENCE_OBJECT_FORGERY`;
+- `QUALIFIED_EVIDENCE_FORGERY`.
 
-## External governance resolution
-`governance/external-authorities.v2.json` separates exact location from promotion authority.
+Open failure family:
+- `PROVIDER_OBSERVATION_SUBSTITUTION` — provider payload must be bound to live provider identity, exact candidate and workflow/check/artifact provenance before H4/H5 trust.
 
-- `rot.knowledge/main`: current signed repository-level constitutional/change-control pin `afe43178ae492980ad0dead1b727b3092cfc5a13`. The first eight-commit drift from `621550dd...` to `6fcd6205...` and the subsequent one-commit drift to `afe43178...` were audited; neither compare touched Agentic Context Mesh governance.
-- ACM governance revision: `rotprods/rot.knowledge:feat/rot-life-graph-os-foundation@48b0d1eddb83b165237268c4334d6e19bbd969ec`.
-- CP01: exact document located and `CANDIDATE_PINNED`; immutable runtime `649cc514...` independently passed GitHub-hosted `npm run ci`.
-- CP02: exact document located and `CANDIDATE_PINNED`; canonical convergence runtime `07d94e9e...` passed `npm run deep:convergence` plus 20/20 flake runs. Parent `G-0001 CP-0300` compatibility and complete MID01 machine manifest/review remain open.
-- CP03: exact document located and `CANDIDATE_PINNED`; SQLite reference runtime `1e30b4a0...` passed FAST + immutable deep qualification after a real independent run exposed and closed one typed JSON error-boundary defect. MID02/PostgreSQL/RLS/backend parity and independent security review remain open.
-- COS2 remains pinned `3ae197ebe6024b68ea2cc33a4c54c76fbc8d1e83`.
+## Last observed exact-head evidence
+Historical once head moves:
+- Hardness V1 Self-Hosting Gate run `34480609787`: SUCCESS on `9daf88a7b5a688514e93c9c2f0431b245621fd44`.
 
-`CANDIDATE_PINNED` is never promotion-qualified. Exact locator resolution closes the old discovery problem but does not authorize CP01/CP02/CP03 as production governance.
-
-## GitHub signature path
-Isolated PR #14 proved native GitHub PR merge with `expected_head_sha` can create a cryptographically verified commit: `619e2a664257783e6a27d7db0e79eb5c93735ce2`, `verification.verified=true`, `reason=valid`, GitHub PGP signature.
-
-This proves a signed integration mechanism. It does **not** provide branch/ruleset enforcement, signed-head enforcement, or promotion authority.
-
-## Hard blockers
-1. Genuine fresh-runtime empirical zero-context successor drill.
-2. CP01/CP02/CP03 promotion qualification; exact candidate locators are resolved but their own governance blockers remain.
-3. GitHub required-check / PR / no-force-push / no-deletion / admin and signed-head enforcement.
-4. Durable accepted-event writer qualification; watermark remains `0`.
+At predecessor close the branch endpoint still reported that SHA, unsigned/unprotected, while file reads reflected later provenance hardening and subsequent durable documentation writes produced newer commit IDs. Treat this as `LIVE_TRUTH_INCONSISTENT` until successor reconciles branch/PR/commits/files/CI.
 
 ## Authority ceiling
-External governance candidate locators and the GitHub signed-merge path are verified evidence. Neither promotes the whole system. Empirical recovery remains `UNVERIFIED / NOT_RUN`; network/process executors are UNVERIFIED; durable accepted-event writer is UNQUALIFIED; multi-host authority is DEFERRED; whole Survival remains `IMPLEMENTED / SHADOW_ONLY`.
+`DERIVED_POLICY_ONLY / SHADOW`.
 
-## Next safe frontier
-Exact-head qualify the final CP15 lane after the `afe43178...` repin, integrate it through the verified GitHub-native merge path, verify the resulting canonical signature, and rerun all required exact-head gates plus Promotion Control Plane Readiness. Then attack the remaining durable blockers: GitHub enforcement, CP governance promotion obligations, and the genuinely fresh empirical death drill.
+Explicitly NOT proven:
+- H5 empirical qualification;
+- global ENFORCE;
+- production authority;
+- independent fresh-agent death drill;
+- final frozen candidate qualification;
+- source-level mutation saturation;
+- provider-bound provenance saturation.
+
+## Next waves
+- H-W8: provider-bound GitHub evidence collector/verifier + substitution/replay adversarial corpus.
+- H-W9: source-level mutation campaign; any critical survivor FAIL.
+- H-W10: freeze one candidate and run Hardness + GGEV2 R2 + R3/R4 + CP13 + applicable security/recovery gates on exact SHA.
+- H-W11: genuine independent zero-context death drill (#26).
+- H-W12: external GO/NO_GO promotion decision; no self-promotion.
+
+## Stop conditions
+Fail closed on stale/missing evidence, mutable-provider disagreement, concurrent scope collision, authority ambiguity, critical surviving mutant, non-independent death drill, or exact-head drift.
